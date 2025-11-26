@@ -65,19 +65,19 @@ struct SegmentIterator {
 };
 
 
-IntervalSetHolder newHolder(int bufferSize) {
+inline IntervalSetHolder newHolder(int bufferSize) {
     // Allocate Transition buffers
     return IntervalSetHolder{new Transition[bufferSize], new Transition[bufferSize], 0, bufferSize};
 };
 
-void swapBuffers(IntervalSetHolder &holder) {
+inline void swapBuffers(IntervalSetHolder &holder) {
     Transition *temp = holder.readBuffer;
     holder.readBuffer = holder.writeBuffer;
     holder.writeBuffer = temp;
     holder.writeIndex = 0;
 };
 
-IntervalSet empty(IntervalSetHolder &holder) {
+inline IntervalSet empty(IntervalSetHolder &holder) {
     return IntervalSet{holder.writeBuffer, 1, 0};
 };
 
@@ -85,7 +85,7 @@ IntervalSet empty(IntervalSetHolder &holder) {
  * @brief Creates a new set from a single [start, end) interval.
  * This is the primary way to get data into the system.
  */
-IntervalSet fromInterval(IntervalSetHolder &holder, Interval interval) {
+inline IntervalSet fromInterval(IntervalSetHolder &holder, Interval interval) {
     int newStartIndex = holder.writeIndex;
     
     // Only add a non-empty interval
@@ -102,7 +102,7 @@ IntervalSet fromInterval(IntervalSetHolder &holder, Interval interval) {
  * This is crucial for carrying over unmodified sets
  * before calling swapBuffers().
  */
-IntervalSet copySet(IntervalSetHolder& holder, IntervalSet set) {
+inline IntervalSet copySet(IntervalSetHolder& holder, IntervalSet set) {
     int newStartIndex = holder.writeIndex;
     
     // Read from the set's *own* buffer (could be read or write)
@@ -118,7 +118,7 @@ IntervalSet copySet(IntervalSetHolder& holder, IntervalSet set) {
 /**
  * @brief Computes the union (OR) of two sets using a plane-sweep algorithm.
  */
-IntervalSet unionSets(IntervalSetHolder &holder, IntervalSet setA, IntervalSet setB) {
+inline IntervalSet unionSets(IntervalSetHolder &holder, IntervalSet setA, IntervalSet setB) {
     int newStartIndex = holder.writeIndex;
     int i = setA.startIndex;
     int j = setB.startIndex;
@@ -157,7 +157,7 @@ IntervalSet unionSets(IntervalSetHolder &holder, IntervalSet setA, IntervalSet s
 /**
  * @brief Computes the intersection (AND) of two sets.
  */
-IntervalSet intersectSets(IntervalSetHolder &holder, IntervalSet setA, IntervalSet setB) {
+inline IntervalSet intersectSets(IntervalSetHolder &holder, IntervalSet setA, IntervalSet setB) {
     int newStartIndex = holder.writeIndex;
     int i = setA.startIndex;
     int j = setB.startIndex;
@@ -197,7 +197,7 @@ IntervalSet intersectSets(IntervalSetHolder &holder, IntervalSet setA, IntervalS
  * @brief Computes the negation of a set within a given domain.
  * This is (domain AND (NOT setA)).
  */
-IntervalSet negateSet(IntervalSetHolder &holder, IntervalSet setA, Interval domain) {
+inline IntervalSet negateSet(IntervalSetHolder &holder, IntervalSet setA, Interval domain) {
     int newStartIndex = holder.writeIndex;
     int i = setA.startIndex;
 
@@ -246,7 +246,7 @@ IntervalSet negateSet(IntervalSetHolder &holder, IntervalSet setA, Interval doma
 };
 
 
-void destroyHolder(IntervalSetHolder &holder) {
+inline void destroyHolder(IntervalSetHolder &holder) {
     delete[] holder.writeBuffer;
     delete[] holder.readBuffer;
 };
@@ -378,7 +378,7 @@ inline bool getNextSegment(SegmentIterator& it) {
  * @brief Converts an IntervalSet (of transitions) back to a
  * std::vector<Interval> for inspection.
  */
-std::vector<Interval> toVectorIntervals(const IntervalSet& set) {
+inline std::vector<Interval> toVectorIntervals(const IntervalSet& set) {
     std::vector<Interval> result;
     if (set.startIndex > set.endIndex) {
         return result; // Empty set
@@ -416,7 +416,7 @@ inline std::vector<Transition> toVectorTransitions(const IntervalSet& set) {
 }
 
 // Helper for std::sort
-bool compareTransitions(const Transition& a, const Transition& b) {
+inline bool compareTransitions(const Transition& a, const Transition& b) {
     if (a.time != b.time) {
         return a.time < b.time;
     }
@@ -425,7 +425,7 @@ bool compareTransitions(const Transition& a, const Transition& b) {
     return a.isStart > b.isStart;
 }
 
-IntervalSet createSetFromIntervals(
+inline IntervalSet createSetFromIntervals(
     IntervalSetHolder& holder, 
     const std::vector<Interval>& intervals) {
     int newStartIndex = holder.writeIndex;

@@ -1,5 +1,6 @@
 add_executable(bench_runner 
     benchmark_engine.cpp
+    benchmark_interval_set.cpp
 )
 
 # Link the SAME library and SAME Catch2
