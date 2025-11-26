@@ -18,9 +18,8 @@ jobs:
           
       - name: Install dependencies
         run: |
-          sudo apt-get install -y gcovr
-          # Install your other dependencies (catch2, etc)
-
+          sudo apt-get install -y gcovr libboost-all-dev
+          
       - name: Configure & Build
         run: |
           cmake -B build -DENABLE_COVERAGE=ON
