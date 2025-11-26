@@ -1,3 +1,9 @@
+data/*
+build/
+
+*Zone.Identifier
+
+
 # Prerequisites
 *.d
 
