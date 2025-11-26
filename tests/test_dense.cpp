@@ -2,10 +2,15 @@
 #include <catch2/benchmark/catch_benchmark.hpp>
 #include <catch2/catch_all.hpp>
 
+#include <string>
+#include <vector>
+#include <fstream>
+#include <iostream>
+#include "do-verify/json_reader.hpp"
 
 
-#include "dense_mtl/MTLEngine.hpp"
-TEST_CASE("Dense Implementation tests", "[dense_tests]") {
+#include "do-verify/MTLEngine.hpp"
+TEST_CASE("Dense Implementation tests", "[dense]") {
     using namespace std;
     using namespace dense_vector;
     using namespace db_interval_set;
@@ -50,12 +55,8 @@ TEST_CASE("Dense Implementation tests", "[dense_tests]") {
 }
 
 
-#include <string>
-#include <vector>
-#include <fstream>
-#include <iostream>
-#include "json_reader.hpp"
-TEST_CASE("Dense Timescales Tests", "[dense_tests]") {
+
+TEST_CASE("Dense Timescales Tests", "[dense]") {
 
     using namespace db_interval_set;
     using namespace dense_vector;
@@ -66,7 +67,7 @@ TEST_CASE("Dense Timescales Tests", "[dense_tests]") {
     Node always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 1, 0, B_INFINITY};
     std::vector<Node> nodes{p, once, always};
 
-    std::ifstream input_file("/home/arinc/workspace/data-oriented-runtime-verif/fullsuite/RecurGLB/Dense10/1M/RecurGLB10.jsonl");
+    std::ifstream input_file("data/fullsuite/RecurGLB/Dense10/1M/RecurGLB10.jsonl");
     json_reader::TimescalesInput prevInput;
     int step = 0;
     for (std::string line; std::getline(input_file, line);){

@@ -3,25 +3,16 @@
 #include <catch2/catch_all.hpp>
 
 
-#include <boost/icl/interval_set.hpp>
-#include <boost/icl/right_open_interval.hpp> // For [start, end)
-
-// A type alias for the Boost interval type matching ours
-using BoostInterval = boost::icl::right_open_interval<int>;
-
-// A type alias for the set
-// Note: This is a complex template. We'll typedef it for sanity.
-using BoostSet = boost::icl::interval_set<
-    int,                     // Domain type
-    std::less,               // Comparator
-    BoostInterval            // The interval type
->;
-
-
-// C++ Standard Library
 #include <vector>
 #include <random>
 #include <chrono>
+#include <tuple> // <-- Added for std::tie
+
+
+#include <boost/icl/interval_set.hpp>
+#include <boost/icl/right_open_interval.hpp> // For [start, end)
+#include "do-verify/interval_set.hpp"
+
 
 // --- Our code to test ---
 using namespace db_interval_set;
@@ -59,7 +50,7 @@ BoostSet createBoostSetFromIntervals(const std::vector<Interval>& intervals) {
 }
 
 
-TEST_CASE("Performance Benchmarks", "[is_benchmark]") {
+TEST_CASE("Performance Benchmarks", "[interval_set][basic]") {
     // --- 1. SETUP ---
     // Generate a large set of test data.
     // This is run ONCE before all benchmark sections.
@@ -140,10 +131,75 @@ TEST_CASE("Performance Benchmarks", "[is_benchmark]") {
 }
 
 
-#include "interval_set_scenario.hpp"
-#include <tuple> // <-- Added for std::tie
+/**
+ * @brief Generates a vector of random intervals.
+ * (FIXED: Takes generator by reference, does not re-seed)
+ */
+std::vector<Interval> generateRandomIntervals(
+    std::mt19937& gen, // Pass generator by reference
+    int count, 
+    int maxStart, 
+    int maxDuration
+) {
+    std::uniform_int_distribution<> startDist(0, maxStart);
+    std::uniform_int_distribution<> durationDist(1, maxDuration);
+    
+    std::vector<Interval> intervals;
+    intervals.reserve(count);
+    for (int i = 0; i < count; ++i) {
+        int start = startDist(gen);
+        int end = start + durationDist(gen);
+        intervals.push_back({start, end});
+    }
+    return intervals;
+}
 
-TEST_CASE("Serial Update Benchmark", "[is_serial_benchmark]") {
+
+void run_scenario_serial_update(
+    std::vector<IntervalSet>& sets, 
+    IntervalSetHolder& holder, 
+    int steps,
+    const std::vector<bool>& ops
+) {
+    for (int step = 0; step < steps; step++) {
+        
+        // sets[0] was not modified. We must copy it.
+        sets[0] = copySet(holder, sets[0]);
+
+        // Run the serial update chain.
+        for (int i = 1; i < sets.size(); i++) {
+            // Use the pre-computed operation
+            if (ops[i]) {
+                sets[i] = unionSets(holder, sets[i - 1], sets[i]);
+            } else {
+                sets[i] = intersectSets(holder, sets[i - 1], sets[i]);
+            }
+        }
+        swapBuffers(holder);
+    }
+}
+
+void run_scenario_boost(
+    std::vector<BoostSet>& sets, 
+    int steps,
+    const std::vector<bool>& ops
+) {
+    for (int step = 0; step < steps; step++) {
+        for (int i = 1; i < sets.size(); i++) {
+            // Use the pre-computed operation
+            if (ops[i]) {
+                sets[i] = sets[i - 1] | sets[i];
+            } else {
+                sets[i] = sets[i - 1] & sets[i];
+            }
+        }
+    }
+}
+
+
+
+
+TEST_CASE("Serial Update Benchmark", "[interval_set][serial]") {
 
     // --- 1. SETUP PARAMS ---
     auto params = GENERATE(table<int, int, int, int, int>({
@@ -181,7 +237,7 @@ TEST_CASE("Serial Update Benchmark", "[is_serial_benchmark]") {
     std::mt19937 dataGen(1337);
     std::vector<std::vector<Interval>> allIntervals(NUM_SETS);
     for (int i = 0; i < NUM_SETS; ++i) {
-        allIntervals[i] = interval_set_scenario::generateRandomIntervals(dataGen, INTERVALS_PER_SET, MAX_START, MAX_DURATION);
+        allIntervals[i] = generateRandomIntervals(dataGen, INTERVALS_PER_SET, MAX_START, MAX_DURATION);
     }
     
     // --- 4. CORRECT BUFFER SIZE CALCULATION ---
@@ -219,7 +275,7 @@ TEST_CASE("Serial Update Benchmark", "[is_serial_benchmark]") {
 
         // This is the code that gets timed
         meter.measure([&] {
-            interval_set_scenario::run_scenario_serial_update(dbSets, holder, STEPS, operations);
+            run_scenario_serial_update(dbSets, holder, STEPS, operations);
         });
 
         // Teardown (not timed)
@@ -230,12 +286,12 @@ TEST_CASE("Serial Update Benchmark", "[is_serial_benchmark]") {
         // This setup code runs *per sample* but is *not timed*.
         std::vector<BoostSet> boostSets(NUM_SETS);
         for (int i = 0; i < NUM_SETS; ++i) {
-            boostSets[i] = interval_set_scenario::createBoostSetFromIntervals(allIntervals[i]);
+            boostSets[i] = createBoostSetFromIntervals(allIntervals[i]);
         }
 
         // This is the code that gets timed
         meter.measure([&] {
-            interval_set_scenario::run_scenario_boost(boostSets, STEPS, operations);
+            run_scenario_boost(boostSets, STEPS, operations);
         });
         
         // (No teardown needed for Boost, vectors clean up themselves)
