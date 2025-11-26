@@ -4,14 +4,14 @@
 
 
 
-#include "double_buffer_interval_sets/interval_set.hpp"
+#include "do-verify/interval_set.hpp"
 #include <ostream>
 
 // Use the namespace for cleaner tests
 using namespace db_interval_set;
 
 
-TEST_CASE("Basic Set Creation and Lifecycle", "[interval_set_correctness][core]") {
+TEST_CASE("Basic Set Creation and Lifecycle", "[interval_set]") {
     
     SECTION("newHolder and destroyHolder") {
         // This test mainly checks that the code compiles and doesn't crash.
@@ -75,7 +75,7 @@ TEST_CASE("Basic Set Creation and Lifecycle", "[interval_set_correctness][core]"
 }
 
 
-TEST_CASE("Union Operations (unionSets)", "[interval_set_correctness][union]") {
+TEST_CASE("Union Operations (unionSets)", "[interval_set]") {
     IntervalSetHolder holder = newHolder(1024);
 
     // This is the core "double buffer" pattern for testing operations:
@@ -195,7 +195,7 @@ TEST_CASE("Union Operations (unionSets)", "[interval_set_correctness][union]") {
     destroyHolder(holder);
 }
 
-TEST_CASE("Intersection Operations (intersectSets)", "[interval_set_correctness][intersect]") {
+TEST_CASE("Intersection Operations (intersectSets)", "[interval_set]") {
     IntervalSetHolder holder = newHolder(1024);
 
     SECTION("Simple Overlap") {
@@ -277,7 +277,7 @@ TEST_CASE("Intersection Operations (intersectSets)", "[interval_set_correctness]
 }
 
 
-TEST_CASE("Negation Operations (negateSet)", "[interval_set_correctness][negate]") {
+TEST_CASE("Negation Operations (negateSet)", "[interval_set]") {
     IntervalSetHolder holder = newHolder(1024);
     Interval domain = {0, 100};
 
@@ -394,6 +394,24 @@ TEST_CASE("Negation Operations (negateSet)", "[interval_set_correctness][negate]
 
 
 
+// Helper struct for testing segments
+struct ExpectedSegment {
+    db_interval_set::Interval interval;
+    bool a;
+    bool b;
+
+    // Overload operator== for Catch2 vector comparison
+    bool operator==(const ExpectedSegment& other) const {
+        return interval == other.interval && a == other.a && b == other.b;
+    }
+    
+    // Friend function for printing
+    friend std::ostream& operator<<(std::ostream& os, const ExpectedSegment& seg) {
+        os << "Seg{ " << seg.interval << ", A:" << (seg.a ? "T" : "F")
+           << ", B:" << (seg.b ? "T" : "F") << " }";
+        return os;
+    }
+};
 
 // Helper function to run the iteration and collect results
 std::vector<ExpectedSegment> runIteration(
@@ -405,30 +423,19 @@ std::vector<ExpectedSegment> runIteration(
     
     db_interval_set::SegmentIterator it = 
         db_interval_set::createSegmentIterator(setA, setB, domain);
-        
-    int segStart = it.interval.start;
-    bool segA = it.leftTruthy;
-    bool segB = it.rightTruthy;
     
     while (db_interval_set::getNextSegment(it)) {
-        int segEnd = it.interval.end;
-        
         // Only add non-empty segments
-        if (segStart < segEnd) {
-             results.push_back(ExpectedSegment{ {segStart, segEnd}, segA, segB });
+        if (it.interval.start != it.interval.end) {
+             results.push_back(ExpectedSegment{ {it.interval.start, it.interval.end}, it.leftTruthy, it.rightTruthy });
         }
-       
-        // Update state for the next segment
-        segStart = it.interval.start;
-        segA = it.leftTruthy;
-        segB = it.rightTruthy;
     }
     
     return results;
 }
 
 
-TEST_CASE("SegmentIterator tests", "[SegmentIterator]") {
+TEST_CASE("SegmentIterator tests", "[interval_set]") {
     using namespace db_interval_set;
     
     IntervalSetHolder holder = newHolder(1024);

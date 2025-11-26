@@ -1,7 +1,7 @@
 
 add_executable(unit_tests 
-    test_logic.cpp 
-    # test_main.cpp # Include only if you have a custom main
+    test_dense.cpp
+    test_interval_set.cpp
 )
 
 target_link_libraries(unit_tests PRIVATE do-verify Catch2::Catch2WithMain)
