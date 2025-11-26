@@ -33,6 +33,13 @@ jobs:
           # Generate XML Report (Codecov needs XML)
           # We filter to include only 'include/' folder to match your setup
           gcovr -r ../.. --filter "../../include/" --xml -o coverage.xml
+          
+      # --- ADD THIS DEBUG STEP ---
+      - name: Debug Coverage Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-debug
+          path: build/tests/coverage.xml
       
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
