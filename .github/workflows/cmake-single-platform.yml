@@ -1,0 +1,35 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y gcovr
+          # Install your other dependencies (catch2, etc)
+
+      - name: Configure & Build
+        run: |
+          cmake -B build -DENABLE_COVERAGE=ON
+          cmake --build build
+
+      - name: Test & Generate Report
+        run: |
+          # Run tests
+          cd build/tests && ./unit_tests
+          
+          # Generate XML Report (Codecov needs XML)
+          # We filter to include only 'include/' folder to match your setup
+          gcovr -r ../.. --filter "../../include/" --xml -o coverage.xml
+      
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./build/tests/coverage.xml
+          fail_ci_if_error: true
