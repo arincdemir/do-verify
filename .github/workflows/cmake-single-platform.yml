@@ -8,6 +8,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Download Test Data
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Built-in token, no setup needed
+        run: |
+          # Download specific file from the specific tag
+          gh release download timescales-data-v1 -p "data.zip"
+          unzip data.zip
+          
       - name: Install dependencies
         run: |
           sudo apt-get install -y gcovr
