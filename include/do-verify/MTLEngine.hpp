@@ -128,9 +128,6 @@ db_interval_set::IntervalSet run_evaluation(std::vector<Node> &nodes, db_interva
             {
             auto leftOutput = nodes[curNode.leftOperandIndex].output;
             auto rightOutput = nodes[curNode.rightOperandIndex].output;
-            if (setHolder.writeIndex > 500) {
-                if (true);
-            }
             curNode.output = db_interval_set::empty(setHolder);
 
             auto iterator = db_interval_set::createSegmentIterator(leftOutput, rightOutput, {startTime, endTime});
