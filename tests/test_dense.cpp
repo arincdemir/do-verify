@@ -70,11 +70,17 @@ TEST_CASE("Dense Timescales Tests", "[dense]") {
     std::ifstream input_file("data/fullsuite/RecurGLB/Dense10/1M/RecurGLB10.jsonl");
     json_reader::TimescalesInput prevInput;
     int step = 0;
+    bool all_correct = true;
+
     for (std::string line; std::getline(input_file, line);){
         if (step != 0) {
             auto newInput = json_reader::read_line(line);
             IntervalSet output = run_evaluation(nodes, holder, prevInput.time, newInput.time, prevInput.propositions);
-            REQUIRE(toVectorIntervals(output) == std::vector<Interval>{{prevInput.time, newInput.time}});
+            if (toVectorIntervals(output) != std::vector<Interval>{{prevInput.time, newInput.time}}) {
+                all_correct = false;
+                // Optional: break early or log the specific failure step if needed
+                // break; 
+            }
             prevInput = newInput;
             swapBuffers(holder);
         }
@@ -83,5 +89,7 @@ TEST_CASE("Dense Timescales Tests", "[dense]") {
         }
         step++;
     };
+
+    REQUIRE(all_correct);
 
 }

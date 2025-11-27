@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.15)
 project(do-verify VERSION 1.0.0 LANGUAGES CXX)
 
+option(ENABLE_COVERAGE "Enable code coverage" OFF)
+
+if(ENABLE_COVERAGE)
+    # Add flags for GCC/Clang
+    add_compile_options(--coverage)
+    add_link_options(--coverage)
+endif()
+
 # Standard Setup
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
