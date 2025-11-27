@@ -41,8 +41,7 @@ jobs:
           # --root .            : explicit root
           # --filter "include/" : keeps files that have 'include/' in their path
           # --print-summary     : prints text output to the GitHub console (so you can verify immediately)
-          gcovr --root . --filter "include/" --print-summary --xml -o build/tests/coverage.xml
-          
+          gcovr --root . --filter "include/" --gcov-ignore-errors=no_working_dir_found --print-summary --xml -o build/tests/coverage.xml build          
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
         with:
