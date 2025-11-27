@@ -1,6 +1,13 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  # Trigger on pushes ONLY to the main branch
+  push:
+    branches: [ "main" ]
+  
+  # Trigger on PRs targeting the main branch
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -30,16 +37,9 @@ jobs:
           cmake --build build --target coverage
           
           
-      # --- ADD THIS DEBUG STEP ---
-      - name: Debug Coverage Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-debug
-          path: build/tests/coverage.xml
-      
       - name: Upload to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./build/tests/coverage.xml
+          files: ./build/coverage.xml
           fail_ci_if_error: true
