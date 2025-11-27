@@ -4,38 +4,38 @@ if(ENABLE_COVERAGE)
     if(GCOVR_PATH)
         add_custom_target(coverage
             # 1. Run the tests
-            COMMAND ./unit_tests
+            COMMAND ${CMAKE_CURRENT_BINARY_DIR}/unit_tests
             
             # 2. Make directory
             COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/coverage
             
             # 3. Generate Report
             COMMAND ${GCOVR_PATH} 
-                -r ${CMAKE_SOURCE_DIR} 
-                --filter "${CMAKE_SOURCE_DIR}/include/"
+                -r .
+                --filter "include/"
                 --exclude "${CMAKE_BINARY_DIR}/_deps/"
-                --exclude "${CMAKE_SOURCE_DIR}/tests/"       # <--- NEW: Ignore test code
-                --exclude "${CMAKE_SOURCE_DIR}/benchmarks/"
+                --exclude "tests/"
+                --exclude "benchmarks/"
                 --gcov-ignore-parse-errors
                 --gcov-ignore-errors=all
                 --exclude-throw-branches
                 --html --html-details 
                 -o ${CMAKE_BINARY_DIR}/coverage/index.html
 
-            # 4. Generate XML Report (For Tools/Codecov) <-- NEW SECTION
+            # 4. Generate XML Report (For Tools/Codecov)
             COMMAND ${GCOVR_PATH} 
-                -r ${CMAKE_SOURCE_DIR} 
-                --filter "${CMAKE_SOURCE_DIR}/include/"
+                -r .
+                --filter "include/"
                 --exclude "${CMAKE_BINARY_DIR}/_deps/"
-                --exclude "${CMAKE_SOURCE_DIR}/tests/"       # <--- NEW: Ignore test code
-                --exclude "${CMAKE_SOURCE_DIR}/benchmarks/"
+                --exclude "tests/"
+                --exclude "benchmarks/"
                 --gcov-ignore-parse-errors
                 --gcov-ignore-errors=all
                 --exclude-throw-branches
                 --xml 
                 -o ${CMAKE_BINARY_DIR}/coverage.xml
             
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
             COMMENT "Generating coverage report..."
         )
     endif()
