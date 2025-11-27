@@ -1,6 +1,13 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  # Trigger on pushes ONLY to the main branch
+  push:
+    branches: [ "main" ]
+  
+  # Trigger on PRs targeting the main branch
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
