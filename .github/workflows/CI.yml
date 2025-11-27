@@ -25,7 +25,8 @@ jobs:
           
       - name: Install dependencies
         run: |
-          sudo apt-get install -y gcovr libboost-all-dev
+          sudo apt-get install -y libboost-all-dev
+          pip install --upgrade gcovr
           
       - name: Configure & Build
         run: |
