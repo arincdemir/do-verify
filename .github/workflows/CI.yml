@@ -27,14 +27,8 @@ jobs:
 
       - name: Test & Generate Report
         run: |
-          # Run tests
-          ./build/tests/unit_tests
+          cmake --build build --target coverage
           
-          # 2. Run gcovr from the root
-          # --root .            : explicit root
-          # --filter "include/" : keeps files that have 'include/' in their path
-          # --print-summary     : prints text output to the GitHub console (so you can verify immediately)
-          gcovr --root . --filter "include/" --print-summary --xml -o build/tests/coverage.xml
           
       # --- ADD THIS DEBUG STEP ---
       - name: Debug Coverage Artifact

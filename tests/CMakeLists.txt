@@ -19,6 +19,17 @@ if(ENABLE_COVERAGE)
                 --exclude-throw-branches
                 --html --html-details 
                 -o ${CMAKE_BINARY_DIR}/coverage/index.html
+
+            # 4. Generate XML Report (For Tools/Codecov) <-- NEW SECTION
+            COMMAND ${GCOVR_PATH} 
+                -r ${CMAKE_SOURCE_DIR} 
+                --filter "${CMAKE_SOURCE_DIR}/include/"
+                --exclude "${CMAKE_BINARY_DIR}/_deps/"
+                --gcov-ignore-parse-errors
+                --gcov-ignore-errors=all
+                --exclude-throw-branches
+                --xml 
+                -o ${CMAKE_BINARY_DIR}/coverage.xml
             
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             COMMENT "Generating coverage report..."
