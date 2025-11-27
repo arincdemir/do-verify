@@ -27,6 +27,7 @@ jobs:
         run: |
           sudo apt-get install -y libboost-all-dev
           pip install --upgrade gcovr
+          gcovr --version
           
       - name: Configure & Build
         run: |

@@ -11,11 +11,11 @@ if(ENABLE_COVERAGE)
             
             # 3. Generate Report
             COMMAND ${GCOVR_PATH} 
-                -r .
-                --filter "include/"
-                --exclude "${CMAKE_BINARY_DIR}/_deps/"
-                --exclude "tests/"
-                --exclude "benchmarks/"
+                -r ${CMAKE_SOURCE_DIR} 
+                --filter "${CMAKE_SOURCE_DIR}/include/"
+                --exclude "${CMAKE_BINARY_DIR}"
+                --exclude "${CMAKE_SOURCE_DIR}/tests/"
+                --exclude "${CMAKE_SOURCE_DIR}/benchmarks/"
                 --gcov-ignore-parse-errors
                 --gcov-ignore-errors=all
                 --exclude-throw-branches
@@ -24,11 +24,11 @@ if(ENABLE_COVERAGE)
 
             # 4. Generate XML Report (For Tools/Codecov)
             COMMAND ${GCOVR_PATH} 
-                -r .
-                --filter "include/"
-                --exclude "${CMAKE_BINARY_DIR}/_deps/"
-                --exclude "tests/"
-                --exclude "benchmarks/"
+                -r ${CMAKE_SOURCE_DIR} 
+                --filter "${CMAKE_SOURCE_DIR}/include/"
+                --exclude "${CMAKE_BINARY_DIR}"
+                --exclude "${CMAKE_SOURCE_DIR}/tests/"
+                --exclude "${CMAKE_SOURCE_DIR}/benchmarks/"
                 --gcov-ignore-parse-errors
                 --gcov-ignore-errors=all
                 --exclude-throw-branches
