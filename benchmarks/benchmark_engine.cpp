@@ -57,7 +57,7 @@ TEST_CASE("Dense AbsentAQ", "[dense_benchmarks][AbsentAQ]") {
     std::string benchmarkName = CONDENSATION + " " + std::to_string(TIMINGS);
 
     BENCHMARK_ADVANCED("AbsentAQ " + benchmarkName)(Catch::Benchmark::Chronometer meter) {
-        IntervalSetHolder holder = newHolder(100000);
+        IntervalSetHolder holder = newHolder(1000);
         Node q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         Node p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         Node once{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, TIMINGS};
@@ -68,11 +68,12 @@ TEST_CASE("Dense AbsentAQ", "[dense_benchmarks][AbsentAQ]") {
         std::vector<Node> nodes{q, p, once, notNode, since, implies, always};
 
         std::string file_name = "data/fullsuite/AbsentAQ/" + CONDENSATION + "/1M/AbsentAQ" + std::to_string(TIMINGS) +".row.bin";
-        const auto& allInputs = InputCache::get(file_name);        meter.measure([&] {  
+        const auto& allInputs = InputCache::get(file_name);        
+        meter.measure([&] {  
             IntervalSet finalOutput;
             for (int i = 1; i < allInputs.size(); i++){
                 auto newInput = allInputs[i];
-                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, newInput.time, {newInput.q, newInput.p});
+                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p});
                 finalOutput = output;
                 swapBuffers(holder);
             }
@@ -110,7 +111,7 @@ TEST_CASE("Dense AbsentBQR", "[dense_benchmarks][AbsentBQR]") {
     std::string benchmarkName = CONDENSATION + " " + std::to_string(TIMINGS);
 
     BENCHMARK_ADVANCED("AbsentBQR " + benchmarkName)(Catch::Benchmark::Chronometer meter) {
-        IntervalSetHolder holder = newHolder(100000);
+        IntervalSetHolder holder = newHolder(1000);
 
         const int since_a = 3 * (TIMINGS / 10);
         const int since_b = TIMINGS;
@@ -136,7 +137,7 @@ TEST_CASE("Dense AbsentBQR", "[dense_benchmarks][AbsentBQR]") {
             for (int i = 1; i < allInputs.size(); i++){
                 auto newInput = allInputs[i];
                 // Order matches nodes: q, p, r
-                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, newInput.time, {newInput.q, newInput.p, newInput.r});
+                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
                 finalOutput = output;
                 swapBuffers(holder);
             }
@@ -165,7 +166,7 @@ TEST_CASE("Dense AbsentBR", "[dense_benchmarks][AbsentBR]") {
     std::string benchmarkName = CONDENSATION + " " + std::to_string(TIMINGS);
 
     BENCHMARK_ADVANCED("AbsentBR " + benchmarkName)(Catch::Benchmark::Chronometer meter) {
-        IntervalSetHolder holder = newHolder(100000);
+        IntervalSetHolder holder = newHolder(1000);
 
         const int inner_always_b = TIMINGS;
 
@@ -186,7 +187,7 @@ TEST_CASE("Dense AbsentBR", "[dense_benchmarks][AbsentBR]") {
             for (int i = 1; i < allInputs.size(); i++){
                 auto newInput = allInputs[i];
                 // Order matches nodes: q, p, r
-                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, newInput.time, {newInput.q, newInput.p, newInput.r});
+                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
                 finalOutput = output;
                 swapBuffers(holder);
             }
@@ -215,7 +216,7 @@ TEST_CASE("Dense AlwaysAQ", "[dense_benchmarks][AlwaysAQ]") {
     std::string benchmarkName = CONDENSATION + " " + std::to_string(TIMINGS);
 
     BENCHMARK_ADVANCED("AlwaysAQ " + benchmarkName)(Catch::Benchmark::Chronometer meter) {
-        IntervalSetHolder holder = newHolder(100000);
+        IntervalSetHolder holder = newHolder(1000);
         
         const int once_b = TIMINGS;
 
@@ -236,7 +237,7 @@ TEST_CASE("Dense AlwaysAQ", "[dense_benchmarks][AlwaysAQ]") {
             for (int i = 1; i < allInputs.size(); i++){
                 auto newInput = allInputs[i];
                 // Order matches nodes: q, p, r
-                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, newInput.time, {newInput.q, newInput.p, newInput.r});
+                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
                 finalOutput = output;
                 swapBuffers(holder);
             }
@@ -265,7 +266,7 @@ TEST_CASE("Dense AlwaysBQR", "[dense_benchmarks][AlwaysBQR]") {
     std::string benchmarkName = CONDENSATION + " " + std::to_string(TIMINGS);
 
     BENCHMARK_ADVANCED("AlwaysBQR " + benchmarkName)(Catch::Benchmark::Chronometer meter) {
-        IntervalSetHolder holder = newHolder(100000);
+        IntervalSetHolder holder = newHolder(1000);
 
         const int since_a = 3 * (TIMINGS / 10);
         const int since_b = TIMINGS;
@@ -291,7 +292,7 @@ TEST_CASE("Dense AlwaysBQR", "[dense_benchmarks][AlwaysBQR]") {
             for (int i = 1; i < allInputs.size(); i++){
                 auto newInput = allInputs[i];
                 // Order matches nodes: q, p, r
-                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, newInput.time, {newInput.q, newInput.p, newInput.r});
+                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
                 finalOutput = output;
                 swapBuffers(holder);
             }
@@ -320,7 +321,7 @@ TEST_CASE("Dense AlwaysBR", "[dense_benchmarks][AlwaysBR]") {
     std::string benchmarkName = CONDENSATION + " " + std::to_string(TIMINGS);
 
     BENCHMARK_ADVANCED("AlwaysBR " + benchmarkName)(Catch::Benchmark::Chronometer meter) {
-        IntervalSetHolder holder = newHolder(100000);
+        IntervalSetHolder holder = newHolder(1000);
 
         const int inner_always_b = TIMINGS;
 
@@ -340,7 +341,7 @@ TEST_CASE("Dense AlwaysBR", "[dense_benchmarks][AlwaysBR]") {
             for (int i = 1; i < allInputs.size(); i++){
                 auto newInput = allInputs[i];
                 // Order matches nodes: q, p, r
-                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, newInput.time, {newInput.q, newInput.p, newInput.r});
+                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
                 finalOutput = output;
                 swapBuffers(holder);
             }
@@ -369,7 +370,7 @@ TEST_CASE("Dense RecurBQR", "[dense_benchmarks][RecurBQR]") {
     std::string benchmarkName = CONDENSATION + " " + std::to_string(TIMINGS);
 
     BENCHMARK_ADVANCED("RecurBQR " + benchmarkName)(Catch::Benchmark::Chronometer meter) {
-        IntervalSetHolder holder = newHolder(100000);
+        IntervalSetHolder holder = newHolder(1000);
 
         const int inner_once_b = TIMINGS;
 
@@ -395,7 +396,7 @@ TEST_CASE("Dense RecurBQR", "[dense_benchmarks][RecurBQR]") {
             for (int i = 1; i < allInputs.size(); i++){
                 auto newInput = allInputs[i];
                 // Order matches nodes: q, p, r
-                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, newInput.time, {newInput.q, newInput.p, newInput.r});
+                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
                 finalOutput = output;
                 swapBuffers(holder);
             }
@@ -426,7 +427,7 @@ TEST_CASE("Dense RecurGLB", "[dense_benchmarks][RecurGLB]") {
     std::string benchmarkName = CONDENSATION + " " + std::to_string(TIMINGS);
 
     BENCHMARK_ADVANCED("RecurGLB " + benchmarkName)(Catch::Benchmark::Chronometer meter) {
-        IntervalSetHolder holder = newHolder(100000);
+        IntervalSetHolder holder = newHolder(1000);
         Node p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         Node once{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, TIMINGS};
         Node always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 1, 0, B_INFINITY};
@@ -439,7 +440,7 @@ TEST_CASE("Dense RecurGLB", "[dense_benchmarks][RecurGLB]") {
             for (int i = 1; i < allInputs.size(); i++){
                 auto newInput = allInputs[i];
                 // Order matches nodes: just p
-                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, newInput.time, {newInput.p});
+                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].p});
                 finalOutput = output;
                 swapBuffers(holder);
             }
@@ -470,7 +471,7 @@ TEST_CASE("Dense RespondBQR", "[dense_benchmarks][RespondBQR]") {
     std::string benchmarkName = CONDENSATION + " " + std::to_string(TIMINGS);
 
     BENCHMARK_ADVANCED("RespondBQR " + benchmarkName)(Catch::Benchmark::Chronometer meter) {
-        IntervalSetHolder holder = newHolder(1000000);
+        IntervalSetHolder holder = newHolder(1000);
 
         const int once_a = 3 * (TIMINGS / 10);
         const int once_b = TIMINGS;
@@ -503,7 +504,7 @@ TEST_CASE("Dense RespondBQR", "[dense_benchmarks][RespondBQR]") {
             for (int i = 1; i < allInputs.size(); i++){
                 auto newInput = allInputs[i];
                 // Order matches nodes: q, p, s, r
-                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, newInput.time, {newInput.q, newInput.p, newInput.s, newInput.r});
+                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].s, allInputs[i - 1].r});
                 finalOutput = output;
                 swapBuffers(holder);
             }
@@ -533,7 +534,7 @@ TEST_CASE("Dense RespondGLB", "[dense_benchmarks][RespondGLB]") {
     std::string benchmarkName = CONDENSATION + " " + std::to_string(TIMINGS);
 
     BENCHMARK_ADVANCED("RespondGLB " + benchmarkName)(Catch::Benchmark::Chronometer meter) {
-        IntervalSetHolder holder = newHolder(100000);
+        IntervalSetHolder holder = newHolder(1000);
 
         const int once_a = 3 * (TIMINGS / 10);
         const int once_b = TIMINGS;
@@ -556,9 +557,8 @@ TEST_CASE("Dense RespondGLB", "[dense_benchmarks][RespondGLB]") {
         meter.measure([&] { 
             IntervalSet finalOutput;
             for (int i = 1; i < allInputs.size(); i++){
-                auto newInput = allInputs[i];
                 // Order matches nodes: p, s
-                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, newInput.time, {newInput.p, newInput.s});
+                IntervalSet output = run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].p, allInputs[i - 1].s});
                 finalOutput = output;
                 swapBuffers(holder);
             }
