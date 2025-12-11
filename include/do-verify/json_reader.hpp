@@ -13,7 +13,7 @@ struct TimescalesInput {
     std::vector<bool> propositions;
 };
 
-TimescalesInput read_line(std::string &line) {
+inline TimescalesInput read_line(std::string &line) {
     std::vector<bool> propositions;
     int time = 0;
     std::string segment;

@@ -21,9 +21,6 @@ struct Transition {
     bool isStart; // true = start of an interval, false = end of an interval
 };
 
-// timescalest dene
-// dense implemente dene
-
 struct IntervalSet {
     Transition *buffer;
     int startIndex;
@@ -80,6 +77,29 @@ inline void swapBuffers(IntervalSetHolder &holder) {
 inline IntervalSet empty(IntervalSetHolder &holder) {
     return IntervalSet{holder.writeBuffer, 1, 0};
 };
+
+/**
+ * @brief Checks if a single time point is contained within the interval set.
+ * Since intervals are [start, end), start is inclusive and end is exclusive.
+ *
+ * @param set The interval set to check.
+ * @param time The time point to query.
+ * @return true if the time point is in the set, false otherwise.
+ */
+inline bool includes(const IntervalSet& set, int time) {
+    bool state = false;
+    for (int i = set.startIndex; i <= set.endIndex; ++i) {
+        const Transition& t = set.buffer[i];
+        if (t.time <= time) {
+            state = t.isStart;
+        } else {
+            break; // No need to check further transitions
+        }
+    }
+    return state;
+}
+
+
 
 /**
  * @brief Creates a new set from a single [start, end) interval.

@@ -16,7 +16,7 @@ struct TimescalesInput {
 };
 #pragma pack(pop)
 
-std::vector<TimescalesInput> readInputFile(std::string fileName) {
+inline std::vector<TimescalesInput> readInputFile(std::string fileName) {
 
     // 2. Open File
     // std::ios::ate is NOT used here because we need to read from the start
