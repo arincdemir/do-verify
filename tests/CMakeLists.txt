@@ -68,6 +68,7 @@ add_executable(unit_tests
     test_discrete.cpp
     test_dense.cpp
     test_interval_set.cpp
+    test_readers.cpp
 )
 
 target_link_libraries(unit_tests PRIVATE do-verify Catch2::Catch2WithMain)
