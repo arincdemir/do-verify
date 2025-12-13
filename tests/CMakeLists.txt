@@ -12,6 +12,7 @@ if(ENABLE_COVERAGE)
             # 3. Generate Report
             COMMAND ${GCOVR_PATH} 
                 -r ${CMAKE_SOURCE_DIR} 
+                --filter "${CMAKE_SOURCE_DIR}/src/"
                 --filter "${CMAKE_SOURCE_DIR}/include/"
                 --exclude "${CMAKE_BINARY_DIR}"
                 --exclude "${CMAKE_SOURCE_DIR}/tests/"
@@ -25,6 +26,7 @@ if(ENABLE_COVERAGE)
             # 4. Generate XML Report (For Tools/Codecov)
             COMMAND ${GCOVR_PATH} 
                 -r ${CMAKE_SOURCE_DIR} 
+                --filter "${CMAKE_SOURCE_DIR}/src/"
                 --filter "${CMAKE_SOURCE_DIR}/include/"
                 --exclude "${CMAKE_BINARY_DIR}"
                 --exclude "${CMAKE_SOURCE_DIR}/tests/"
@@ -38,6 +40,7 @@ if(ENABLE_COVERAGE)
                 # 5. Print Summary to Console (Standard Output)
             COMMAND ${GCOVR_PATH} 
                 -r ${CMAKE_SOURCE_DIR} 
+                --filter "${CMAKE_SOURCE_DIR}/src/"
                 --filter "${CMAKE_SOURCE_DIR}/include/"
                 --exclude "${CMAKE_BINARY_DIR}"
                 --exclude "${CMAKE_SOURCE_DIR}/tests/"
@@ -47,13 +50,13 @@ if(ENABLE_COVERAGE)
                 --exclude-throw-branches
                 --txt # explicitly sets text format
             
-            COMMAND ${CMAKE_COMMAND} -E echo "------------------------------------------------"
-            COMMAND ${CMAKE_COMMAND} -E echo "Coverage Filter: ${CMAKE_SOURCE_DIR}/include/"
+            COMMAND ${CMAKE_COMMAND} -E echo "--------------------------------------------------"
+            COMMAND ${CMAKE_COMMAND} -E echo "Coverage Filter: ${CMAKE_SOURCE_DIR}/src/"
             COMMAND ${CMAKE_COMMAND} -E echo "Exclude Path 1:  ${CMAKE_BINARY_DIR}"
             COMMAND ${CMAKE_COMMAND} -E echo "Exclude Path 2:  ${CMAKE_SOURCE_DIR}/tests/"
             COMMAND ${CMAKE_COMMAND} -E echo "Exclude Path 3:  ${CMAKE_SOURCE_DIR}/benchmarks/"
-            COMMAND ${CMAKE_COMMAND} -E echo "------------------------------------------------"
-               
+            COMMAND ${CMAKE_COMMAND} -E echo "--------------------------------------------------"
+            
 
             
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
