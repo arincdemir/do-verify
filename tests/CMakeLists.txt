@@ -17,6 +17,7 @@ if(ENABLE_COVERAGE)
                 --exclude "${CMAKE_BINARY_DIR}"
                 --exclude "${CMAKE_SOURCE_DIR}/tests/"
                 --exclude "${CMAKE_SOURCE_DIR}/benchmarks/"
+                --exclude "${CMAKE_SOURCE_DIR}/src/main.cpp"
                 --gcov-ignore-parse-errors
                 --gcov-ignore-errors=all
                 --exclude-throw-branches
@@ -31,6 +32,7 @@ if(ENABLE_COVERAGE)
                 --exclude "${CMAKE_BINARY_DIR}"
                 --exclude "${CMAKE_SOURCE_DIR}/tests/"
                 --exclude "${CMAKE_SOURCE_DIR}/benchmarks/"
+                --exclude "${CMAKE_SOURCE_DIR}/src/main.cpp"
                 --gcov-ignore-parse-errors
                 --gcov-ignore-errors=all
                 --exclude-throw-branches
@@ -53,8 +55,7 @@ if(ENABLE_COVERAGE)
             
             COMMAND ${CMAKE_COMMAND} -E echo "--------------------------------------------------"
             COMMAND ${CMAKE_COMMAND} -E echo "Coverage Filter: ${CMAKE_SOURCE_DIR}/src/"
-                        COMMAND ${CMAKE_COMMAND} -E echo "Coverage Filter: ${CMAKE_SOURCE_DIR}/src/"
-
+            COMMAND ${CMAKE_COMMAND} -E echo "Coverage Filter: ${CMAKE_SOURCE_DIR}/src/"
             COMMAND ${CMAKE_COMMAND} -E echo "Exclude Path 1:  ${CMAKE_BINARY_DIR}"
             COMMAND ${CMAKE_COMMAND} -E echo "Exclude Path 2:  ${CMAKE_SOURCE_DIR}/tests/"
             COMMAND ${CMAKE_COMMAND} -E echo "Exclude Path 3:  ${CMAKE_SOURCE_DIR}/benchmarks/"
