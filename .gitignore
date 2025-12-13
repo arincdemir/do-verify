@@ -1,6 +1,9 @@
 data/*
 build/
 .vscode/
+misc/
+debugger
+debugger.cpp
 
 *Zone.Identifier
 

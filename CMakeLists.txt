@@ -13,12 +13,16 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Define the Header-Only Library
-# "INTERFACE" means "I have no .cpp files to compile, just headers"
-add_library(do-verify INTERFACE)
+# Define the library with source files
+add_library(do-verify STATIC
+    src/interval_set.cpp
+    src/MTLEngine.cpp
+    src/binary_row_reader.cpp
+    src/json_reader.cpp
+)
 
 # Tell CMake where the headers are
-target_include_directories(do-verify INTERFACE
+target_include_directories(do-verify PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
@@ -32,7 +36,13 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
+
+add_executable(do-verify-bin 
+    src/main.cpp
+)
+
+target_link_libraries(do-verify-bin PRIVATE do-verify)
+
 # Add Subdirectories
 enable_testing()
 add_subdirectory(tests)
-add_subdirectory(benchmarks)
