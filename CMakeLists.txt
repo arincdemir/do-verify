@@ -32,6 +32,13 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
+
+add_executable(do-verify-bin 
+    src/main.cpp
+)
+
+target_link_libraries(do-verify-bin PRIVATE do-verify)
+
 # Add Subdirectories
 enable_testing()
 add_subdirectory(tests)
