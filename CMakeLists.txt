@@ -43,6 +43,15 @@ add_executable(do-verify-bin
 
 target_link_libraries(do-verify-bin PRIVATE do-verify)
 
+
+
+add_executable(do-verify-perf 
+    src/main_perf.cpp
+)
+
+target_compile_options(do-verify-perf PRIVATE -g -fno-omit-frame-pointer)
+target_link_libraries(do-verify-perf PRIVATE do-verify)
+
 # Add Subdirectories
 enable_testing()
 add_subdirectory(tests)
