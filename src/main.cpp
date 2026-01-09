@@ -114,6 +114,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
     // AbsentAQ: historically((once[:N]{q}) -> ((not{p}) since {q}))
     if (strcmp(arguments.spec, "historically((once[:10]{q}) -> ((not{p}) since {q}))") == 0)
     {
+        // TODO pre-allocated the proposition vector
+        std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -126,13 +128,17 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p});
+            //changed these
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically((once[:100]{q}) -> ((not{p}) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -145,13 +151,16 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically((once[:1000]{q}) -> ((not{p}) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -164,7 +173,9 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -172,6 +183,7 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
     // AbsentBQR: historically({r} && !{q} && once{q}) -> ((not{p}) since[A:B] {q})
     else if (strcmp(arguments.spec, "historically({r} && !{q} && once{q}) -> ((not{p}) since[3:10] {q})") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -188,13 +200,17 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically({r} && !{q} && once{q}) -> ((not{p}) since[30:100] {q})") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -211,13 +227,17 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically({r} && !{q} && once{q}) -> ((not{p}) since[300:1000] {q})") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -234,7 +254,10 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -242,6 +265,7 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
     // AbsentBR: historically({r} -> (historically[:N](not{p})))
     else if (strcmp(arguments.spec, "historically({r} -> (historically[:10](not{p})))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -254,13 +278,17 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically({r} -> (historically[:100](not{p})))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -273,13 +301,17 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically({r} -> (historically[:1000](not{p})))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -292,7 +324,10 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -300,6 +335,7 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
     // AlwaysAQ: historically((once[:N]{q}) -> ({p} since {q}))
     else if (strcmp(arguments.spec, "historically((once[:10]{q}) -> ({p} since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -312,13 +348,17 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically((once[:100]{q}) -> ({p} since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -331,13 +371,17 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically((once[:1000]{q}) -> ({p} since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -350,7 +394,10 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -358,6 +405,7 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
     // AlwaysBQR: historically(({r} && !{q} && once{q}) -> ({p} since[A:B] {q}))
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ({p} since[3:10] {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -374,13 +422,17 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ({p} since[30:100] {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -397,13 +449,17 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ({p} since[300:1000] {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -420,7 +476,10 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -428,6 +487,7 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
     // AlwaysBR: historically({r} -> (historically[:N]{p}))
     else if (strcmp(arguments.spec, "historically({r} -> (historically[:10]{p}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -439,13 +499,17 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically({r} -> (historically[:100]{p}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -457,13 +521,17 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically({r} -> (historically[:1000]{p}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -475,7 +543,10 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -483,6 +554,7 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
     // RecurBQR: historically(({r} && !{q} && once{q}) -> ((once[:N]({p} or {q})) since {q}))
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ((once[:10]({p} or {q})) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -500,13 +572,17 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ((once[:100]({p} or {q})) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -524,13 +600,17 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ((once[:1000]({p} or {q})) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -548,7 +628,10 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -556,6 +639,7 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
     // RecurGLB: historically(once[:N]{p})
     else if (strcmp(arguments.spec, "historically(once[:10]{p})") == 0)
     {
+        std::vector<bool> propositionInputs(1);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode once{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, 10};
@@ -564,13 +648,15 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].p});
+            propositionInputs[0] = allInputs[i].p;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(once[:100]{p})") == 0)
     {
+        std::vector<bool> propositionInputs(1);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode once{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, 100};
@@ -579,13 +665,15 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].p});
+            propositionInputs[0] = allInputs[i].p;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(once[:1000]{p})") == 0)
     {
+        std::vector<bool> propositionInputs(1);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode once{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, 1000};
@@ -594,7 +682,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].p});
+            propositionInputs[0] = allInputs[i].p;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -602,6 +691,7 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
     // RespondBQR: historically(({r} && !{q} && once{q}) -> ( (({s} -> once[A:B]{p}) and not((not {s}) since[B:] {p})) since {q}))
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ( (({s} -> once[3:10]{p}) and not((not {s}) since[10:] {p})) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(4);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -624,13 +714,18 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].s, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].s;
+            propositionInputs[3] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ( (({s} -> once[30:100]{p}) and not((not {s}) since[100:] {p})) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(4);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -653,13 +748,18 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].s, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].s;
+            propositionInputs[3] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ( (({s} -> once[300:1000]{p}) and not((not {s}) since[1000:] {p})) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(4);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -682,7 +782,11 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].q, allInputs[i].p, allInputs[i].s, allInputs[i].r});
+            propositionInputs[0] = allInputs[i].q;
+            propositionInputs[1] = allInputs[i].p;
+            propositionInputs[2] = allInputs[i].s;
+            propositionInputs[3] = allInputs[i].r;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -690,6 +794,7 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
     // RespondGLB: historically(({s} -> once[A:B]{p}) and not((not {s}) since[B:] {p}))
     else if (strcmp(arguments.spec, "historically(({s} -> once[3:10]{p}) and not((not {s}) since[10:] {p}))") == 0)
     {
+        std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -704,13 +809,16 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].p, allInputs[i].s});
+            propositionInputs[0] = allInputs[i].p;
+            propositionInputs[1] = allInputs[i].s;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({s} -> once[30:100]{p}) and not((not {s}) since[100:] {p}))") == 0)
     {
+        std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -725,13 +833,16 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].p, allInputs[i].s});
+            propositionInputs[0] = allInputs[i].p;
+            propositionInputs[1] = allInputs[i].s;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({s} -> once[300:1000]{p}) and not((not {s}) since[1000:] {p}))") == 0)
     {
+        std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
         DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -746,7 +857,9 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
 
         for (size_t i = 0; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i].time, {allInputs[i].p, allInputs[i].s});
+            propositionInputs[0] = allInputs[i].p;
+            propositionInputs[1] = allInputs[i].s;
+            run_evaluation(nodes, holder, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -763,6 +876,7 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
     // AbsentAQ: historically((once[:N]{q}) -> ((not{p}) since {q}))
     if (strcmp(arguments.spec, "historically((once[:10]{q}) -> ((not{p}) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -773,15 +887,18 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 5, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, once, notNode, since, implies, always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically((once[:100]{q}) -> ((not{p}) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -792,15 +909,18 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 5, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, once, notNode, since, implies, always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically((once[:1000]{q}) -> ((not{p}) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -811,9 +931,11 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 5, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, once, notNode, since, implies, always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -821,6 +943,7 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
     // AbsentBQR: historically({r} && !{q} && once{q}) -> ((not{p}) since[A:B] {q})
     else if (strcmp(arguments.spec, "historically({r} && !{q} && once{q}) -> ((not{p}) since[3:10] {q})") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -835,15 +958,19 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode always_node{empty(holder), empty(holder), NodeType::ALWAYS, 0, 9, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, not_q, once_q, and1, and2, not_p, since_node, implies_node, always_node};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically({r} && !{q} && once{q}) -> ((not{p}) since[30:100] {q})") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -858,15 +985,19 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode always_node{empty(holder), empty(holder), NodeType::ALWAYS, 0, 9, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, not_q, once_q, and1, and2, not_p, since_node, implies_node, always_node};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically({r} && !{q} && once{q}) -> ((not{p}) since[300:1000] {q})") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -881,9 +1012,12 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode always_node{empty(holder), empty(holder), NodeType::ALWAYS, 0, 9, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, not_q, once_q, and1, and2, not_p, since_node, implies_node, always_node};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -891,6 +1025,7 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
     // AbsentBR: historically({r} -> (historically[:N](not{p})))
     else if (strcmp(arguments.spec, "historically({r} -> (historically[:10](not{p})))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -901,15 +1036,19 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 5, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, not_p, inner_always, implies_node, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically({r} -> (historically[:100](not{p})))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -920,15 +1059,19 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 5, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, not_p, inner_always, implies_node, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically({r} -> (historically[:1000](not{p})))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -939,9 +1082,12 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 5, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, not_p, inner_always, implies_node, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -949,6 +1095,7 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
     // AlwaysAQ: historically((once[:N]{q}) -> ({p} since {q}))
     else if (strcmp(arguments.spec, "historically((once[:10]{q}) -> ({p} since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -959,15 +1106,19 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 5, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, once_q, since_node, implies_node, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically((once[:100]{q}) -> ({p} since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -978,15 +1129,19 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 5, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, once_q, since_node, implies_node, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically((once[:1000]{q}) -> ({p} since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -997,9 +1152,12 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 5, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, once_q, since_node, implies_node, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -1007,6 +1165,7 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
     // AlwaysBQR: historically(({r} && !{q} && once{q}) -> ({p} since[A:B] {q}))
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ({p} since[3:10] {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -1021,15 +1180,19 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode always_node{empty(holder), empty(holder), NodeType::ALWAYS, 0, 9, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, not_q, once_q, and1, and2, not_p, since_node, implies_node, always_node};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ({p} since[30:100] {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -1044,15 +1207,19 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode always_node{empty(holder), empty(holder), NodeType::ALWAYS, 0, 9, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, not_q, once_q, and1, and2, not_p, since_node, implies_node, always_node};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ({p} since[300:1000] {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -1067,9 +1234,12 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode always_node{empty(holder), empty(holder), NodeType::ALWAYS, 0, 9, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, not_q, once_q, and1, and2, not_p, since_node, implies_node, always_node};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -1077,6 +1247,7 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
     // AlwaysBR: historically({r} -> (historically[:N]{p}))
     else if (strcmp(arguments.spec, "historically({r} -> (historically[:10]{p}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -1086,15 +1257,19 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 4, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, inner_always, implies_node, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically({r} -> (historically[:100]{p}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -1104,15 +1279,19 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 4, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, inner_always, implies_node, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically({r} -> (historically[:1000]{p}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -1122,9 +1301,12 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 4, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, inner_always, implies_node, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -1132,6 +1314,7 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
     // RecurBQR: historically(({r} && !{q} && once{q}) -> ((once[:N]({p} or {q})) since {q}))
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ((once[:10]({p} or {q})) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -1147,15 +1330,19 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 10, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, not_q, once_q, and1, and2, p_or_q, once_p_or_q, since_node, implies_node, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ((once[:100]({p} or {q})) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -1171,15 +1358,19 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 10, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, not_q, once_q, and1, and2, p_or_q, once_p_or_q, since_node, implies_node, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ((once[:1000]({p} or {q})) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -1195,9 +1386,12 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 10, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, r, not_q, once_q, and1, and2, p_or_q, once_p_or_q, since_node, implies_node, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -1205,45 +1399,51 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
     // RecurGLB: historically(once[:N]{p})
     else if (strcmp(arguments.spec, "historically(once[:10]{p})") == 0)
     {
+        std::vector<bool> propositionInputs(1);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode once{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, 10};
         DenseNode always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 1, 0, B_INFINITY};
         std::vector<DenseNode> nodes{p, once, always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].p});
+            propositionInputs[0] = allInputs[i - 1].p;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(once[:100]{p})") == 0)
     {
+        std::vector<bool> propositionInputs(1);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode once{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, 100};
         DenseNode always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 1, 0, B_INFINITY};
         std::vector<DenseNode> nodes{p, once, always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].p});
+            propositionInputs[0] = allInputs[i - 1].p;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(once[:1000]{p})") == 0)
     {
+        std::vector<bool> propositionInputs(1);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode once{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, 1000};
         DenseNode always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 1, 0, B_INFINITY};
         std::vector<DenseNode> nodes{p, once, always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].p});
+            propositionInputs[0] = allInputs[i - 1].p;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -1251,6 +1451,7 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
     // RespondBQR: historically(({r} && !{q} && once{q}) -> ( (({s} -> once[A:B]{p}) and not((not {s}) since[B:] {p})) since {q}))
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ( (({s} -> once[3:10]{p}) and not((not {s}) since[10:] {p})) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(4);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -1271,15 +1472,20 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 15, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, s, r, not_q, once_q, and_A1, and_A2, once_p, implies_D, not_s, since_F, not_F, and_C, since_B, implies_main, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].s, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].s;
+            propositionInputs[3] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ( (({s} -> once[30:100]{p}) and not((not {s}) since[100:] {p})) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(4);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -1300,15 +1506,20 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 15, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, s, r, not_q, once_q, and_A1, and_A2, once_p, implies_D, not_s, since_F, not_F, and_C, since_B, implies_main, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].s, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].s;
+            propositionInputs[3] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({r} && !{q} && once{q}) -> ( (({s} -> once[300:1000]{p}) and not((not {s}) since[1000:] {p})) since {q}))") == 0)
     {
+        std::vector<bool> propositionInputs(4);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -1329,9 +1540,13 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 15, 0, B_INFINITY};
         std::vector<DenseNode> nodes{q, p, s, r, not_q, once_q, and_A1, and_A2, once_p, implies_D, not_s, since_F, not_F, and_C, since_B, implies_main, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].s, allInputs[i - 1].r});
+            propositionInputs[0] = allInputs[i - 1].q;
+            propositionInputs[1] = allInputs[i - 1].p;
+            propositionInputs[2] = allInputs[i - 1].s;
+            propositionInputs[3] = allInputs[i - 1].r;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
@@ -1339,6 +1554,7 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
     // RespondGLB: historically(({s} -> once[A:B]{p}) and not((not {s}) since[B:] {p}))
     else if (strcmp(arguments.spec, "historically(({s} -> once[3:10]{p}) and not((not {s}) since[10:] {p}))") == 0)
     {
+        std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -1351,15 +1567,18 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 7, 0, B_INFINITY};
         std::vector<DenseNode> nodes{p, s, once_p, implies_D, not_s, since_F, not_F, and_C, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].p, allInputs[i - 1].s});
+            propositionInputs[0] = allInputs[i - 1].p;
+            propositionInputs[1] = allInputs[i - 1].s;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({s} -> once[30:100]{p}) and not((not {s}) since[100:] {p}))") == 0)
     {
+        std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -1372,15 +1591,18 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 7, 0, B_INFINITY};
         std::vector<DenseNode> nodes{p, s, once_p, implies_D, not_s, since_F, not_F, and_C, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].p, allInputs[i - 1].s});
+            propositionInputs[0] = allInputs[i - 1].p;
+            propositionInputs[1] = allInputs[i - 1].s;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);
     }
     else if (strcmp(arguments.spec, "historically(({s} -> once[300:1000]{p}) and not((not {s}) since[1000:] {p}))") == 0)
     {
+        std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
         DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
@@ -1393,9 +1615,11 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 7, 0, B_INFINITY};
         std::vector<DenseNode> nodes{p, s, once_p, implies_D, not_s, since_F, not_F, and_C, root_always};
 
-        for (int i = 1; i < allInputs.size(); i++)
+        for (size_t i = 1; i < allInputs.size(); i++)
         {
-            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].p, allInputs[i - 1].s});
+            propositionInputs[0] = allInputs[i - 1].p;
+            propositionInputs[1] = allInputs[i - 1].s;
+            run_evaluation(nodes, holder, allInputs[i - 1].time, allInputs[i].time, propositionInputs);
             swapBuffers(holder);
         }
         destroyHolder(holder);

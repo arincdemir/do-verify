@@ -12,16 +12,11 @@ int add_with_inf(int a, int b) {
 }
 
 db_interval_set::IntervalSet run_evaluation(std::vector<DenseNode> &nodes, db_interval_set::IntervalSetHolder &setHolder, const int startTime, const int endTime, const std::vector<bool> &propositionInputs) {
-    for(size_t node_index = 0; node_index < nodes.size(); node_index++) {
+    int nodeCount = nodes.size();
+    for(size_t node_index = 0; node_index < nodeCount; node_index++) {
         DenseNode &curNode = nodes[node_index];
         switch (curNode.type)
-        {           // TODO hocaya sor: datada bir time ve true, false geldiği zaman o timeden önce mi öyle sonra mı?
-                    // timescales'de timeless'lar var nasıl implemente edicem
-
-                    // once -> eventually
-                    // historically -> always
-                    // -> -> implies
-
+        {          
         case NodeType::PROPOSITION:
             if (propositionInputs[node_index]) curNode.output = db_interval_set::fromInterval(setHolder, {startTime, endTime});
             else curNode.output = db_interval_set::empty(setHolder);
@@ -59,8 +54,6 @@ db_interval_set::IntervalSet run_evaluation(std::vector<DenseNode> &nodes, db_in
                 if (iterator.rightTruthy) {
                     curNode.state = db_interval_set::unionSets(setHolder, curNode.state,
                         db_interval_set::fromInterval(setHolder, {iterator.interval.start + curNode.a, add_with_inf(iterator.interval.end, curNode.b)}));
-                    int a = 0;
-                    (void)a; // Suppress unused variable warning
                 }
                 i++;
                 
@@ -134,12 +127,14 @@ db_interval_set::IntervalSet run_evaluation(std::vector<DenseNode> &nodes, db_in
         }
     
     }
-    return nodes[nodes.size() - 1].output;
+    return nodes[nodeCount - 1].output;
 }
 
 
 bool run_evaluation(std::vector<DiscreteNode> &nodes, db_interval_set::IntervalSetHolder &setHolder, const int time, const std::vector<bool> &propositionInputs) {
-    for (unsigned int node_index = 0; node_index < nodes.size(); node_index++) {
+    //TODO store the nodes size value for later use. We know it wont change
+    int nodeCount = nodes.size();
+    for (unsigned int node_index = 0; node_index < nodeCount; node_index++) {
         DiscreteNode &curNode = nodes[node_index];
         switch (curNode.type)
         {
@@ -161,24 +156,30 @@ bool run_evaluation(std::vector<DiscreteNode> &nodes, db_interval_set::IntervalS
         case NodeType::EVENTUALLY:
         {
             if (nodes[curNode.rightOperandIndex].output) {
-                curNode.state = db_interval_set::unionSets(setHolder, curNode.state,
-                    db_interval_set::fromInterval(setHolder, {time + curNode.a, add_with_inf(time + 1, curNode.b)}));
+                // TODO added this more optimized union
+                curNode.state = db_interval_set::unionIntervalFromRight(setHolder, curNode.state, {time + curNode.a, add_with_inf(time + 1, curNode.b)});
             }
-            curNode.output = db_interval_set::includes(curNode.state, time);
-            curNode.state = db_interval_set::intersectSets(setHolder, curNode.state,
-                db_interval_set::fromInterval(setHolder, {time + 1, B_INFINITY}));
+            // TODO added this for more optimized result
+            db_interval_set::CheckAndClipResult result = db_interval_set::checkAndClip(setHolder, curNode.state, time);
+            curNode.output = result.output;
+            curNode.state = result.set;
+            // curNode.output = db_interval_set::includes(curNode.state, time);
+            // curNode.state = db_interval_set::intersectSets(setHolder, curNode.state,
+            //     db_interval_set::fromInterval(setHolder, {time + 1, B_INFINITY}));
             break;
 
         }   
         case NodeType::ALWAYS:
         {
             if (!nodes[curNode.rightOperandIndex].output) {
-                curNode.state = db_interval_set::unionSets(setHolder, curNode.state,
-                    db_interval_set::fromInterval(setHolder, {time + curNode.a, add_with_inf(time + 1, curNode.b)}));
+                curNode.state = db_interval_set::unionIntervalFromRight(setHolder, curNode.state, {time + curNode.a, add_with_inf(time + 1, curNode.b)});
             }
-            curNode.output = !db_interval_set::includes(curNode.state, time);
-            curNode.state = db_interval_set::intersectSets(setHolder, curNode.state,
-                db_interval_set::fromInterval(setHolder, {time + 1, B_INFINITY}));
+            db_interval_set::CheckAndClipResult result = db_interval_set::checkAndClip(setHolder, curNode.state, time);
+            curNode.output = !result.output;
+            curNode.state = result.set;
+            // curNode.output = !db_interval_set::includes(curNode.state, time);
+            // curNode.state = db_interval_set::intersectSets(setHolder, curNode.state,
+            //     db_interval_set::fromInterval(setHolder, {time + 1, B_INFINITY}));
             break;
         }
         case NodeType::SINCE:
@@ -186,8 +187,7 @@ bool run_evaluation(std::vector<DiscreteNode> &nodes, db_interval_set::IntervalS
             bool leftOutput = nodes[curNode.leftOperandIndex].output;
             bool rightOutput = nodes[curNode.rightOperandIndex].output;
             if (leftOutput && rightOutput) {
-                curNode.state = db_interval_set::unionSets(setHolder, curNode.state,
-                    db_interval_set::fromInterval(setHolder, {time + curNode.a, add_with_inf(time + 1, curNode.b)}));
+                curNode.state = db_interval_set::unionIntervalFromRight(setHolder, curNode.state, {time + curNode.a, add_with_inf(time + 1, curNode.b)});
             }
             else if (!leftOutput && rightOutput) {
                 curNode.state = db_interval_set::fromInterval(setHolder, {time + curNode.a, add_with_inf(time + 1, curNode.b)});
@@ -198,16 +198,19 @@ bool run_evaluation(std::vector<DiscreteNode> &nodes, db_interval_set::IntervalS
             else {
                 curNode.state = db_interval_set::empty(setHolder);
             }
-            curNode.output = db_interval_set::includes(curNode.state, time);
-            curNode.state = db_interval_set::intersectSets(setHolder, curNode.state,
-                db_interval_set::fromInterval(setHolder, {time + 1, B_INFINITY}));
+            db_interval_set::CheckAndClipResult result = db_interval_set::checkAndClip(setHolder, curNode.state, time);
+            curNode.output = result.output;
+            curNode.state = result.set;
+            // curNode.output = db_interval_set::includes(curNode.state, time);
+            // curNode.state = db_interval_set::intersectSets(setHolder, curNode.state,
+            //     db_interval_set::fromInterval(setHolder, {time + 1, B_INFINITY}));
             break;
         }
         case NodeType::TEST:
             break;
         }
     }
-    return nodes[nodes.size() - 1].output;
+    return nodes[nodeCount - 1].output;
     
 }
 
