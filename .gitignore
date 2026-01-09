@@ -2,6 +2,7 @@ data/*
 build/
 .vscode/
 misc/
+do-verify-misc/
 debugger
 debugger.cpp
 

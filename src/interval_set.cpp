@@ -112,6 +112,40 @@ IntervalSet unionSets(IntervalSetHolder &holder, IntervalSet setA, IntervalSet s
     return IntervalSet{holder.writeBuffer, newStartIndex, holder.writeIndex - 1};
 }
 
+
+/**
+ * @brief Computes the union of a set with an interval, where the interval 
+ * is guaranteed to be towards the right, and have at most one overlap.
+ */
+IntervalSet unionIntervalFromRight(IntervalSetHolder &holder, IntervalSet set, Interval interval) {
+    // Case 1: Handle Empty Set
+    if (set.startIndex > set.endIndex) {
+        return fromInterval(holder, interval);
+    }
+    int newStartIndex = holder.writeIndex;
+    // Case 2: Disjoint (No overlap, simply append)
+    if (set.buffer[set.endIndex].time < interval.start) { // cannot merge
+        // Copy existing set
+        for (int i = set.startIndex; i <= set.endIndex; ++i) {
+            holder.writeBuffer[holder.writeIndex++] = set.buffer[i];
+        }
+        // Append new interval
+        holder.writeBuffer[holder.writeIndex++] = Transition{interval.start, true};
+        holder.writeBuffer[holder.writeIndex++] = Transition{interval.end, false};
+        return IntervalSet{holder.writeBuffer, newStartIndex, holder.writeIndex - 1};
+    }
+    // Case 3: Merge (Overlap or Touching)
+    else {
+        // Copy everything EXCEPT the very last transition (the old end point)
+        for (int i = set.startIndex; i < set.endIndex; ++i) {
+            holder.writeBuffer[holder.writeIndex++] = set.buffer[i];
+        }
+        // Write the new extended end transition
+        holder.writeBuffer[holder.writeIndex++] = Transition{interval.end, false};
+        return IntervalSet{holder.writeBuffer, newStartIndex, holder.writeIndex - 1};
+    }
+}
+
 /**
  * @brief Computes the intersection (AND) of two sets.
  */
@@ -126,7 +160,7 @@ IntervalSet intersectSets(IntervalSetHolder &holder, IntervalSet setA, IntervalS
 
     while (i <= setA.endIndex || j <= setB.endIndex) {
         int t = std::numeric_limits<int>::max();
-        if (i <= setA.endIndex) t = std::min(t, setA.buffer[i].time);
+        if (i <= setA.endIndex) t = setA.buffer[i].time;
         if (j <= setB.endIndex) t = std::min(t, setB.buffer[j].time);
 
         bool wasInSet = (isInA && isInB);
@@ -326,6 +360,66 @@ bool getNextSegment(SegmentIterator& it) {
     
     // We successfully produced a segment.
     return true;
+}
+
+
+/**
+ * @brief Checks if 'time' is in the set AND returns a new set clipped to [time + 1, INF).
+ * Optimized replacement for: includes(t) + intersect(fromInterval(t+1, INF)).
+ * * PRECONDITION: The input set must not contain any transitions before 'time'.
+ * (i.e., set.buffer[set.startIndex].time >= time).
+ */
+CheckAndClipResult checkAndClip(IntervalSetHolder &holder, IntervalSet set, int time) {
+    // 1. Handle Empty Set
+    if (set.startIndex > set.endIndex) {
+        return CheckAndClipResult{false, set}; // Set is empty, output is false
+    }
+
+    int newStartIndex = holder.writeIndex;
+    Transition first = set.buffer[set.startIndex];
+
+    // Case A: The set starts in the future (> time)
+    // Therefore, it does NOT include 'time'.
+    if (first.time > time) {
+        // Copy the set exactly as is (it is already valid for [time+1, inf))
+        for (int i = set.startIndex; i <= set.endIndex; ++i) {
+            holder.writeBuffer[holder.writeIndex++] = set.buffer[i];
+        }
+        return CheckAndClipResult{false, IntervalSet{holder.writeBuffer, newStartIndex, holder.writeIndex - 1}};
+    }
+    
+    // Case B: The set starts exactly at 'time'
+    // Therefore, it DOES include 'time'.
+    else {
+        // We need to clip the start. The interval [time, X) becomes [time+1, X).
+        
+        int readIdx = set.startIndex + 1;
+        
+        // Check for [time, time+1)
+        // If the interval ends exactly at time+1, the result [time+1, time+1) is empty.
+        // We can skip writing the new start and skip copying the end.
+        bool skipEmptyInterval = false;
+        if (readIdx <= set.endIndex) {
+            Transition nextT = set.buffer[readIdx];
+            if (nextT.time == (time + 1) && !nextT.isStart) {
+                skipEmptyInterval = true;
+                readIdx++; // Skip reading the 'end' transition
+            }
+        }
+
+        if (!skipEmptyInterval) {
+            // Write the new start transition at time + 1
+            holder.writeBuffer[holder.writeIndex++] = Transition{time + 1, true};
+        }
+        
+        // Copy the rest of the transitions (if any)
+        while (readIdx <= set.endIndex) {
+            holder.writeBuffer[holder.writeIndex++] = set.buffer[readIdx];
+            readIdx++;
+        }
+
+        return CheckAndClipResult{true, IntervalSet{holder.writeBuffer, newStartIndex, holder.writeIndex - 1}};
+    }
 }
 
 

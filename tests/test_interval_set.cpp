@@ -550,3 +550,200 @@ TEST_CASE("SegmentIterator tests", "[interval_set]") {
     destroyHolder(holder);
 }
 
+TEST_CASE("Optimized Union (unionIntervalFromRight)", "[interval_set]") {
+    IntervalSetHolder holder = newHolder(1024);
+
+    SECTION("Disjoint (Append to End)") {
+        // Set: {[0, 10)}, Interval: [20, 30)
+        // Expected: {[0, 10), [20, 30)}
+        
+        auto s1_t = fromInterval(holder, {0, 10});
+        swapBuffers(holder);
+        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+
+        // Act
+        IntervalSet result = unionIntervalFromRight(holder, set, {20, 30});
+        std::vector<Interval> v = toVectorIntervals(result);
+
+        REQUIRE(v == std::vector<Interval>{{0, 10}, {20, 30}});
+    }
+
+    SECTION("Touching (Merge)") {
+        // Set: {[0, 10)}, Interval: [10, 20)
+        // Expected: {[0, 20)}
+        // This validates that it doesn't leave a gap or duplicate the "10" transition.
+        
+        auto s1_t = fromInterval(holder, {0, 10});
+        swapBuffers(holder);
+        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+
+        // Act
+        IntervalSet result = unionIntervalFromRight(holder, set, {10, 20});
+        std::vector<Interval> v = toVectorIntervals(result);
+
+        REQUIRE(v == std::vector<Interval>{{0, 20}});
+    }
+
+    SECTION("Overlapping (Merge/Extension)") {
+        // Set: {[0, 20)}, Interval: [15, 30)
+        // Expected: {[0, 30)}
+        // This validates that the old end (20) is removed and replaced by new end (30).
+        
+        auto s1_t = fromInterval(holder, {0, 20});
+        swapBuffers(holder);
+        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+
+        // Act
+        IntervalSet result = unionIntervalFromRight(holder, set, {15, 30});
+        std::vector<Interval> v = toVectorIntervals(result);
+
+        REQUIRE(v == std::vector<Interval>{{0, 30}});
+    }
+
+    SECTION("Complex Multi-Interval Extension") {
+        // Set: {[0, 10), [20, 30)}, Interval: [25, 40)
+        // Expected: {[0, 10), [20, 40)}
+        // Validates that previous intervals (0-10) are copied correctly unmodified.
+        
+        // 1. Create the complex set manually
+        auto s1_t = fromInterval(holder, {0, 10});
+        auto s2_t = fromInterval(holder, {20, 30});
+        swapBuffers(holder);
+        
+        IntervalSet i1 = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet i2 = {holder.readBuffer, s2_t.startIndex, s2_t.endIndex};
+        
+        // Union them to create the input set in writeBuffer
+        auto inputSet_t = unionSets(holder, i1, i2);
+        
+        // Swap so inputSet is now in readBuffer
+        swapBuffers(holder);
+        IntervalSet set = {holder.readBuffer, inputSet_t.startIndex, inputSet_t.endIndex};
+
+        // Act
+        IntervalSet result = unionIntervalFromRight(holder, set, {25, 40});
+        std::vector<Interval> v = toVectorIntervals(result);
+
+        REQUIRE(v == std::vector<Interval>{{0, 10}, {20, 40}});
+    }
+
+    SECTION("Empty Set Handling") {
+        // Set: {}, Interval: [5, 10)
+        // Expected: {[5, 10)}
+        
+        auto s1_t = empty(holder);
+        swapBuffers(holder);
+        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+
+        // Act
+        IntervalSet result = unionIntervalFromRight(holder, set, {5, 10});
+        std::vector<Interval> v = toVectorIntervals(result);
+
+        REQUIRE(v == std::vector<Interval>{{5, 10}});
+    }
+
+    destroyHolder(holder);
+}
+
+
+TEST_CASE("Optimized Check and Clip (checkAndClip)", "[interval_set]") {
+    IntervalSetHolder holder = newHolder(1024);
+    int time = 10;
+
+    SECTION("Case A: Set starts in the future (> time)") {
+        // Set: {[15, 20)}, Time: 10
+        // Expected: output=false, Set unchanged {[15, 20)}
+        
+        auto s1_t = fromInterval(holder, {15, 20});
+        swapBuffers(holder);
+        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+
+        // Act
+        CheckAndClipResult result = checkAndClip(holder, set, time);
+        std::vector<Interval> v = toVectorIntervals(result.set);
+
+        // Assert
+        REQUIRE(result.output == false);
+        REQUIRE(v == std::vector<Interval>{{15, 20}});
+    }
+
+    SECTION("Case B: Set starts exactly at time") {
+        // Set: {[10, 20)}, Time: 10
+        // Expected: output=true, Set clipped to {[11, 20)}
+        
+        auto s1_t = fromInterval(holder, {10, 20});
+        swapBuffers(holder);
+        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+
+        // Act
+        CheckAndClipResult result = checkAndClip(holder, set, time);
+        std::vector<Interval> v = toVectorIntervals(result.set);
+
+        // Assert
+        REQUIRE(result.output == true);
+        REQUIRE(v == std::vector<Interval>{{11, 20}});
+    }
+
+    SECTION("Case C: Micro-Optimization (Result becomes empty)") {
+        // Set: {[10, 11)}, Time: 10
+        // Expected: output=true
+        // Logic: Clipping [10, 11) to [11, INF) leaves [11, 11), which is empty.
+        
+        auto s1_t = fromInterval(holder, {10, 11});
+        swapBuffers(holder);
+        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+
+        // Act
+        CheckAndClipResult result = checkAndClip(holder, set, time);
+        std::vector<Interval> v = toVectorIntervals(result.set);
+
+        // Assert
+        REQUIRE(result.output == true);
+        REQUIRE(v.empty());
+    }
+
+    SECTION("Case D: Multi-Interval Preservation") {
+        // Set: {[10, 15), [20, 25)}, Time: 10
+        // Expected: output=true, Set becomes {[11, 15), [20, 25)}
+        
+        // Setup complex set
+        auto i1 = fromInterval(holder, {10, 15});
+        auto i2 = fromInterval(holder, {20, 25});
+        swapBuffers(holder);
+        // Union to make one set
+        auto set_t = unionSets(holder, 
+            {holder.readBuffer, i1.startIndex, i1.endIndex}, 
+            {holder.readBuffer, i2.startIndex, i2.endIndex}
+        );
+        swapBuffers(holder);
+        IntervalSet set = {holder.readBuffer, set_t.startIndex, set_t.endIndex};
+
+        // Act
+        CheckAndClipResult result = checkAndClip(holder, set, time);
+        std::vector<Interval> v = toVectorIntervals(result.set);
+
+        // Assert
+        REQUIRE(result.output == true);
+        REQUIRE(v == std::vector<Interval>{{11, 15}, {20, 25}});
+    }
+
+    SECTION("Case E: Empty Input Set") {
+        // Set: {}, Time: 10
+        // Expected: output=false, Set empty
+        
+        auto s1_t = empty(holder);
+        swapBuffers(holder);
+        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+
+        // Act
+        CheckAndClipResult result = checkAndClip(holder, set, time);
+        std::vector<Interval> v = toVectorIntervals(result.set);
+
+        // Assert
+        REQUIRE(result.output == false);
+        REQUIRE(v.empty());
+    }
+    
+
+    destroyHolder(holder);
+}

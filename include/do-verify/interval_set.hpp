@@ -61,6 +61,11 @@ struct SegmentIterator {
     bool currentRightTruthy;
 };
 
+struct CheckAndClipResult {
+    bool output;      // Was 'time' in the set?
+    IntervalSet set;  // The new clipped set (starting >= time + 1)
+};
+
 
 IntervalSetHolder newHolder(int bufferSize);
 
@@ -97,6 +102,13 @@ IntervalSet copySet(IntervalSetHolder& holder, IntervalSet set);
 IntervalSet unionSets(IntervalSetHolder &holder, IntervalSet setA, IntervalSet setB);
 
 /**
+ * @brief Computes the union of a set with an interval, where the interval 
+ * is guaranteed to be towards the right, and have at most one overlap.
+ */
+IntervalSet unionIntervalFromRight(IntervalSetHolder &holder, IntervalSet set, Interval interval);
+
+
+/**
  * @brief Computes the intersection (AND) of two sets.
  */
 IntervalSet intersectSets(IntervalSetHolder &holder, IntervalSet setA, IntervalSet setB);
@@ -130,6 +142,8 @@ SegmentIterator createSegmentIterator(IntervalSet setA, IntervalSet setB, Interv
  * @return true if a valid segment was found, false if the iteration is finished.
  */
 bool getNextSegment(SegmentIterator& it);
+
+CheckAndClipResult checkAndClip(IntervalSetHolder &holder, IntervalSet set, int time);
 
 
 // --- Helper Functions ---
