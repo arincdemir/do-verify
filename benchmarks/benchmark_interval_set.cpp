@@ -297,3 +297,66 @@ TEST_CASE("Serial Update Benchmark", "[interval_set][serial]") {
         // (No teardown needed for Boost, vectors clean up themselves)
     };
 }
+
+
+TEST_CASE("Benchmark: Generic Union vs Optimized Extension", "[interval_set][new_union]") {
+    // 1. Setup: Create a large buffer and a "Heavy Set"
+    // We need a large buffer because benchmarks run many times.
+    // However, we will reset the writeIndex inside the loop to avoid overflow.
+    IntervalSetHolder holder = newHolder(1024 * 1024); 
+
+    // Create a base set with 1,000 intervals: [0,1], [10,11], [20,21] ...
+    int count = 1000;
+    std::vector<Interval> initialIntervals;
+    initialIntervals.reserve(count);
+    for (int i = 0; i < count; ++i) {
+        initialIntervals.push_back({i * 10, i * 10 + 5});
+    }
+
+    // Helper to batch create
+    IntervalSet heavySet_t = createSetFromIntervals(holder, initialIntervals);
+    swapBuffers(holder); // heavySet is now in readBuffer
+    
+    // Create the handle for the heavy set in readBuffer
+    IntervalSet heavySet = {holder.readBuffer, heavySet_t.startIndex, heavySet_t.endIndex};
+
+    // Store the current write index. We will reset to this point
+    // before every benchmark iteration so we don't blow up the buffer.
+    int baseWriteIndex = holder.writeIndex;
+
+    // --- SCENARIO 1: DISJOINT APPEND ---
+    // Adding [10005, 10010), which is strictly after the last interval [9990, 9995)
+    Interval disjointInterval = {10005, 10010};
+
+    BENCHMARK("Disjoint: Generic unionSets + fromInterval") {
+        // Reset state
+        holder.writeIndex = baseWriteIndex;
+        
+        // Cost includes creating the set wrapper AND the union
+        IntervalSet temp = fromInterval(holder, disjointInterval);
+        return unionSets(holder, heavySet, temp);
+    };
+
+    BENCHMARK("Disjoint: Optimized unionIntervalFromRight") {
+        holder.writeIndex = baseWriteIndex;
+        return unionIntervalFromRight(holder, heavySet, disjointInterval);
+    };
+
+    // --- SCENARIO 2: OVERLAP MERGE ---
+    // Adding [9992, 10010), which overlaps the last interval [9990, 9995)
+    Interval overlapInterval = {9992, 10010};
+
+    BENCHMARK("Overlap: Generic unionSets + fromInterval") {
+        holder.writeIndex = baseWriteIndex;
+        
+        IntervalSet temp = fromInterval(holder, overlapInterval);
+        return unionSets(holder, heavySet, temp);
+    };
+
+    BENCHMARK("Overlap: Optimized unionIntervalFromRight") {
+        holder.writeIndex = baseWriteIndex;
+        return unionIntervalFromRight(holder, heavySet, overlapInterval);
+    };
+
+    destroyHolder(holder);
+}
