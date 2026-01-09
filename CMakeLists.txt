@@ -55,3 +55,4 @@ target_link_libraries(do-verify-perf PRIVATE do-verify)
 # Add Subdirectories
 enable_testing()
 add_subdirectory(tests)
+add_subdirectory(benchmarks)
