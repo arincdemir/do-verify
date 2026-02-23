@@ -18,35 +18,19 @@
 
 namespace do_verify {
 
-template <class NetworkT> struct ptl_parser : ptl_grammar{
-  using time_t = typename NetworkT::time_t;
-  using value_t = typename NetworkT::value_t;
-  using input_t = typename NetworkT::input_t;
-  using output_t = typename NetworkT::output_t;
-
-  using node_t = typename NetworkT::node_t;
-  using state_t = typename NetworkT::state_t;
-  using network_t = typename NetworkT::type;
-
-  using node_ptr_t = typename NetworkT::node_ptr_t;
-  using state_ptr_t = typename NetworkT::state_ptr_t;
-
-  using options_t = typename NetworkT::options_t;
-  using Setting = typename NetworkT::setting_t;
+struct ptl_parser : ptl_grammar{
 
   peg::parser parser;
-  reelay::kwargs meta;
 
-  std::vector<state_ptr_t> states = std::vector<state_ptr_t>();
 
-  explicit ptl_parser(const reelay::kwargs &mm = reelay::kwargs())
-      : meta(mm) {
+  explicit ptl_parser() {
 
     parser = peg::parser(grammar);
-    parser.log = [](size_t line, size_t col, const std::string &msg) {
+    parser.set_logger([](size_t line, size_t col, const std::string &msg) {
       std::cerr << line << ":" << col << ": " << msg << std::endl;
-    };
+    });
 
+    
     parser["SimpleRecordProposition"] = [&](const peg::SemanticValues &sv) {
       if (sv.size() > 1) {
         std::vector<node_ptr_t> args;
