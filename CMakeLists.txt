@@ -36,7 +36,7 @@ target_include_directories(do-verify PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(do-verify PUBLIC cpp-peglib)
+target_link_libraries(do-verify PUBLIC peglib)
 
 # Fetch Catch2 (ONCE for the whole project)
 FetchContent_Declare(
@@ -62,6 +62,12 @@ add_executable(do-verify-perf
 
 target_compile_options(do-verify-perf PRIVATE -g -fno-omit-frame-pointer)
 target_link_libraries(do-verify-perf PRIVATE do-verify)
+
+add_executable(test-parse
+    src/test_parse.cpp
+)
+target_compile_options(test-parse PRIVATE -g -O0)
+target_link_libraries(test-parse PRIVATE do-verify)
 
 # Add Subdirectories
 enable_testing()

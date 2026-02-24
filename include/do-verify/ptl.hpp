@@ -216,6 +216,7 @@ struct ptl_parser : ptl_grammar{
     parser["Atom"] = [&](const peg::SemanticValues &sv) {
       std::string name = std::any_cast<std::string>(sv[0]);
       // TODO: Find a way to map the proposition names to indices of nodes
+      // Also the same proposition name should map to the same node index. For now, we just create a new node for each atom occurrence.
       DiscreteNode node;
       node.type = NodeType::PROPOSITION;
       node.leftOperandIndex = 0;
