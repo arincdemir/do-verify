@@ -18,9 +18,8 @@ struct ptl_grammar {
     Disjunctive <- Conjunctive (LOR Conjunctive)*
     Conjunctive <- SinceExpr (LAND SinceExpr)*
     SinceExpr <- Unary (SINCE Bound? Unary)?
-    Unary <- NotExpr / PrevExpr / TimedOnceExpr / OnceExpr / TimedHistExpr / HistExpr / Atom / '(' Expression ')'
+    Unary <- NotExpr / TimedOnceExpr / OnceExpr / TimedHistExpr / HistExpr / Atom / '(' Expression ')'
     NotExpr  <- LNOT Atom / LNOT '(' Expression ')'
-    PrevExpr <- PREV Atom / PREV '(' Expression ')'
     OnceExpr <- ONCE Atom / ONCE '(' Expression ')'
     HistExpr <- HIST Atom / HIST '(' Expression ')'
     TimedOnceExpr <- ONCE Bound Atom / ONCE Bound '(' Expression ')'
@@ -37,7 +36,6 @@ struct ptl_grammar {
     Number <- <'-'? [0-9]+ ('.' [0-9]+)?>
 
 
-    ~PREV   <- < 'Y' / 'pre' >
     ~HIST  <- < 'H' / 'historically' >
     ~ONCE  <- < 'P' / 'once' >
     ~SINCE <- < 'S' / 'since' >
