@@ -7,7 +7,6 @@ using namespace do_verify;
 using namespace db_interval_set;
 
 int main() {
-    IntervalSetHolder holder;
     ptl_parser p;
 
     std::string formula = "historically(({r} && !{q} && once {q}) -> ({p} since[3:10] {q}))";
@@ -15,8 +14,16 @@ int main() {
     std::cout << "Parsing: " << formula << std::endl;
 
     try {
-        auto nodes = p.parse(formula, false, holder);
+        auto nodes = p.parse(formula);
         std::cout << "Parsed successfully! " << nodes.size() << " nodes created." << std::endl;
+
+        // Show proposition map
+        auto &propMap = p.get_proposition_map();
+        std::cout << "\nProposition map:" << std::endl;
+        for (auto &[name, idx] : propMap) {
+            std::cout << "  " << name << " -> input index " << idx << std::endl;
+        }
+        std::cout << std::endl;
 
         for (size_t i = 0; i < nodes.size(); i++) {
             std::cout << "Node " << i << ": type=";

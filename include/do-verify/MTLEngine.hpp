@@ -21,6 +21,14 @@ enum class NodeType {
     TEST,
 };
 
+struct ParsedNode {
+    NodeType type;
+    unsigned int leftOperandIndex;  // For propositions, this is the input index
+    unsigned int rightOperandIndex;
+    int a;
+    int b;
+};
+
 struct DenseNode {
     db_interval_set::IntervalSet state;
     db_interval_set::IntervalSet output;

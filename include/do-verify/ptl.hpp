@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include <any>
 
 #define PEGLIB_USE_STD_ANY 1
@@ -28,9 +29,8 @@ struct ptl_parser : ptl_grammar{
 
 
   peg::parser parser;
-  std::vector<DiscreteNode> result_nodes;
-  bool dense = false;
-  db_interval_set::IntervalSetHolder holder;
+  std::vector<ParsedNode> result_nodes;
+  std::map<std::string, unsigned int> proposition_map;
 
   explicit ptl_parser() {
 
@@ -41,30 +41,25 @@ struct ptl_parser : ptl_grammar{
 
     parser["NotExpr"] = [&](const peg::SemanticValues &sv) {
       int childIndex = std::any_cast<int>(sv[0]);
-      DiscreteNode notNode;
-      notNode.type = NodeType::NOT;
-      notNode.leftOperandIndex = childIndex;
-      notNode.rightOperandIndex = 0;
-      notNode.a = 0;
-      notNode.b = 0;
-      notNode.state = db_interval_set::empty(holder);
-      notNode.output = false;
-      result_nodes.push_back(notNode);
+      ParsedNode node;
+      node.type = NodeType::NOT;
+      node.leftOperandIndex = childIndex;
+      node.rightOperandIndex = 0;
+      node.a = 0;
+      node.b = 0;
+      result_nodes.push_back(node);
       return static_cast<int>(result_nodes.size() - 1);
     };
 
     parser["Implicative"] = [&](const peg::SemanticValues &sv) {
-      // Rule:
       if (sv.size() > 1) {
-        DiscreteNode implicationNode;
-        implicationNode.type = NodeType::IMPLIES;
-        implicationNode.leftOperandIndex = std::any_cast<int>(sv[0]);
-        implicationNode.rightOperandIndex = std::any_cast<int>(sv[1]);
-        implicationNode.a = 0;
-        implicationNode.b = 0;
-        implicationNode.state = db_interval_set::empty(holder);
-        implicationNode.output = false;
-        result_nodes.push_back(implicationNode);
+        ParsedNode node;
+        node.type = NodeType::IMPLIES;
+        node.leftOperandIndex = std::any_cast<int>(sv[0]);
+        node.rightOperandIndex = std::any_cast<int>(sv[1]);
+        node.a = 0;
+        node.b = 0;
+        result_nodes.push_back(node);
         return static_cast<int>(result_nodes.size() - 1);
       } else {
         return std::any_cast<int>(sv[0]);
@@ -73,19 +68,16 @@ struct ptl_parser : ptl_grammar{
 
     parser["Disjunctive"] = [&](const peg::SemanticValues &sv) {
       if (sv.size() > 1) {
-        // Chain binary OR nodes: (a | b | c) -> OR(OR(a, b), c)
         int left = std::any_cast<int>(sv[0]);
         for (size_t i = 1; i < sv.size(); i++) {
           int right = std::any_cast<int>(sv[i]);
-          DiscreteNode orNode;
-          orNode.type = NodeType::OR;
-          orNode.leftOperandIndex = left;
-          orNode.rightOperandIndex = right;
-          orNode.a = 0;
-          orNode.b = 0;
-          orNode.state = db_interval_set::empty(holder);
-          orNode.output = false;
-          result_nodes.push_back(orNode);
+          ParsedNode node;
+          node.type = NodeType::OR;
+          node.leftOperandIndex = left;
+          node.rightOperandIndex = right;
+          node.a = 0;
+          node.b = 0;
+          result_nodes.push_back(node);
           left = static_cast<int>(result_nodes.size() - 1);
         }
         return left;
@@ -99,15 +91,13 @@ struct ptl_parser : ptl_grammar{
         int left = std::any_cast<int>(sv[0]);
         for (size_t i = 1; i < sv.size(); i++) {
           int right = std::any_cast<int>(sv[i]);
-          DiscreteNode andNode;
-          andNode.type = NodeType::AND;
-          andNode.leftOperandIndex = left;
-          andNode.rightOperandIndex = right;
-          andNode.a = 0;
-          andNode.b = 0;
-          andNode.state = db_interval_set::empty(holder);
-          andNode.output = false;
-          result_nodes.push_back(andNode);
+          ParsedNode node;
+          node.type = NodeType::AND;
+          node.leftOperandIndex = left;
+          node.rightOperandIndex = right;
+          node.a = 0;
+          node.b = 0;
+          result_nodes.push_back(node);
           left = static_cast<int>(result_nodes.size() - 1);
         }
         return left;
@@ -118,15 +108,12 @@ struct ptl_parser : ptl_grammar{
 
     parser["OnceExpr"] = [&](const peg::SemanticValues &sv) {
       int childIndex = std::any_cast<int>(sv[0]);
-
-      DiscreteNode node;
+      ParsedNode node;
       node.type = NodeType::EVENTUALLY;
       node.leftOperandIndex = childIndex;
       node.rightOperandIndex = 0;
       node.a = 0;
       node.b = B_INFINITY;
-      node.state = db_interval_set::empty(holder);
-      node.output = false;
       result_nodes.push_back(node);
       return static_cast<int>(result_nodes.size() - 1);
     };
@@ -134,30 +121,24 @@ struct ptl_parser : ptl_grammar{
     parser["TimedOnceExpr"] = [&](const peg::SemanticValues &sv) {
       std::pair<int, int> bound = std::any_cast<std::pair<int, int>>(sv[0]);
       int childIndex = std::any_cast<int>(sv[1]);
-
-      DiscreteNode node;
+      ParsedNode node;
       node.type = NodeType::EVENTUALLY;
       node.leftOperandIndex = childIndex;
       node.rightOperandIndex = 0;
       node.a = bound.first;
       node.b = bound.second;
-      node.state = db_interval_set::empty(holder);
-      node.output = false;
       result_nodes.push_back(node);
       return static_cast<int>(result_nodes.size() - 1);
     };
 
     parser["HistExpr"] = [&](const peg::SemanticValues &sv) {
       int childIndex = std::any_cast<int>(sv[0]);
-
-      DiscreteNode node;
+      ParsedNode node;
       node.type = NodeType::ALWAYS;
       node.leftOperandIndex = childIndex;
       node.rightOperandIndex = 0;
       node.a = 0;
       node.b = B_INFINITY;
-      node.state = db_interval_set::empty(holder);
-      node.output = false;
       result_nodes.push_back(node);
       return static_cast<int>(result_nodes.size() - 1);
     };
@@ -165,15 +146,12 @@ struct ptl_parser : ptl_grammar{
     parser["TimedHistExpr"] = [&](const peg::SemanticValues &sv) {
       std::pair<int, int> bound = std::any_cast<std::pair<int, int>>(sv[0]);
       int childIndex = std::any_cast<int>(sv[1]);
-
-      DiscreteNode node;
+      ParsedNode node;
       node.type = NodeType::ALWAYS;
       node.leftOperandIndex = childIndex;
       node.rightOperandIndex = 0;
       node.a = bound.first;
       node.b = bound.second;
-      node.state = db_interval_set::empty(holder);
-      node.output = false;
       result_nodes.push_back(node);
       return static_cast<int>(result_nodes.size() - 1);
     };
@@ -183,29 +161,23 @@ struct ptl_parser : ptl_grammar{
         int leftIndex = std::any_cast<int>(sv[0]);
         std::pair<int, int> bound = std::any_cast<std::pair<int, int>>(sv[1]);
         int rightIndex = std::any_cast<int>(sv[2]);
-
-        DiscreteNode node;
+        ParsedNode node;
         node.type = NodeType::SINCE;
         node.leftOperandIndex = leftIndex;
         node.rightOperandIndex = rightIndex;
         node.a = bound.first;
         node.b = bound.second;
-        node.state = db_interval_set::empty(holder);
-        node.output = false;
         result_nodes.push_back(node);
         return static_cast<int>(result_nodes.size() - 1);
       } else if (sv.size() == 2) {
         int leftIndex = std::any_cast<int>(sv[0]);
         int rightIndex = std::any_cast<int>(sv[1]);
-
-        DiscreteNode node;
+        ParsedNode node;
         node.type = NodeType::SINCE;
         node.leftOperandIndex = leftIndex;
         node.rightOperandIndex = rightIndex;
         node.a = 0;
         node.b = B_INFINITY;
-        node.state = db_interval_set::empty(holder);
-        node.output = false;
         result_nodes.push_back(node);
         return static_cast<int>(result_nodes.size() - 1);
       } else {
@@ -215,18 +187,21 @@ struct ptl_parser : ptl_grammar{
 
     parser["Atom"] = [&](const peg::SemanticValues &sv) {
       std::string name = std::any_cast<std::string>(sv[0]);
-      // TODO: Find a way to map the proposition names to indices of nodes
-      // Also the same proposition name should map to the same node index. For now, we just create a new node for each atom occurrence.
-      DiscreteNode node;
-      node.type = NodeType::PROPOSITION;
-      node.leftOperandIndex = 0;
-      node.rightOperandIndex = 0;
-      node.a = 0;
-      node.b = 0;
-      node.state = db_interval_set::empty(holder);
-      node.output = false;
-      result_nodes.push_back(node);
-      return static_cast<int>(result_nodes.size() - 1);
+      if (proposition_map.find(name) == proposition_map.end()) {
+        ParsedNode node;
+        node.type = NodeType::PROPOSITION;
+        node.leftOperandIndex = static_cast<int>(proposition_map.size());  // Use this as the input index for the proposition
+        node.rightOperandIndex = 0;
+        node.a = 0;
+        node.b = 0;
+        result_nodes.push_back(node);
+        proposition_map[name] = static_cast<unsigned int>(result_nodes.size() - 1);
+        return static_cast<int>(result_nodes.size() - 1);
+      }
+      else {
+        return static_cast<int>(proposition_map[name]);
+      }
+      
     };
 
     parser["FullBound"] = [](const peg::SemanticValues &sv) {
@@ -248,22 +223,57 @@ struct ptl_parser : ptl_grammar{
     parser["Name"] = [](const peg::SemanticValues &sv) { return std::string(sv.token()); };
     parser["Number"] = [](const peg::SemanticValues &sv) { return std::string(sv.token()); };
 
-    parser.enable_packrat_parsing(); // Enable packrat parsing.
+    parser.enable_packrat_parsing();
   }
 
-  std::vector<DiscreteNode> parse(const std::string &pattern, const bool dense, db_interval_set::IntervalSetHolder &holder) {
+  std::vector<ParsedNode> parse(const std::string &pattern) {
     result_nodes.clear();
-    this->dense = dense;
-    this->holder = holder;
+    proposition_map.clear();
     bool ok = parser.parse(pattern.c_str());
     if (!ok) {
       throw std::runtime_error("Failed to parse pattern: " + pattern);
     }
     return result_nodes;
   }
-  
-  std::shared_ptr<std::vector<DiscreteNode>> make_shared(const std::string &pattern, bool dense, db_interval_set::IntervalSetHolder &holder) {
-    return std::make_shared<std::vector<DiscreteNode>>(parse(pattern, dense, holder));
+
+  std::vector<DiscreteNode> parse_discrete(const std::string &pattern, db_interval_set::IntervalSetHolder &holder) {
+    parse(pattern);
+    std::vector<DiscreteNode> nodes;
+    nodes.reserve(result_nodes.size());
+    for (auto &pn : result_nodes) {
+      DiscreteNode dn;
+      dn.type = pn.type;
+      dn.leftOperandIndex = pn.leftOperandIndex;
+      dn.rightOperandIndex = pn.rightOperandIndex;
+      dn.a = pn.a;
+      dn.b = pn.b;
+      dn.state = db_interval_set::empty(holder);
+      dn.output = false;
+      nodes.push_back(dn);
+    }
+    return nodes;
+  }
+
+  std::vector<DenseNode> parse_dense(const std::string &pattern, db_interval_set::IntervalSetHolder &holder) {
+    parse(pattern);
+    std::vector<DenseNode> nodes;
+    nodes.reserve(result_nodes.size());
+    for (auto &pn : result_nodes) {
+      DenseNode dn;
+      dn.type = pn.type;
+      dn.leftOperandIndex = pn.leftOperandIndex;
+      dn.rightOperandIndex = pn.rightOperandIndex;
+      dn.a = pn.a;
+      dn.b = pn.b;
+      dn.state = db_interval_set::empty(holder);
+      dn.output = db_interval_set::empty(holder);
+      nodes.push_back(dn);
+    }
+    return nodes;
+  }
+
+  const std::map<std::string, unsigned int>& get_proposition_map() const {
+    return proposition_map;
   }
 
 };
