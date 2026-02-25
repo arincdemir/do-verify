@@ -43,8 +43,8 @@ struct ptl_parser : ptl_grammar{
       int childIndex = std::any_cast<int>(sv[0]);
       ParsedNode node;
       node.type = NodeType::NOT;
-      node.leftOperandIndex = childIndex;
-      node.rightOperandIndex = 0;
+      node.leftOperandIndex = 0;
+      node.rightOperandIndex = childIndex;
       node.a = 0;
       node.b = 0;
       result_nodes.push_back(node);
@@ -110,8 +110,8 @@ struct ptl_parser : ptl_grammar{
       int childIndex = std::any_cast<int>(sv[0]);
       ParsedNode node;
       node.type = NodeType::EVENTUALLY;
-      node.leftOperandIndex = childIndex;
-      node.rightOperandIndex = 0;
+      node.leftOperandIndex = 0;
+      node.rightOperandIndex = childIndex;
       node.a = 0;
       node.b = B_INFINITY;
       result_nodes.push_back(node);
@@ -123,8 +123,8 @@ struct ptl_parser : ptl_grammar{
       int childIndex = std::any_cast<int>(sv[1]);
       ParsedNode node;
       node.type = NodeType::EVENTUALLY;
-      node.leftOperandIndex = childIndex;
-      node.rightOperandIndex = 0;
+      node.leftOperandIndex = 0;
+      node.rightOperandIndex = childIndex;
       node.a = bound.first;
       node.b = bound.second;
       result_nodes.push_back(node);
@@ -135,8 +135,8 @@ struct ptl_parser : ptl_grammar{
       int childIndex = std::any_cast<int>(sv[0]);
       ParsedNode node;
       node.type = NodeType::ALWAYS;
-      node.leftOperandIndex = childIndex;
-      node.rightOperandIndex = 0;
+      node.leftOperandIndex = 0;
+      node.rightOperandIndex = childIndex;
       node.a = 0;
       node.b = B_INFINITY;
       result_nodes.push_back(node);
@@ -148,8 +148,8 @@ struct ptl_parser : ptl_grammar{
       int childIndex = std::any_cast<int>(sv[1]);
       ParsedNode node;
       node.type = NodeType::ALWAYS;
-      node.leftOperandIndex = childIndex;
-      node.rightOperandIndex = 0;
+      node.leftOperandIndex = 0;
+      node.rightOperandIndex = childIndex;
       node.a = bound.first;
       node.b = bound.second;
       result_nodes.push_back(node);

@@ -25,7 +25,7 @@ enum class NodeType {
 struct ParsedNode {
     NodeType type;
     unsigned int leftOperandIndex;  // For propositions, this is the input index
-    unsigned int rightOperandIndex;
+    unsigned int rightOperandIndex; // unary operator operand sits here
     int a;
     int b;
 };
@@ -35,7 +35,7 @@ struct DenseNode {
     db_interval_set::IntervalSet output;
     NodeType type;
     unsigned int leftOperandIndex;
-    unsigned int rightOperandIndex;
+    unsigned int rightOperandIndex; // unary operator operand sits here
     int a;
     int b;
 };
@@ -50,7 +50,7 @@ struct DiscreteNode {
     bool output;
     NodeType type;
     unsigned int leftOperandIndex;
-    unsigned int rightOperandIndex;
+    unsigned int rightOperandIndex; // unary operator operand sits here
     int a;
     int b;
 };
