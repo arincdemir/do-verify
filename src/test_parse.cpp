@@ -14,7 +14,8 @@ int main() {
     std::cout << "Parsing: " << formula << std::endl;
 
     try {
-        auto nodes = p.parse(formula);
+        db_interval_set::IntervalSetHolder holder;
+        auto nodes = p.parse_dense(formula, holder);
         std::cout << "Parsed successfully! " << nodes.size() << " nodes created." << std::endl;
 
         // Show proposition map

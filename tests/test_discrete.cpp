@@ -26,7 +26,7 @@ TEST_CASE("Discrete Implementation Tests", "[discrete]") {
         nodes.push_back(do_verify::DiscreteNode{db_interval_set::empty(holder), false, do_verify::NodeType::PROPOSITION,
         0, 0, 0, 0});
         nodes.push_back(do_verify::DiscreteNode{db_interval_set::empty(holder), false, do_verify::NodeType::PROPOSITION,
-        0, 0, 0, 0});
+        1, 0, 0, 0});
         nodes.push_back(do_verify::DiscreteNode{db_interval_set::empty(holder), false, do_verify::NodeType::OR,
         0, 1, 0, 0});
         nodes.push_back(do_verify::DiscreteNode{db_interval_set::empty(holder), false, do_verify::NodeType::EVENTUALLY,
@@ -77,7 +77,7 @@ TEST_CASE("Discrete Implementation Tests", "[discrete]") {
         nodes.push_back(do_verify::DiscreteNode{db_interval_set::empty(holder), false, do_verify::NodeType::PROPOSITION,
         0, 0, 0, 0});
         nodes.push_back(do_verify::DiscreteNode{db_interval_set::empty(holder), false, do_verify::NodeType::PROPOSITION,
-        0, 0, 0, 0});
+        1, 0, 0, 0});
         nodes.push_back(do_verify::DiscreteNode{db_interval_set::empty(holder), false, do_verify::NodeType::SINCE,
         0, 1, 2, 3});
         bool allCorrect = true;
@@ -117,7 +117,7 @@ TEST_CASE("Discrete AbsentAQ", "[discrete][AbsentAQ]") {
     SECTION("AbsentAQ " + benchmarkName) {
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
         DiscreteNode once{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, TIMINGS};
         DiscreteNode notNode{empty(holder), false, NodeType::NOT, 0, 1, 0, 0};
         DiscreteNode since{empty(holder), false, NodeType::SINCE, 3, 0, 0, B_INFINITY};
@@ -173,8 +173,8 @@ TEST_CASE("Discrete AbsentBQR", "[discrete][AbsentBQR]") {
         const int since_b = TIMINGS;
 
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};      
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};      
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};          
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY}; 
         DiscreteNode and1{empty(holder), false, NodeType::AND, 2, 3, 0, 0};           
@@ -232,8 +232,8 @@ TEST_CASE("Discrete AbsentBR", "[discrete][AbsentBR]") {
         const int inner_always_b = TIMINGS;
 
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};      
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};      
         DiscreteNode not_p{empty(holder), false, NodeType::NOT, 0, 1, 0, 0};          
         DiscreteNode inner_always{empty(holder), false, NodeType::ALWAYS, 0, 3, 0, inner_always_b}; 
         DiscreteNode implies_node{empty(holder), false, NodeType::IMPLIES, 2, 4, 0, 0}; 
@@ -287,8 +287,8 @@ TEST_CASE("Discrete AlwaysAQ", "[discrete][AlwaysAQ]") {
         const int once_b = TIMINGS;
 
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};      
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};      
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, once_b}; 
         DiscreteNode since_node{empty(holder), false, NodeType::SINCE, 1, 0, 0, B_INFINITY}; 
         DiscreteNode implies_node{empty(holder), false, NodeType::IMPLIES, 3, 4, 0, 0}; 
@@ -343,8 +343,8 @@ TEST_CASE("Discrete AlwaysBQR", "[discrete][AlwaysBQR]") {
         const int since_b = TIMINGS;
 
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};      
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};      
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};          
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY}; 
         DiscreteNode and1{empty(holder), false, NodeType::AND, 2, 3, 0, 0};           
@@ -402,8 +402,8 @@ TEST_CASE("Discrete AlwaysBR", "[discrete][AlwaysBR]") {
         const int inner_always_b = TIMINGS;
 
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};      
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};      
         DiscreteNode inner_always{empty(holder), false, NodeType::ALWAYS, 0, 1, 0, inner_always_b}; 
         DiscreteNode implies_node{empty(holder), false, NodeType::IMPLIES, 2, 3, 0, 0}; 
         DiscreteNode root_always{empty(holder), false, NodeType::ALWAYS, 0, 4, 0, B_INFINITY}; 
@@ -456,8 +456,8 @@ TEST_CASE("Discrete RecurBQR", "[discrete][RecurBQR]") {
         const int inner_once_b = TIMINGS;
 
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};      
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};      
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};          
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY}; 
         DiscreteNode and1{empty(holder), false, NodeType::AND, 2, 3, 0, 0};           
@@ -565,9 +565,9 @@ TEST_CASE("Discrete RespondBQR", "[discrete][RespondBQR]") {
         const int since_a = TIMINGS;
 
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};      
+        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};      
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 3, 0, 0, 0};      
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};          
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY}; 
         DiscreteNode and_A1{empty(holder), false, NodeType::AND, 3, 4, 0, 0};         
@@ -632,7 +632,7 @@ TEST_CASE("Discrete RespondGLB", "[discrete][RespondGLB]") {
         const int since_a = TIMINGS;
 
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
-        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};      
+        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};      
         DiscreteNode once_p{empty(holder), false, NodeType::EVENTUALLY, 0, 0, once_a, once_b}; 
         DiscreteNode implies_D{empty(holder), false, NodeType::IMPLIES, 1, 2, 0, 0};    
         DiscreteNode not_s{empty(holder), false, NodeType::NOT, 0, 1, 0, 0};          

@@ -18,7 +18,7 @@ db_interval_set::IntervalSet run_evaluation(std::vector<DenseNode> &nodes, db_in
         switch (curNode.type)
         {          
         case NodeType::PROPOSITION:
-            if (propositionInputs[node_index]) curNode.output = db_interval_set::fromInterval(setHolder, {startTime, endTime});
+            if (propositionInputs[curNode.leftOperandIndex]) curNode.output = db_interval_set::fromInterval(setHolder, {startTime, endTime});
             else curNode.output = db_interval_set::empty(setHolder);
             break;
         case NodeType::AND:
@@ -132,14 +132,13 @@ db_interval_set::IntervalSet run_evaluation(std::vector<DenseNode> &nodes, db_in
 
 
 bool run_evaluation(std::vector<DiscreteNode> &nodes, db_interval_set::IntervalSetHolder &setHolder, const int time, const std::vector<bool> &propositionInputs) {
-    //TODO store the nodes size value for later use. We know it wont change
     int nodeCount = nodes.size();
     for (unsigned int node_index = 0; node_index < nodeCount; node_index++) {
         DiscreteNode &curNode = nodes[node_index];
         switch (curNode.type)
         {
         case NodeType::PROPOSITION:
-            curNode.output = propositionInputs[node_index];
+            curNode.output = propositionInputs[curNode.leftOperandIndex];
             break;
         case NodeType::AND:
             curNode.output = nodes[curNode.leftOperandIndex].output && nodes[curNode.rightOperandIndex].output;
@@ -156,16 +155,11 @@ bool run_evaluation(std::vector<DiscreteNode> &nodes, db_interval_set::IntervalS
         case NodeType::EVENTUALLY:
         {
             if (nodes[curNode.rightOperandIndex].output) {
-                // TODO added this more optimized union
                 curNode.state = db_interval_set::unionIntervalFromRight(setHolder, curNode.state, {time + curNode.a, add_with_inf(time + 1, curNode.b)});
             }
-            // TODO added this for more optimized result
             db_interval_set::CheckAndClipResult result = db_interval_set::checkAndClip(setHolder, curNode.state, time);
             curNode.output = result.output;
             curNode.state = result.set;
-            // curNode.output = db_interval_set::includes(curNode.state, time);
-            // curNode.state = db_interval_set::intersectSets(setHolder, curNode.state,
-            //     db_interval_set::fromInterval(setHolder, {time + 1, B_INFINITY}));
             break;
 
         }   

@@ -59,7 +59,7 @@ TEST_CASE("Dense AbsentAQ", "[dense_benchmarks][AbsentAQ]") {
     BENCHMARK_ADVANCED("AbsentAQ " + benchmarkName)(Catch::Benchmark::Chronometer meter) {
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
         DenseNode once{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, TIMINGS};
         DenseNode notNode{empty(holder), empty(holder), NodeType::NOT, 0, 1, 0, 0};
         DenseNode since{empty(holder), empty(holder), NodeType::SINCE, 3, 0, 0, B_INFINITY};
@@ -117,8 +117,8 @@ TEST_CASE("Dense AbsentBQR", "[dense_benchmarks][AbsentBQR]") {
         const int since_b = TIMINGS;
 
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 0
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 1
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 2
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};      // 1
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};      // 2
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};          // 3
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY}; // 4
         DenseNode and1{empty(holder), empty(holder), NodeType::AND, 2, 3, 0, 0};           // 5
@@ -171,8 +171,8 @@ TEST_CASE("Dense AbsentBR", "[dense_benchmarks][AbsentBR]") {
         const int inner_always_b = TIMINGS;
 
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 0
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 1
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 2
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};      // 1
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};      // 2
         DenseNode not_p{empty(holder), empty(holder), NodeType::NOT, 0, 1, 0, 0};          // 3
         DenseNode inner_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 3, 0, inner_always_b}; // 4
         DenseNode implies_node{empty(holder), empty(holder), NodeType::IMPLIES, 2, 4, 0, 0}; // 5
@@ -221,8 +221,8 @@ TEST_CASE("Dense AlwaysAQ", "[dense_benchmarks][AlwaysAQ]") {
         const int once_b = TIMINGS;
 
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 0
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 1
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 2
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};      // 1
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};      // 2
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, once_b}; // 3
         DenseNode since_node{empty(holder), empty(holder), NodeType::SINCE, 1, 0, 0, B_INFINITY}; // 4
         DenseNode implies_node{empty(holder), empty(holder), NodeType::IMPLIES, 3, 4, 0, 0}; // 5
@@ -272,8 +272,8 @@ TEST_CASE("Dense AlwaysBQR", "[dense_benchmarks][AlwaysBQR]") {
         const int since_b = TIMINGS;
 
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 0
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 1
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 2
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};      // 1
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};      // 2
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};          // 3
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY}; // 4
         DenseNode and1{empty(holder), empty(holder), NodeType::AND, 2, 3, 0, 0};           // 5
@@ -326,8 +326,8 @@ TEST_CASE("Dense AlwaysBR", "[dense_benchmarks][AlwaysBR]") {
         const int inner_always_b = TIMINGS;
 
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 0
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 1
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 2
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};      // 1
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};      // 2
         DenseNode inner_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 1, 0, inner_always_b}; // 3
         DenseNode implies_node{empty(holder), empty(holder), NodeType::IMPLIES, 2, 3, 0, 0}; // 4
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 4, 0, B_INFINITY}; // 5
@@ -375,8 +375,8 @@ TEST_CASE("Dense RecurBQR", "[dense_benchmarks][RecurBQR]") {
         const int inner_once_b = TIMINGS;
 
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 0
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 1
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 2
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};      // 1
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};      // 2
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};          // 3
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY}; // 4
         DenseNode and1{empty(holder), empty(holder), NodeType::AND, 2, 3, 0, 0};           // 5
@@ -478,9 +478,9 @@ TEST_CASE("Dense RespondBQR", "[dense_benchmarks][RespondBQR]") {
         const int since_a = TIMINGS;
 
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 0
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 1
-        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 2
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 3
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};      // 1
+        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};      // 2
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 3, 0, 0, 0};      // 3
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};          // 4
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY}; // 5
         DenseNode and_A1{empty(holder), empty(holder), NodeType::AND, 3, 4, 0, 0};         // 6
@@ -541,7 +541,7 @@ TEST_CASE("Dense RespondGLB", "[dense_benchmarks][RespondGLB]") {
         const int since_a = TIMINGS;
 
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 0
-        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};      // 1
+        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};      // 1
         DenseNode once_p{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, once_a, once_b}; // 2
         DenseNode implies_D{empty(holder), empty(holder), NodeType::IMPLIES, 1, 2, 0, 0};    // 3
         DenseNode not_s{empty(holder), empty(holder), NodeType::NOT, 0, 1, 0, 0};          // 4
