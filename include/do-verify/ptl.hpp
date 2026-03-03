@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <any>
 
 #define PEGLIB_USE_STD_ANY 1
@@ -31,6 +32,19 @@ struct ptl_parser : ptl_grammar{
   peg::parser parser;
   std::vector<ParsedNode> result_nodes;
   std::map<std::string, unsigned int> proposition_map;
+  std::unordered_map<NodeKey, int, NodeKeyHash> node_dedup_map;
+
+  int add_or_find_node(const ParsedNode &node) {
+    NodeKey key{node.type, node.leftOperandIndex, node.rightOperandIndex, node.a, node.b};
+    auto it = node_dedup_map.find(key);
+    if (it != node_dedup_map.end()) {
+      return it->second;
+    }
+    result_nodes.push_back(node);
+    int index = static_cast<int>(result_nodes.size() - 1);
+    node_dedup_map[key] = index;
+    return index;
+  }
 
   explicit ptl_parser() {
 
@@ -47,8 +61,7 @@ struct ptl_parser : ptl_grammar{
       node.rightOperandIndex = childIndex;
       node.a = 0;
       node.b = 0;
-      result_nodes.push_back(node);
-      return static_cast<int>(result_nodes.size() - 1);
+      return add_or_find_node(node);
     };
 
     parser["Implicative"] = [&](const peg::SemanticValues &sv) {
@@ -59,8 +72,7 @@ struct ptl_parser : ptl_grammar{
         node.rightOperandIndex = std::any_cast<int>(sv[1]);
         node.a = 0;
         node.b = 0;
-        result_nodes.push_back(node);
-        return static_cast<int>(result_nodes.size() - 1);
+        return add_or_find_node(node);
       } else {
         return std::any_cast<int>(sv[0]);
       }
@@ -77,8 +89,7 @@ struct ptl_parser : ptl_grammar{
           node.rightOperandIndex = right;
           node.a = 0;
           node.b = 0;
-          result_nodes.push_back(node);
-          left = static_cast<int>(result_nodes.size() - 1);
+          left = add_or_find_node(node);
         }
         return left;
       } else {
@@ -97,8 +108,7 @@ struct ptl_parser : ptl_grammar{
           node.rightOperandIndex = right;
           node.a = 0;
           node.b = 0;
-          result_nodes.push_back(node);
-          left = static_cast<int>(result_nodes.size() - 1);
+          left = add_or_find_node(node);
         }
         return left;
       } else {
@@ -114,8 +124,7 @@ struct ptl_parser : ptl_grammar{
       node.rightOperandIndex = childIndex;
       node.a = 0;
       node.b = B_INFINITY;
-      result_nodes.push_back(node);
-      return static_cast<int>(result_nodes.size() - 1);
+      return add_or_find_node(node);
     };
 
     parser["TimedOnceExpr"] = [&](const peg::SemanticValues &sv) {
@@ -127,8 +136,7 @@ struct ptl_parser : ptl_grammar{
       node.rightOperandIndex = childIndex;
       node.a = bound.first;
       node.b = bound.second;
-      result_nodes.push_back(node);
-      return static_cast<int>(result_nodes.size() - 1);
+      return add_or_find_node(node);
     };
 
     parser["HistExpr"] = [&](const peg::SemanticValues &sv) {
@@ -139,8 +147,7 @@ struct ptl_parser : ptl_grammar{
       node.rightOperandIndex = childIndex;
       node.a = 0;
       node.b = B_INFINITY;
-      result_nodes.push_back(node);
-      return static_cast<int>(result_nodes.size() - 1);
+      return add_or_find_node(node);
     };
 
     parser["TimedHistExpr"] = [&](const peg::SemanticValues &sv) {
@@ -152,8 +159,7 @@ struct ptl_parser : ptl_grammar{
       node.rightOperandIndex = childIndex;
       node.a = bound.first;
       node.b = bound.second;
-      result_nodes.push_back(node);
-      return static_cast<int>(result_nodes.size() - 1);
+      return add_or_find_node(node);
     };
 
     parser["SinceExpr"] = [&](const peg::SemanticValues &sv) {
@@ -167,8 +173,7 @@ struct ptl_parser : ptl_grammar{
         node.rightOperandIndex = rightIndex;
         node.a = bound.first;
         node.b = bound.second;
-        result_nodes.push_back(node);
-        return static_cast<int>(result_nodes.size() - 1);
+        return add_or_find_node(node);
       } else if (sv.size() == 2) {
         int leftIndex = std::any_cast<int>(sv[0]);
         int rightIndex = std::any_cast<int>(sv[1]);
@@ -178,8 +183,7 @@ struct ptl_parser : ptl_grammar{
         node.rightOperandIndex = rightIndex;
         node.a = 0;
         node.b = B_INFINITY;
-        result_nodes.push_back(node);
-        return static_cast<int>(result_nodes.size() - 1);
+        return add_or_find_node(node);
       } else {
         return std::any_cast<int>(sv[0]);
       }
@@ -190,13 +194,13 @@ struct ptl_parser : ptl_grammar{
       if (proposition_map.find(name) == proposition_map.end()) {
         ParsedNode node;
         node.type = NodeType::PROPOSITION;
-        node.leftOperandIndex = static_cast<int>(proposition_map.size());  // Use this as the input index for the proposition
+        node.leftOperandIndex = static_cast<unsigned int>(proposition_map.size());
         node.rightOperandIndex = 0;
         node.a = 0;
         node.b = 0;
-        result_nodes.push_back(node);
-        proposition_map[name] = static_cast<unsigned int>(result_nodes.size() - 1);
-        return static_cast<int>(result_nodes.size() - 1);
+        int index = add_or_find_node(node);
+        proposition_map[name] = static_cast<unsigned int>(index);
+        return index;
       }
       else {
         return static_cast<int>(proposition_map[name]);
@@ -229,6 +233,7 @@ struct ptl_parser : ptl_grammar{
   std::vector<ParsedNode> parse(const std::string &pattern) {
     result_nodes.clear();
     proposition_map.clear();
+    node_dedup_map.clear();
     bool ok = parser.parse(pattern.c_str());
     if (!ok) {
       throw std::runtime_error("Failed to parse pattern: " + pattern);
@@ -236,24 +241,45 @@ struct ptl_parser : ptl_grammar{
     return result_nodes;
   }
 
-  std::vector<DiscreteNode> parse_discrete(const std::string &pattern, db_interval_set::IntervalSetHolder &holder) {
-    parse(pattern);
-    std::vector<DiscreteNode> nodes;
-    nodes.reserve(result_nodes.size());
-    for (auto &pn : result_nodes) {
+  void parse_discrete(const std::string &pattern, DiscreteMultiPropertyMonitor &monitor){
+    // Load state from monitor (reuses nodes/propositions from previous parses)
+    result_nodes = std::move(monitor.parsed_nodes);
+    proposition_map = std::move(monitor.proposition_map);
+    node_dedup_map = std::move(monitor.node_dedup_map);
+
+    int prev_size = static_cast<int>(result_nodes.size());
+
+    // Parse without clearing — appends to existing state
+    bool ok = parser.parse(pattern.c_str());
+    if (!ok) {
+      throw std::runtime_error("Failed to parse pattern: " + pattern);
+    }
+
+    // Record root node index for this property
+    monitor.propertyRootNodeIndexes.push_back(static_cast<int>(result_nodes.size() - 1));
+    monitor.propertyCount++;
+
+    // Convert only newly added ParsedNodes to DiscreteNodes
+    for (size_t i = prev_size; i < result_nodes.size(); i++) {
+      auto &pn = result_nodes[i];
       DiscreteNode dn;
       dn.type = pn.type;
       dn.leftOperandIndex = pn.leftOperandIndex;
       dn.rightOperandIndex = pn.rightOperandIndex;
       dn.a = pn.a;
       dn.b = pn.b;
-      dn.state = db_interval_set::empty(holder);
+      dn.state = db_interval_set::empty(monitor.holder);
       dn.output = false;
-      nodes.push_back(dn);
+      monitor.nodes.push_back(dn);
     }
-    return nodes;
+
+    // Save state back to monitor
+    monitor.parsed_nodes = std::move(result_nodes);
+    monitor.proposition_map = std::move(proposition_map);
+    monitor.node_dedup_map = std::move(node_dedup_map);
   }
 
+  /*
   std::vector<DenseNode> parse_dense(const std::string &pattern, db_interval_set::IntervalSetHolder &holder) {
     parse(pattern);
     std::vector<DenseNode> nodes;
@@ -270,6 +296,45 @@ struct ptl_parser : ptl_grammar{
       nodes.push_back(dn);
     }
     return nodes;
+  }
+  */
+
+  void parse_dense(const std::string &pattern, DenseMultiPropertyMonitor &monitor) {
+    // Load state from monitor (reuses nodes/propositions from previous parses)
+    result_nodes = std::move(monitor.parsed_nodes);
+    proposition_map = std::move(monitor.proposition_map);
+    node_dedup_map = std::move(monitor.node_dedup_map);
+
+    int prev_size = static_cast<int>(result_nodes.size());
+
+    // Parse without clearing — appends to existing state
+    bool ok = parser.parse(pattern.c_str());
+    if (!ok) {
+      throw std::runtime_error("Failed to parse pattern: " + pattern);
+    }
+
+    // Record root node index for this property
+    monitor.propertyRootNodeIndexes.push_back(static_cast<int>(result_nodes.size() - 1));
+    monitor.propertyCount++;
+
+    // Convert only newly added ParsedNodes to DenseNodes
+    for (size_t i = prev_size; i < result_nodes.size(); i++) {
+      auto &pn = result_nodes[i];
+      DenseNode dn;
+      dn.type = pn.type;
+      dn.leftOperandIndex = pn.leftOperandIndex;
+      dn.rightOperandIndex = pn.rightOperandIndex;
+      dn.a = pn.a;
+      dn.b = pn.b;
+      dn.state = db_interval_set::empty(monitor.holder);
+      dn.output = db_interval_set::empty(monitor.holder);
+      monitor.nodes.push_back(dn);
+    }
+
+    // Save state back to monitor
+    monitor.parsed_nodes = std::move(result_nodes);
+    monitor.proposition_map = std::move(proposition_map);
+    monitor.node_dedup_map = std::move(node_dedup_map);
   }
 
   const std::map<std::string, unsigned int>& get_proposition_map() const {
