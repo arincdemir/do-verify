@@ -114,11 +114,10 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
     // AbsentAQ: historically((once[:N]{q}) -> ((not{p}) since {q}))
     if (strcmp(arguments.spec, "historically((once[:10]{q}) -> ((not{p}) since {q}))") == 0)
     {
-        // TODO pre-allocated the proposition vector
         std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
         DiscreteNode once{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, 10};
         DiscreteNode notNode{empty(holder), false, NodeType::NOT, 0, 1, 0, 0};
         DiscreteNode since{empty(holder), false, NodeType::SINCE, 3, 0, 0, B_INFINITY};
@@ -141,7 +140,7 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
         DiscreteNode once{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, 100};
         DiscreteNode notNode{empty(holder), false, NodeType::NOT, 0, 1, 0, 0};
         DiscreteNode since{empty(holder), false, NodeType::SINCE, 3, 0, 0, B_INFINITY};
@@ -163,7 +162,7 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
         DiscreteNode once{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, 1000};
         DiscreteNode notNode{empty(holder), false, NodeType::NOT, 0, 1, 0, 0};
         DiscreteNode since{empty(holder), false, NodeType::SINCE, 3, 0, 0, B_INFINITY};
@@ -186,8 +185,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DiscreteNode and1{empty(holder), false, NodeType::AND, 2, 3, 0, 0};
@@ -213,8 +212,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DiscreteNode and1{empty(holder), false, NodeType::AND, 2, 3, 0, 0};
@@ -240,8 +239,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DiscreteNode and1{empty(holder), false, NodeType::AND, 2, 3, 0, 0};
@@ -268,8 +267,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode not_p{empty(holder), false, NodeType::NOT, 0, 1, 0, 0};
         DiscreteNode inner_always{empty(holder), false, NodeType::ALWAYS, 0, 3, 0, 10};
         DiscreteNode implies_node{empty(holder), false, NodeType::IMPLIES, 2, 4, 0, 0};
@@ -291,8 +290,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode not_p{empty(holder), false, NodeType::NOT, 0, 1, 0, 0};
         DiscreteNode inner_always{empty(holder), false, NodeType::ALWAYS, 0, 3, 0, 100};
         DiscreteNode implies_node{empty(holder), false, NodeType::IMPLIES, 2, 4, 0, 0};
@@ -314,8 +313,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode not_p{empty(holder), false, NodeType::NOT, 0, 1, 0, 0};
         DiscreteNode inner_always{empty(holder), false, NodeType::ALWAYS, 0, 3, 0, 1000};
         DiscreteNode implies_node{empty(holder), false, NodeType::IMPLIES, 2, 4, 0, 0};
@@ -338,8 +337,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, 10};
         DiscreteNode since_node{empty(holder), false, NodeType::SINCE, 1, 0, 0, B_INFINITY};
         DiscreteNode implies_node{empty(holder), false, NodeType::IMPLIES, 3, 4, 0, 0};
@@ -361,8 +360,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, 100};
         DiscreteNode since_node{empty(holder), false, NodeType::SINCE, 1, 0, 0, B_INFINITY};
         DiscreteNode implies_node{empty(holder), false, NodeType::IMPLIES, 3, 4, 0, 0};
@@ -384,8 +383,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, 1000};
         DiscreteNode since_node{empty(holder), false, NodeType::SINCE, 1, 0, 0, B_INFINITY};
         DiscreteNode implies_node{empty(holder), false, NodeType::IMPLIES, 3, 4, 0, 0};
@@ -408,8 +407,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DiscreteNode and1{empty(holder), false, NodeType::AND, 2, 3, 0, 0};
@@ -435,8 +434,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DiscreteNode and1{empty(holder), false, NodeType::AND, 2, 3, 0, 0};
@@ -462,8 +461,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DiscreteNode and1{empty(holder), false, NodeType::AND, 2, 3, 0, 0};
@@ -490,8 +489,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode inner_always{empty(holder), false, NodeType::ALWAYS, 0, 1, 0, 10};
         DiscreteNode implies_node{empty(holder), false, NodeType::IMPLIES, 2, 3, 0, 0};
         DiscreteNode root_always{empty(holder), false, NodeType::ALWAYS, 0, 4, 0, B_INFINITY};
@@ -512,8 +511,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode inner_always{empty(holder), false, NodeType::ALWAYS, 0, 1, 0, 100};
         DiscreteNode implies_node{empty(holder), false, NodeType::IMPLIES, 2, 3, 0, 0};
         DiscreteNode root_always{empty(holder), false, NodeType::ALWAYS, 0, 4, 0, B_INFINITY};
@@ -534,8 +533,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode inner_always{empty(holder), false, NodeType::ALWAYS, 0, 1, 0, 1000};
         DiscreteNode implies_node{empty(holder), false, NodeType::IMPLIES, 2, 3, 0, 0};
         DiscreteNode root_always{empty(holder), false, NodeType::ALWAYS, 0, 4, 0, B_INFINITY};
@@ -557,8 +556,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DiscreteNode and1{empty(holder), false, NodeType::AND, 2, 3, 0, 0};
@@ -585,8 +584,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DiscreteNode and1{empty(holder), false, NodeType::AND, 2, 3, 0, 0};
@@ -613,8 +612,8 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DiscreteNode and1{empty(holder), false, NodeType::AND, 2, 3, 0, 0};
@@ -694,9 +693,9 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(4);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 3, 0, 0, 0};
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DiscreteNode and_A1{empty(holder), false, NodeType::AND, 3, 4, 0, 0};
@@ -728,9 +727,9 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(4);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 3, 0, 0, 0};
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DiscreteNode and_A1{empty(holder), false, NodeType::AND, 3, 4, 0, 0};
@@ -762,9 +761,9 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(4);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
+        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 2, 0, 0, 0};
+        DiscreteNode r{empty(holder), false, NodeType::PROPOSITION, 3, 0, 0, 0};
         DiscreteNode not_q{empty(holder), false, NodeType::NOT, 0, 0, 0, 0};
         DiscreteNode once_q{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DiscreteNode and_A1{empty(holder), false, NodeType::AND, 3, 4, 0, 0};
@@ -797,7 +796,7 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
         DiscreteNode once_p{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 3, 10};
         DiscreteNode implies_D{empty(holder), false, NodeType::IMPLIES, 1, 2, 0, 0};
         DiscreteNode not_s{empty(holder), false, NodeType::NOT, 0, 1, 0, 0};
@@ -821,7 +820,7 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
         DiscreteNode once_p{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 30, 100};
         DiscreteNode implies_D{empty(holder), false, NodeType::IMPLIES, 1, 2, 0, 0};
         DiscreteNode not_s{empty(holder), false, NodeType::NOT, 0, 1, 0, 0};
@@ -845,7 +844,7 @@ void discrete_case(arguments arguments, std::vector<binary_row_reader::Timescale
         std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode s{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
         DiscreteNode once_p{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 300, 1000};
         DiscreteNode implies_D{empty(holder), false, NodeType::IMPLIES, 1, 2, 0, 0};
         DiscreteNode not_s{empty(holder), false, NodeType::NOT, 0, 1, 0, 0};
@@ -879,7 +878,7 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
         DenseNode once{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, 10};
         DenseNode notNode{empty(holder), empty(holder), NodeType::NOT, 0, 1, 0, 0};
         DenseNode since{empty(holder), empty(holder), NodeType::SINCE, 3, 0, 0, B_INFINITY};
@@ -901,7 +900,7 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
         DenseNode once{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, 100};
         DenseNode notNode{empty(holder), empty(holder), NodeType::NOT, 0, 1, 0, 0};
         DenseNode since{empty(holder), empty(holder), NodeType::SINCE, 3, 0, 0, B_INFINITY};
@@ -923,7 +922,7 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
         DenseNode once{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, 1000};
         DenseNode notNode{empty(holder), empty(holder), NodeType::NOT, 0, 1, 0, 0};
         DenseNode since{empty(holder), empty(holder), NodeType::SINCE, 3, 0, 0, B_INFINITY};
@@ -946,8 +945,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DenseNode and1{empty(holder), empty(holder), NodeType::AND, 2, 3, 0, 0};
@@ -973,8 +972,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DenseNode and1{empty(holder), empty(holder), NodeType::AND, 2, 3, 0, 0};
@@ -1000,8 +999,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DenseNode and1{empty(holder), empty(holder), NodeType::AND, 2, 3, 0, 0};
@@ -1028,8 +1027,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode not_p{empty(holder), empty(holder), NodeType::NOT, 0, 1, 0, 0};
         DenseNode inner_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 3, 0, 10};
         DenseNode implies_node{empty(holder), empty(holder), NodeType::IMPLIES, 2, 4, 0, 0};
@@ -1051,8 +1050,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode not_p{empty(holder), empty(holder), NodeType::NOT, 0, 1, 0, 0};
         DenseNode inner_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 3, 0, 100};
         DenseNode implies_node{empty(holder), empty(holder), NodeType::IMPLIES, 2, 4, 0, 0};
@@ -1074,8 +1073,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode not_p{empty(holder), empty(holder), NodeType::NOT, 0, 1, 0, 0};
         DenseNode inner_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 3, 0, 1000};
         DenseNode implies_node{empty(holder), empty(holder), NodeType::IMPLIES, 2, 4, 0, 0};
@@ -1098,8 +1097,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, 10};
         DenseNode since_node{empty(holder), empty(holder), NodeType::SINCE, 1, 0, 0, B_INFINITY};
         DenseNode implies_node{empty(holder), empty(holder), NodeType::IMPLIES, 3, 4, 0, 0};
@@ -1121,8 +1120,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, 100};
         DenseNode since_node{empty(holder), empty(holder), NodeType::SINCE, 1, 0, 0, B_INFINITY};
         DenseNode implies_node{empty(holder), empty(holder), NodeType::IMPLIES, 3, 4, 0, 0};
@@ -1144,8 +1143,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, 1000};
         DenseNode since_node{empty(holder), empty(holder), NodeType::SINCE, 1, 0, 0, B_INFINITY};
         DenseNode implies_node{empty(holder), empty(holder), NodeType::IMPLIES, 3, 4, 0, 0};
@@ -1168,8 +1167,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DenseNode and1{empty(holder), empty(holder), NodeType::AND, 2, 3, 0, 0};
@@ -1195,8 +1194,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DenseNode and1{empty(holder), empty(holder), NodeType::AND, 2, 3, 0, 0};
@@ -1222,8 +1221,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DenseNode and1{empty(holder), empty(holder), NodeType::AND, 2, 3, 0, 0};
@@ -1250,8 +1249,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode inner_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 1, 0, 10};
         DenseNode implies_node{empty(holder), empty(holder), NodeType::IMPLIES, 2, 3, 0, 0};
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 4, 0, B_INFINITY};
@@ -1272,8 +1271,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode inner_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 1, 0, 100};
         DenseNode implies_node{empty(holder), empty(holder), NodeType::IMPLIES, 2, 3, 0, 0};
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 4, 0, B_INFINITY};
@@ -1294,8 +1293,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode inner_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 1, 0, 1000};
         DenseNode implies_node{empty(holder), empty(holder), NodeType::IMPLIES, 2, 3, 0, 0};
         DenseNode root_always{empty(holder), empty(holder), NodeType::ALWAYS, 0, 4, 0, B_INFINITY};
@@ -1317,8 +1316,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DenseNode and1{empty(holder), empty(holder), NodeType::AND, 2, 3, 0, 0};
@@ -1345,8 +1344,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DenseNode and1{empty(holder), empty(holder), NodeType::AND, 2, 3, 0, 0};
@@ -1373,8 +1372,8 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(3);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DenseNode and1{empty(holder), empty(holder), NodeType::AND, 2, 3, 0, 0};
@@ -1454,9 +1453,9 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(4);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 3, 0, 0, 0};
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DenseNode and_A1{empty(holder), empty(holder), NodeType::AND, 3, 4, 0, 0};
@@ -1488,9 +1487,9 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(4);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 3, 0, 0, 0};
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DenseNode and_A1{empty(holder), empty(holder), NodeType::AND, 3, 4, 0, 0};
@@ -1522,9 +1521,9 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(4);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode q{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
+        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 2, 0, 0, 0};
+        DenseNode r{empty(holder), empty(holder), NodeType::PROPOSITION, 3, 0, 0, 0};
         DenseNode not_q{empty(holder), empty(holder), NodeType::NOT, 0, 0, 0, 0};
         DenseNode once_q{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 0, B_INFINITY};
         DenseNode and_A1{empty(holder), empty(holder), NodeType::AND, 3, 4, 0, 0};
@@ -1557,7 +1556,7 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
         DenseNode once_p{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 3, 10};
         DenseNode implies_D{empty(holder), empty(holder), NodeType::IMPLIES, 1, 2, 0, 0};
         DenseNode not_s{empty(holder), empty(holder), NodeType::NOT, 0, 1, 0, 0};
@@ -1581,7 +1580,7 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
         DenseNode once_p{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 30, 100};
         DenseNode implies_D{empty(holder), empty(holder), NodeType::IMPLIES, 1, 2, 0, 0};
         DenseNode not_s{empty(holder), empty(holder), NodeType::NOT, 0, 1, 0, 0};
@@ -1605,7 +1604,7 @@ void dense_case(arguments arguments, std::vector<binary_row_reader::TimescalesIn
         std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DenseNode p{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
-        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 0, 0, 0, 0};
+        DenseNode s{empty(holder), empty(holder), NodeType::PROPOSITION, 1, 0, 0, 0};
         DenseNode once_p{empty(holder), empty(holder), NodeType::EVENTUALLY, 0, 0, 300, 1000};
         DenseNode implies_D{empty(holder), empty(holder), NodeType::IMPLIES, 1, 2, 0, 0};
         DenseNode not_s{empty(holder), empty(holder), NodeType::NOT, 0, 1, 0, 0};

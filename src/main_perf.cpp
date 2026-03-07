@@ -21,7 +21,7 @@ int main(int argc, char **argv)
         std::vector<bool> propositionInputs(2);
         IntervalSetHolder holder = newHolder(1000);
         DiscreteNode q{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
-        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 0, 0, 0, 0};
+        DiscreteNode p{empty(holder), false, NodeType::PROPOSITION, 1, 0, 0, 0};
         DiscreteNode once{empty(holder), false, NodeType::EVENTUALLY, 0, 0, 0, 10};
         DiscreteNode notNode{empty(holder), false, NodeType::NOT, 0, 1, 0, 0};
         DiscreteNode since{empty(holder), false, NodeType::SINCE, 3, 0, 0, B_INFINITY};
@@ -29,7 +29,6 @@ int main(int argc, char **argv)
         DiscreteNode always{empty(holder), false, NodeType::ALWAYS, 0, 5, 0, B_INFINITY};
         std::vector<DiscreteNode> nodes{q, p, once, notNode, since, implies, always};
 
-        //TODO removed vector allocations for propositions.
         for (size_t i = 0; i < allInputs.size(); i++)
         {
             propositionInputs[0] = allInputs[i].q;

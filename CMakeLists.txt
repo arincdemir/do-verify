@@ -13,6 +13,15 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+include(FetchContent)
+
+FetchContent_Declare(
+  cpp-peglib
+  GIT_REPOSITORY https://github.com/yhirose/cpp-peglib.git
+  GIT_TAG        v1.9.1
+)
+FetchContent_MakeAvailable(cpp-peglib)
+
 # Define the library with source files
 add_library(do-verify STATIC
     src/interval_set.cpp
@@ -27,14 +36,16 @@ target_include_directories(do-verify PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
+target_link_libraries(do-verify PUBLIC peglib)
+
 # Fetch Catch2 (ONCE for the whole project)
-include(FetchContent)
 FetchContent_Declare(
   Catch2
   GIT_REPOSITORY https://github.com/catchorg/Catch2.git
   GIT_TAG        v3.4.0
 )
 FetchContent_MakeAvailable(Catch2)
+
 
 
 add_executable(do-verify-bin 
@@ -51,6 +62,12 @@ add_executable(do-verify-perf
 
 target_compile_options(do-verify-perf PRIVATE -g -fno-omit-frame-pointer)
 target_link_libraries(do-verify-perf PRIVATE do-verify)
+
+add_executable(test-parse
+    src/test_parse.cpp
+)
+target_compile_options(test-parse PRIVATE -g -O0)
+target_link_libraries(test-parse PRIVATE do-verify)
 
 # Add Subdirectories
 enable_testing()
