@@ -33,6 +33,7 @@ struct ptl_parser : ptl_grammar{
   std::vector<ParsedNode> result_nodes;
   std::map<std::string, unsigned int> proposition_map;
   std::unordered_map<NodeKey, int, NodeKeyHash> node_dedup_map;
+  std::string last_error;
 
   int add_or_find_node(const ParsedNode &node) {
     NodeKey key{node.type, node.leftOperandIndex, node.rightOperandIndex, node.a, node.b};
@@ -49,8 +50,8 @@ struct ptl_parser : ptl_grammar{
   explicit ptl_parser() {
 
     parser = peg::parser(grammar);
-    parser.set_logger([](size_t line, size_t col, const std::string &msg) {
-      std::cerr << line << ":" << col << ": " << msg << std::endl;
+    parser.set_logger([this](size_t line, size_t col, const std::string &msg) {
+      last_error = std::to_string(line) + ":" + std::to_string(col) + ": " + msg;
     });
 
     parser["NotExpr"] = [&](const peg::SemanticValues &sv) {
@@ -234,9 +235,10 @@ struct ptl_parser : ptl_grammar{
     result_nodes.clear();
     proposition_map.clear();
     node_dedup_map.clear();
+    last_error.clear();
     bool ok = parser.parse(pattern.c_str());
     if (!ok) {
-      throw std::runtime_error("Failed to parse pattern: " + pattern);
+      throw std::runtime_error("Failed to parse pattern: " + pattern + (last_error.empty() ? "" : " (" + last_error + ")"));
     }
     return result_nodes;
   }
@@ -250,9 +252,10 @@ struct ptl_parser : ptl_grammar{
     int prev_size = static_cast<int>(result_nodes.size());
 
     // Parse without clearing — appends to existing state
+    last_error.clear();
     bool ok = parser.parse(pattern.c_str());
     if (!ok) {
-      throw std::runtime_error("Failed to parse pattern: " + pattern);
+      throw std::runtime_error("Failed to parse pattern: " + pattern + (last_error.empty() ? "" : " (" + last_error + ")"));
     }
 
     // Record root node index for this property
@@ -308,9 +311,10 @@ struct ptl_parser : ptl_grammar{
     int prev_size = static_cast<int>(result_nodes.size());
 
     // Parse without clearing — appends to existing state
+    last_error.clear();
     bool ok = parser.parse(pattern.c_str());
     if (!ok) {
-      throw std::runtime_error("Failed to parse pattern: " + pattern);
+      throw std::runtime_error("Failed to parse pattern: " + pattern + (last_error.empty() ? "" : " (" + last_error + ")"));
     }
 
     // Record root node index for this property
