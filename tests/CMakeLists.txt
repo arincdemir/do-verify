@@ -78,9 +78,10 @@ add_executable(unit_tests
     test_interval_set.cpp
     test_readers.cpp
     test_parse.cpp
+    test_json_input.cpp
 )
 
-target_link_libraries(unit_tests PRIVATE do-verify Catch2::Catch2WithMain)
+target_link_libraries(unit_tests PRIVATE do-verify Catch2::Catch2WithMain simdjson)
 
 # Copy Data: Root/data -> build/tests/data
 add_custom_command(TARGET unit_tests POST_BUILD

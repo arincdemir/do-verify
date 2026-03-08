@@ -214,11 +214,24 @@ struct DenseMultiPropertyMonitor {
     DenseMultiPropertyMonitor &operator=(const DenseMultiPropertyMonitor &) = delete;
 };
 
+struct TimescalesInput {
+    int startTime;
+    int endTime;
+    std::vector<std::pair<std::string, bool>> propositionInputs;
+};
+
 DenseMultiPropertyMonitor createDenseMultiPropertyMonitor(unsigned int holder_size);
 
 void finalize_monitor(DenseMultiPropertyMonitor &monitor, std::vector<std::string> proposition_names_in_input_order);
+void finalize_monitor(DenseMultiPropertyMonitor &monitor);
 
-std::vector<db_interval_set::IntervalSet> eval_multi_property(DenseMultiPropertyMonitor &monitor, const int startTime, const int endTime, const std::vector<bool> &propositionInputs);
+const std::vector<db_interval_set::IntervalSet> &eval_multi_property(DenseMultiPropertyMonitor &monitor, const int startTime, const int endTime, const std::vector<bool> &propositionInputs);
+
+db_interval_set::IntervalSet run_evaluation(std::vector<DenseNode> &nodes, std::map<std::string, unsigned int> &proposition_map, db_interval_set::IntervalSetHolder &setHolder, const int startTime, const int endTime, const std::vector<std::pair<std::string, bool>> &propositionInputs);
+
+const std::vector<db_interval_set::IntervalSet> &eval_multi_property(DenseMultiPropertyMonitor &monitor, const TimescalesInput &input);
+
+
 
 
 } // namespace do_verify
