@@ -140,4 +140,79 @@ void destroy_feeder(DenseJsonFeeder *feeder) {
     delete feeder;
 }
 
+// --- Discrete feeder ---
+
+struct DiscreteJsonFeeder {
+    DiscreteMultiPropertyMonitor &monitor;
+    simdjson::padded_string json_data;
+    simdjson::ondemand::parser parser;
+    simdjson::ondemand::document_stream docs;
+    simdjson::ondemand::document_stream::iterator it;
+    bool started = false;
+
+    // Reusable buffer
+    std::vector<std::pair<std::string, bool>> namedProps;
+
+    int lastTime = 0;
+
+    DiscreteJsonFeeder(DiscreteMultiPropertyMonitor &mon, simdjson::padded_string &&data)
+        : monitor(mon), json_data(std::move(data)) {}
+};
+
+DiscreteJsonFeeder *create_discrete_json_feeder(DiscreteMultiPropertyMonitor &monitor, const std::string &file_path) {
+    simdjson::padded_string data;
+    if (simdjson::padded_string::load(file_path).get(data)) {
+        std::cerr << "Could not load file: " << file_path << "\n";
+        return nullptr;
+    }
+
+    auto *feeder = new DiscreteJsonFeeder(monitor, std::move(data));
+
+    if (feeder->parser.iterate_many(feeder->json_data).get(feeder->docs)) {
+        std::cerr << "Failed to parse NDJSON: " << file_path << "\n";
+        delete feeder;
+        return nullptr;
+    }
+
+    feeder->it = feeder->docs.begin();
+    feeder->started = true;
+
+    size_t propCount = monitor.proposition_map.size();
+    feeder->namedProps.reserve(propCount);
+
+    return feeder;
+}
+
+bool feed_next(DiscreteJsonFeeder *feeder, std::vector<bool> &output) {
+    if (!feeder || !feeder->started) return false;
+
+    while (feeder->it != feeder->docs.end()) {
+        simdjson::ondemand::document_reference doc = *feeder->it;
+        ++(feeder->it);
+
+        unsigned int time_val = 0;
+
+        if (!parse_row(doc, time_val, feeder->namedProps)) {
+            continue;
+        }
+
+        const auto &result = eval_multi_property(feeder->monitor, static_cast<int>(time_val), feeder->namedProps);
+        output.assign(result.begin(), result.end());
+
+        feeder->lastTime = static_cast<int>(time_val);
+
+        return true;
+    }
+
+    return false;
+}
+
+int feeder_time(const DiscreteJsonFeeder *feeder) {
+    return feeder ? feeder->lastTime : 0;
+}
+
+void destroy_feeder(DiscreteJsonFeeder *feeder) {
+    delete feeder;
+}
+
 } // namespace do_verify

@@ -150,8 +150,12 @@ struct DiscreteMultiPropertyMonitor {
 DiscreteMultiPropertyMonitor createDiscreteMultiPropertyMonitor(unsigned int holder_size);
 
 void finalize_monitor(DiscreteMultiPropertyMonitor &monitor, std::vector<std::string> proposition_names_in_input_order);
+void finalize_monitor(DiscreteMultiPropertyMonitor &monitor);
 
-std::vector<bool> eval_multi_property(DiscreteMultiPropertyMonitor &monitor, const int time, std::vector<bool> inputs);
+const std::vector<bool> &eval_multi_property(DiscreteMultiPropertyMonitor &monitor, const int time, const std::vector<bool> &inputs);
+const std::vector<bool> &eval_multi_property(DiscreteMultiPropertyMonitor &monitor, const int time, const std::vector<std::pair<std::string, bool>> &propositionInputs);
+
+bool run_evaluation(std::vector<DiscreteNode> &nodes, std::map<std::string, unsigned int> &proposition_map, db_interval_set::IntervalSetHolder &setHolder, const int time, const std::vector<std::pair<std::string, bool>> &propositionInputs);
 
 
 struct DenseMultiPropertyMonitor {

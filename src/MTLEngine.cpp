@@ -208,6 +208,78 @@ bool run_evaluation(std::vector<DiscreteNode> &nodes, db_interval_set::IntervalS
     
 }
 
+bool run_evaluation(std::vector<DiscreteNode> &nodes, std::map<std::string, unsigned int> &proposition_map, db_interval_set::IntervalSetHolder &setHolder, const int time, const std::vector<std::pair<std::string, bool>> &propositionInputs) {
+    for (const auto &propInput : propositionInputs) {
+        auto &propNode = nodes[proposition_map[propInput.first]];
+        propNode.output = propInput.second;
+    }
+
+    int nodeCount = nodes.size();
+    for (unsigned int node_index = 0; node_index < nodeCount; node_index++) {
+        DiscreteNode &curNode = nodes[node_index];
+        switch (curNode.type)
+        {
+        case NodeType::PROPOSITION:
+            break;
+        case NodeType::AND:
+            curNode.output = nodes[curNode.leftOperandIndex].output && nodes[curNode.rightOperandIndex].output;
+            break;
+        case NodeType::OR:
+            curNode.output = nodes[curNode.leftOperandIndex].output || nodes[curNode.rightOperandIndex].output;
+            break;
+        case NodeType::NOT:
+            curNode.output = !nodes[curNode.rightOperandIndex].output;
+            break;
+        case NodeType::IMPLIES:
+            curNode.output = !(nodes[curNode.leftOperandIndex].output && !nodes[curNode.rightOperandIndex].output);
+            break;
+        case NodeType::EVENTUALLY:
+        {
+            if (nodes[curNode.rightOperandIndex].output) {
+                curNode.state = db_interval_set::unionIntervalFromRight(setHolder, curNode.state, {time + curNode.a, add_with_inf(time + 1, curNode.b)});
+            }
+            db_interval_set::CheckAndClipResult result = db_interval_set::checkAndClip(setHolder, curNode.state, time);
+            curNode.output = result.output;
+            curNode.state = result.set;
+            break;
+        }
+        case NodeType::ALWAYS:
+        {
+            if (!nodes[curNode.rightOperandIndex].output) {
+                curNode.state = db_interval_set::unionIntervalFromRight(setHolder, curNode.state, {time + curNode.a, add_with_inf(time + 1, curNode.b)});
+            }
+            db_interval_set::CheckAndClipResult result = db_interval_set::checkAndClip(setHolder, curNode.state, time);
+            curNode.output = !result.output;
+            curNode.state = result.set;
+            break;
+        }
+        case NodeType::SINCE:
+        {
+            bool leftOutput = nodes[curNode.leftOperandIndex].output;
+            bool rightOutput = nodes[curNode.rightOperandIndex].output;
+            if (leftOutput && rightOutput) {
+                curNode.state = db_interval_set::unionIntervalFromRight(setHolder, curNode.state, {time + curNode.a, add_with_inf(time + 1, curNode.b)});
+            }
+            else if (!leftOutput && rightOutput) {
+                curNode.state = db_interval_set::fromInterval(setHolder, {time + curNode.a, add_with_inf(time + 1, curNode.b)});
+            }
+            else if (leftOutput && !rightOutput) {
+            }
+            else {
+                curNode.state = db_interval_set::empty(setHolder);
+            }
+            db_interval_set::CheckAndClipResult result = db_interval_set::checkAndClip(setHolder, curNode.state, time);
+            curNode.output = result.output;
+            curNode.state = result.set;
+            break;
+        }
+        case NodeType::TEST:
+            break;
+        }
+    }
+    return nodes[nodeCount - 1].output;
+}
+
 DiscreteMultiPropertyMonitor createDiscreteMultiPropertyMonitor(unsigned int holder_size) {
     DiscreteMultiPropertyMonitor monitor;
     monitor.holder = db_interval_set::newHolder(holder_size);    
@@ -222,14 +294,29 @@ void finalize_monitor(DiscreteMultiPropertyMonitor &monitor, std::vector<std::st
             monitor.nodes[it->second].leftOperandIndex = static_cast<unsigned int>(i);
         }
     }
+    monitor.outputs.reserve(monitor.propertyCount);
     monitor.finalized = true;
 }
 
-std::vector<bool> eval_multi_property(DiscreteMultiPropertyMonitor &monitor, const int time, std::vector<bool> inputs) {
+void finalize_monitor(DiscreteMultiPropertyMonitor &monitor) {
+    monitor.outputs.reserve(monitor.propertyCount);
+    monitor.finalized = true;
+}
+
+const std::vector<bool> &eval_multi_property(DiscreteMultiPropertyMonitor &monitor, const int time, const std::vector<bool> &inputs) {
     db_interval_set::swapBuffers(monitor.holder);
     run_evaluation(monitor.nodes, monitor.holder, time, inputs);
     monitor.outputs.clear();
-    monitor.outputs.reserve(monitor.propertyCount);
+    for (int rootIdx : monitor.propertyRootNodeIndexes) {
+        monitor.outputs.push_back(monitor.nodes[rootIdx].output);
+    }
+    return monitor.outputs;
+}
+
+const std::vector<bool> &eval_multi_property(DiscreteMultiPropertyMonitor &monitor, const int time, const std::vector<std::pair<std::string, bool>> &propositionInputs) {
+    db_interval_set::swapBuffers(monitor.holder);
+    run_evaluation(monitor.nodes, monitor.proposition_map, monitor.holder, time, propositionInputs);
+    monitor.outputs.clear();
     for (int rootIdx : monitor.propertyRootNodeIndexes) {
         monitor.outputs.push_back(monitor.nodes[rootIdx].output);
     }

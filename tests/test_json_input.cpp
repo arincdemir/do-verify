@@ -34,3 +34,31 @@ TEST_CASE("AbsentAQ Json Evaluation", "[json]") {
 
     destroy_feeder(feeder);
 }
+
+
+TEST_CASE("Discrete RespondBQR Json Feeder", "[json]") {
+    std::string formula = "historically(({r} && !{q} && once {q}) -> ( (({s} -> once[3:10] {p}) and not( not({s}) since[10:] {p})) since {q}))";
+
+    DiscreteMultiPropertyMonitor monitor = createDiscreteMultiPropertyMonitor(500);
+
+    ptl_parser monitorParser;
+    monitorParser.parse_discrete(formula, monitor);
+    finalize_monitor(monitor);
+
+    DiscreteJsonFeeder *feeder = create_discrete_json_feeder(monitor,
+        "/home/arincdemir/workspace/do-verify/data/fullsuite/RespondBQR/Discrete/1M/RespondBQR10.jsonl");
+    REQUIRE(feeder != nullptr);
+
+    std::vector<bool> output;
+    bool all_correct = true;
+    while (feed_next(feeder, output)) {
+        REQUIRE((output.size() == 1));
+        if (!output[0]) {
+            all_correct = false;
+            break;
+        }
+    }
+    REQUIRE(all_correct == true);
+
+    destroy_feeder(feeder);
+}

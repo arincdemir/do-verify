@@ -55,7 +55,7 @@ TEST_CASE("Discrete Implementation Tests", "[discrete]") {
 
         bool allCorrect = true;
         for(int time = 0; time < propositionInputs[0].size(); time++) {
-            auto outputs = eval_multi_property(monitor, time, {propositionInputs[0][time]});
+            auto outputs = eval_multi_property(monitor, time, std::vector<bool>{propositionInputs[0][time]});
             allCorrect &= outputs[0] == expectedOutput[time];
             
         }
@@ -428,7 +428,7 @@ TEST_CASE("Discrete RecurGLB", "[discrete][RecurGLB]") {
         int maxHolderUsage = 0;
 
         for (int i = 0; i < allInputs.size(); i++){
-            auto outputs = eval_multi_property(monitor, allInputs[i].time, {allInputs[i].p});
+            auto outputs = eval_multi_property(monitor, allInputs[i].time, std::vector<bool>{allInputs[i].p});
             if (!outputs[0]) {
                 all_correct = false;
                 std::cout << benchmarkName << std::endl;
