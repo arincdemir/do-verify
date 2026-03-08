@@ -208,4 +208,59 @@ bool run_evaluation(std::vector<DiscreteNode> &nodes, db_interval_set::IntervalS
     
 }
 
+DiscreteMultiPropertyMonitor createDiscreteMultiPropertyMonitor(unsigned int holder_size) {
+    DiscreteMultiPropertyMonitor monitor;
+    monitor.holder = db_interval_set::newHolder(holder_size);    
+    return monitor;
+}
+
+void finalize_monitor(DiscreteMultiPropertyMonitor &monitor, std::vector<std::string> proposition_names_in_input_order) {
+    // Remap proposition leftOperandIndex to match the user's input order
+    for (size_t i = 0; i < proposition_names_in_input_order.size(); i++) {
+        auto it = monitor.proposition_map.find(proposition_names_in_input_order[i]);
+        if (it != monitor.proposition_map.end()) {
+            monitor.nodes[it->second].leftOperandIndex = static_cast<unsigned int>(i);
+        }
+    }
+    monitor.finalized = true;
+}
+
+std::vector<bool> eval_multi_property(DiscreteMultiPropertyMonitor &monitor, const int time, std::vector<bool> inputs) {
+    run_evaluation(monitor.nodes, monitor.holder, time, inputs);
+    monitor.outputs.clear();
+    monitor.outputs.reserve(monitor.propertyCount);
+    for (int rootIdx : monitor.propertyRootNodeIndexes) {
+        monitor.outputs.push_back(monitor.nodes[rootIdx].output);
+    }
+    return monitor.outputs;
+}
+
+DenseMultiPropertyMonitor createDenseMultiPropertyMonitor(unsigned int holder_size) {
+    DenseMultiPropertyMonitor monitor;
+    monitor.holder = db_interval_set::newHolder(holder_size);
+    return monitor;
+}
+
+void finalize_monitor(DenseMultiPropertyMonitor &monitor, std::vector<std::string> proposition_names_in_input_order) {
+    // Remap proposition leftOperandIndex to match the user's input order
+    for (size_t i = 0; i < proposition_names_in_input_order.size(); i++) {
+        auto it = monitor.proposition_map.find(proposition_names_in_input_order[i]);
+        if (it != monitor.proposition_map.end()) {
+            monitor.nodes[it->second].leftOperandIndex = static_cast<unsigned int>(i);
+        }
+    }
+    monitor.finalized = true;
+}
+
+std::vector<db_interval_set::IntervalSet> eval_multi_property(DenseMultiPropertyMonitor &monitor, const int startTime, const int endTime, const std::vector<bool> &propositionInputs) {
+    run_evaluation(monitor.nodes, monitor.holder, startTime, endTime, propositionInputs);
+    monitor.outputs.clear();
+    monitor.outputs.reserve(monitor.propertyCount);
+    for (int rootIdx : monitor.propertyRootNodeIndexes) {
+        monitor.outputs.push_back(monitor.nodes[rootIdx].output);
+    }
+    return monitor.outputs;
+}
+
+
 } // namespace do_verify

@@ -57,15 +57,18 @@ int main() {
         db_interval_set::IntervalSetHolder handCraftedHolder = db_interval_set::newHolder(1000);
         auto handCraftedNodes = get_hand_parsed(handCraftedHolder);
 
-        db_interval_set::IntervalSetHolder holder = db_interval_set::newHolder(1000);
-        auto nodes = p.parse_dense(formula, holder);
+        // Use the new DenseMultiPropertyMonitor
+        auto monitor = createDenseMultiPropertyMonitor(1000);
+        p.parse_dense(formula, monitor);
+
+        auto &nodes = monitor.nodes;
         std::cout << "Parsed successfully! " << nodes.size() << " nodes created." << std::endl;
+        std::cout << "Property count: " << monitor.propertyCount << std::endl;
 
         // Show proposition map
-        auto &propMap = p.get_proposition_map();
         std::cout << "\nProposition map:" << std::endl;
-        for (auto &[name, idx] : propMap) {
-            std::cout << "  " << name << " -> input index " << idx << std::endl;
+        for (auto &[name, idx] : monitor.proposition_map) {
+            std::cout << "  " << name << " -> node index " << idx << std::endl;
         }
         std::cout << std::endl;
 
