@@ -4,6 +4,7 @@ find_package(Boost REQUIRED)
 add_executable(bench_runner 
     benchmark_engine.cpp
     benchmark_interval_set.cpp
+    benchmark_multi_property.cpp
 )
 
 # Link the SAME library and SAME Catch2, plus Boost headers
