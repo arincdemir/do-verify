@@ -80,6 +80,11 @@ add_executable(test-parse
 target_compile_options(test-parse PRIVATE -g -O0)
 target_link_libraries(test-parse PRIVATE do-verify)
 
+add_executable(check-grammar
+    src/check_grammar.cpp
+)
+target_link_libraries(check-grammar PRIVATE do-verify)
+
 add_executable(test-json src/json_read_main.cpp)
 target_link_libraries(test-json PRIVATE simdjson)
 

@@ -23,7 +23,7 @@ TEST_CASE("AbsentAQ Json Evaluation", "[json]") {
     finalize_monitor(monitor);
 
     DenseJsonFeeder *feeder = create_dense_json_feeder(monitor,
-        "/home/arincdemir/workspace/do-verify/data/fullsuite/RespondBQR/Dense1/1M/RespondBQR10.jsonl");
+        "/data/fullsuite/RespondBQR/Dense1/1M/RespondBQR10.jsonl");
     REQUIRE(feeder != nullptr);
 
     std::vector<IntervalSet> output;
@@ -46,7 +46,7 @@ TEST_CASE("Discrete RespondBQR Json Feeder", "[json]") {
     finalize_monitor(monitor);
 
     DiscreteJsonFeeder *feeder = create_discrete_json_feeder(monitor,
-        "/home/arincdemir/workspace/do-verify/data/fullsuite/RespondBQR/Discrete/1M/RespondBQR10.jsonl");
+        "data/fullsuite/RespondBQR/Discrete/1M/RespondBQR10.jsonl");
     REQUIRE(feeder != nullptr);
 
     std::vector<bool> output;

@@ -100,8 +100,9 @@ TEST_CASE("Multi-property anti-redundancy benchmark", "[multi_property]") {
                     bench_parser.parse_dense(f, mon);
                     finalize_monitor(mon);
                 }
-                // TODO : CLAUDA FORMULA ÜRETTİR
-                // AGENT MD BAK
+                // TODO : CLAUDE'A FORMULA ÜRETTİR
+
+
                 // Create feeders for all monitors
                 std::vector<DenseJsonFeeder *> feeders;
                 feeders.reserve(bench_monitors.size());
