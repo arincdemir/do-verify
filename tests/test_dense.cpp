@@ -81,7 +81,6 @@ TEST_CASE("Dense Timescales Tests", "[dense][old]") {
                 all_correct = false;
             }
             prevInput = newInput;
-            swapBuffers(monitor.holder);
         }
         else {
             prevInput = json_reader::read_line(line);
@@ -139,7 +138,6 @@ TEST_CASE("Dense AbsentAQ", "[dense][AbsentAQ]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
         }
         std::cout << "Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -193,7 +191,6 @@ TEST_CASE("Dense AbsentBQR", "[dense][AbsentBQR]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
         }
         std::cout << "AbsentBQR Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -237,7 +234,6 @@ TEST_CASE("Dense AbsentBR", "[dense][AbsentBR]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
         }
         std::cout << "AbsentBR Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -282,7 +278,6 @@ TEST_CASE("Dense AlwaysAQ", "[dense][AlwaysAQ]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
         }
         std::cout << "AlwaysAQ Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -329,7 +324,6 @@ TEST_CASE("Dense AlwaysBQR", "[dense][AlwaysBQR]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
         }
         std::cout << "AlwaysBQR Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -373,7 +367,6 @@ TEST_CASE("Dense AlwaysBR", "[dense][AlwaysBR]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
         }
         std::cout << "AlwaysBR Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -415,7 +408,7 @@ TEST_CASE("Dense RecurBQR", "[dense][RecurBQR]") {
                 all_correct = false;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
+            
         }
         std::cout << "RecurBQR Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -457,7 +450,7 @@ TEST_CASE("Dense RecurGLB", "[dense][RecurGLB]") {
                 all_correct = false;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
+            
         }
         std::cout << "RecurGLB Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -506,7 +499,7 @@ TEST_CASE("Dense RespondBQR", "[dense][RespondBQR]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
+            
         }
         std::cout << "RespondBQR Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -554,7 +547,7 @@ TEST_CASE("Dense RespondGLB", "[dense][RespondGLB]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
+            
         }
         std::cout << "RespondGLB Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);

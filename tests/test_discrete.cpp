@@ -35,7 +35,7 @@ TEST_CASE("Discrete Implementation Tests", "[discrete]") {
         for(int time = 0; time < propositionInputs[0].size(); time++) {
             auto outputs = eval_multi_property(monitor, time, {propositionInputs[0][time], propositionInputs[1][time]});
             allCorrect &= outputs[0] == expectedOutput[time];
-            swapBuffers(monitor.holder);
+            
         }
         REQUIRE(allCorrect == true);
         
@@ -55,9 +55,9 @@ TEST_CASE("Discrete Implementation Tests", "[discrete]") {
 
         bool allCorrect = true;
         for(int time = 0; time < propositionInputs[0].size(); time++) {
-            auto outputs = eval_multi_property(monitor, time, {propositionInputs[0][time]});
+            auto outputs = eval_multi_property(monitor, time, std::vector<bool>{propositionInputs[0][time]});
             allCorrect &= outputs[0] == expectedOutput[time];
-            swapBuffers(monitor.holder);
+            
         }
         REQUIRE(allCorrect == true);
     }
@@ -78,7 +78,7 @@ TEST_CASE("Discrete Implementation Tests", "[discrete]") {
         for(int time = 0; time < propositionInputs[0].size(); time++) {
             auto outputs = eval_multi_property(monitor, time, {propositionInputs[0][time], propositionInputs[1][time]});
             allCorrect &= outputs[0] == expectedOutput[time];
-            swapBuffers(monitor.holder);
+            
         }
         REQUIRE(allCorrect == true);
     }
@@ -125,7 +125,7 @@ TEST_CASE("Discrete AbsentAQ", "[discrete][AbsentAQ]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
+            
         }
         std::cout << "Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -174,7 +174,7 @@ TEST_CASE("Discrete AbsentBQR", "[discrete][AbsentBQR]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
+            
         }
         std::cout << "AbsentBQR Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -217,7 +217,7 @@ TEST_CASE("Discrete AbsentBR", "[discrete][AbsentBR]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
+            
         }
         std::cout << "AbsentBR Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -260,7 +260,7 @@ TEST_CASE("Discrete AlwaysAQ", "[discrete][AlwaysAQ]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
+            
         }
         std::cout << "AlwaysAQ Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -306,7 +306,7 @@ TEST_CASE("Discrete AlwaysBQR", "[discrete][AlwaysBQR]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
+            
         }
         std::cout << "AlwaysBQR Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -349,7 +349,7 @@ TEST_CASE("Discrete AlwaysBR", "[discrete][AlwaysBR]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
+            
         }
         std::cout << "AlwaysBR Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -392,7 +392,7 @@ TEST_CASE("Discrete RecurBQR", "[discrete][RecurBQR]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
+            
         }
         std::cout << "RecurBQR Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -428,14 +428,14 @@ TEST_CASE("Discrete RecurGLB", "[discrete][RecurGLB]") {
         int maxHolderUsage = 0;
 
         for (int i = 0; i < allInputs.size(); i++){
-            auto outputs = eval_multi_property(monitor, allInputs[i].time, {allInputs[i].p});
+            auto outputs = eval_multi_property(monitor, allInputs[i].time, std::vector<bool>{allInputs[i].p});
             if (!outputs[0]) {
                 all_correct = false;
                 std::cout << benchmarkName << std::endl;
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
+            
         }
         std::cout << "RecurGLB Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -482,7 +482,7 @@ TEST_CASE("Discrete RespondBQR", "[discrete][RespondBQR]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
+            
         }
         std::cout << "RespondBQR Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);
@@ -529,7 +529,7 @@ TEST_CASE("Discrete RespondGLB", "[discrete][RespondGLB]") {
                 break;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
-            swapBuffers(monitor.holder);
+            
         }
         std::cout << "RespondGLB Usage: " << maxHolderUsage << std::endl;
         REQUIRE(all_correct == true);

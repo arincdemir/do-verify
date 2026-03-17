@@ -13,7 +13,16 @@ endif()
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
 include(FetchContent)
+
+FetchContent_Declare(
+    simdjson
+    GIT_REPOSITORY https://github.com/simdjson/simdjson.git
+    GIT_TAG        v4.3.0 
+)
+
+FetchContent_MakeAvailable(simdjson)
 
 FetchContent_Declare(
   cpp-peglib
@@ -28,6 +37,7 @@ add_library(do-verify STATIC
     src/MTLEngine.cpp
     src/binary_row_reader.cpp
     src/json_reader.cpp
+    src/json_feeder.cpp
 )
 
 # Tell CMake where the headers are
@@ -36,7 +46,7 @@ target_include_directories(do-verify PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(do-verify PUBLIC peglib)
+target_link_libraries(do-verify PUBLIC peglib simdjson)
 
 # Fetch Catch2 (ONCE for the whole project)
 FetchContent_Declare(
@@ -68,6 +78,10 @@ add_executable(test-parse
 )
 target_compile_options(test-parse PRIVATE -g -O0)
 target_link_libraries(test-parse PRIVATE do-verify)
+
+add_executable(test-json src/json_read_main.cpp)
+target_link_libraries(test-json PRIVATE simdjson)
+
 
 # Add Subdirectories
 enable_testing()
