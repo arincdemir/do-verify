@@ -29,6 +29,7 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/yhirose/cpp-peglib.git
   GIT_TAG        v1.9.1
 )
+set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(cpp-peglib)
 
 # Define the library with source files

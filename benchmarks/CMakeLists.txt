@@ -1,5 +1,6 @@
 # Find Boost (ICL is header-only, no components needed)
-find_package(Boost REQUIRED)
+cmake_policy(SET CMP0167 NEW)
+find_package(Boost CONFIG REQUIRED)
 
 add_executable(bench_runner 
     benchmark_engine.cpp
