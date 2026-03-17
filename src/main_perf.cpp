@@ -16,7 +16,7 @@ int main(int argc, char **argv)
     for (int i = 0; i < 100; i++)
     {
         // Adjust buffer size as needed based on the formula and sequence length
-        auto monitor = createDenseMultiPropertyMonitor(10000); 
+        auto monitor = createDenseMultiPropertyMonitor(200); 
         
         ptl_parser parser;
         // Replaced "or" with "||" to match parser syntax correctly based on the documentation

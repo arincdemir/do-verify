@@ -31,7 +31,7 @@ struct ptl_parser : ptl_grammar{
 
   peg::parser parser;
   std::vector<ParsedNode> result_nodes;
-  std::map<std::string, unsigned int> proposition_map;
+  std::map<std::string, unsigned int, std::less<>> proposition_map;
   std::unordered_map<NodeKey, int, NodeKeyHash> node_dedup_map;
   std::string last_error;
 
@@ -341,7 +341,7 @@ struct ptl_parser : ptl_grammar{
     monitor.node_dedup_map = std::move(node_dedup_map);
   }
 
-  const std::map<std::string, unsigned int>& get_proposition_map() const {
+  const std::map<std::string, unsigned int, std::less<>>& get_proposition_map() const {
     return proposition_map;
   }
 
