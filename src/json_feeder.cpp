@@ -21,7 +21,7 @@ struct DenseJsonFeeder {
 
     // Current timestep state
     unsigned int curTime = 0;
-    std::vector<std::pair<std::string, bool>> curPropositions;
+    std::vector<std::pair<std::string_view, bool>> curPropositions;
 
     // Whether we have consumed at least one row (need two rows to produce output)
     bool hasPrev = false;
@@ -62,7 +62,7 @@ DenseJsonFeeder *create_dense_json_feeder(DenseMultiPropertyMonitor &monitor, co
 
 static bool parse_row(simdjson::ondemand::document_reference &doc,
                        unsigned int &time_out,
-                       std::vector<std::pair<std::string, bool>> &props_out) {
+                       std::vector<std::pair<std::string_view, bool>> &props_out) {
     simdjson::ondemand::object obj;
     if (doc.get_object().get(obj)) {
         return false;
@@ -81,7 +81,7 @@ static bool parse_row(simdjson::ondemand::document_reference &doc,
         } else {
             bool val = false;
             if (!field.value().get(val)) {
-                props_out.push_back({std::string(key), val});
+                props_out.push_back({key, val});
             }
         }
     }
@@ -151,7 +151,7 @@ struct DiscreteJsonFeeder {
     bool started = false;
 
     // Reusable buffer
-    std::vector<std::pair<std::string, bool>> namedProps;
+    std::vector<std::pair<std::string_view, bool>> namedProps;
 
     int lastTime = 0;
 

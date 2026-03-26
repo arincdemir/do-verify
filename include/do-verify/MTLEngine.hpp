@@ -92,7 +92,7 @@ struct DiscreteMultiPropertyMonitor {
     db_interval_set::IntervalSetHolder holder{};
     std::vector<DiscreteNode> nodes;
     std::vector<ParsedNode> parsed_nodes;
-    std::map<std::string, unsigned int> proposition_map;
+    std::map<std::string, unsigned int, std::less<>> proposition_map;
     std::unordered_map<NodeKey, int, NodeKeyHash> node_dedup_map;
     unsigned int propertyCount = 0;
     std::vector<int> propertyRootNodeIndexes;
@@ -153,9 +153,9 @@ void finalize_monitor(DiscreteMultiPropertyMonitor &monitor, std::vector<std::st
 void finalize_monitor(DiscreteMultiPropertyMonitor &monitor);
 
 const std::vector<bool> &eval_multi_property(DiscreteMultiPropertyMonitor &monitor, const int time, const std::vector<bool> &inputs);
-const std::vector<bool> &eval_multi_property(DiscreteMultiPropertyMonitor &monitor, const int time, const std::vector<std::pair<std::string, bool>> &propositionInputs);
+const std::vector<bool> &eval_multi_property(DiscreteMultiPropertyMonitor &monitor, const int time, const std::vector<std::pair<std::string_view, bool>> &propositionInputs);
 
-bool run_evaluation(std::vector<DiscreteNode> &nodes, std::map<std::string, unsigned int> &proposition_map, db_interval_set::IntervalSetHolder &setHolder, const int time, const std::vector<std::pair<std::string, bool>> &propositionInputs);
+bool run_evaluation(std::vector<DiscreteNode> &nodes, std::map<std::string, unsigned int, std::less<>> &proposition_map, db_interval_set::IntervalSetHolder &setHolder, const int time, const std::vector<std::pair<std::string_view, bool>> &propositionInputs);
 
 
 struct DenseMultiPropertyMonitor {
@@ -163,7 +163,7 @@ struct DenseMultiPropertyMonitor {
     db_interval_set::IntervalSetHolder holder{};
     std::vector<DenseNode> nodes;
     std::vector<ParsedNode> parsed_nodes;
-    std::map<std::string, unsigned int> proposition_map;
+    std::map<std::string, unsigned int, std::less<>> proposition_map;
     std::unordered_map<NodeKey, int, NodeKeyHash> node_dedup_map;
     unsigned int propertyCount = 0;
     std::vector<int> propertyRootNodeIndexes;
@@ -221,7 +221,7 @@ struct DenseMultiPropertyMonitor {
 struct TimescalesInput {
     int startTime;
     int endTime;
-    std::vector<std::pair<std::string, bool>> propositionInputs;
+    std::vector<std::pair<std::string_view, bool>> propositionInputs;
 };
 
 DenseMultiPropertyMonitor createDenseMultiPropertyMonitor(unsigned int holder_size);
@@ -231,7 +231,7 @@ void finalize_monitor(DenseMultiPropertyMonitor &monitor);
 
 const std::vector<db_interval_set::IntervalSet> &eval_multi_property(DenseMultiPropertyMonitor &monitor, const int startTime, const int endTime, const std::vector<bool> &propositionInputs);
 
-db_interval_set::IntervalSet run_evaluation(std::vector<DenseNode> &nodes, std::map<std::string, unsigned int> &proposition_map, db_interval_set::IntervalSetHolder &setHolder, const int startTime, const int endTime, const std::vector<std::pair<std::string, bool>> &propositionInputs);
+db_interval_set::IntervalSet run_evaluation(std::vector<DenseNode> &nodes, std::map<std::string, unsigned int, std::less<>> &proposition_map, db_interval_set::IntervalSetHolder &setHolder, const int startTime, const int endTime, const std::vector<std::pair<std::string_view, bool>> &propositionInputs);
 
 const std::vector<db_interval_set::IntervalSet> &eval_multi_property(DenseMultiPropertyMonitor &monitor, const TimescalesInput &input);
 
