@@ -29,6 +29,7 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/yhirose/cpp-peglib.git
   GIT_TAG        v1.9.1
 )
+set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(cpp-peglib)
 
 # Define the library with source files
@@ -78,6 +79,11 @@ add_executable(test-parse
 )
 target_compile_options(test-parse PRIVATE -g -O0)
 target_link_libraries(test-parse PRIVATE do-verify)
+
+add_executable(check-grammar
+    src/check_grammar.cpp
+)
+target_link_libraries(check-grammar PRIVATE do-verify)
 
 add_executable(test-json src/json_read_main.cpp)
 target_link_libraries(test-json PRIVATE simdjson)
