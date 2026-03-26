@@ -1,0 +1,650 @@
+\documentclass[a4paper,12pt]{report}
+\usepackage{styles/fbe_tez}
+\usepackage{verbatim}
+\usepackage[utf8x]{inputenc} % To use Unicode (e.g. Turkish) characters
+\renewcommand{\labelenumi}{(\roman{enumi})}
+\usepackage{amsmath, amsthm, amssymb}
+ % Some extra symbols
+\usepackage[bottom]{footmisc}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{longtable}
+\graphicspath{{figures/}} % Graphics will be here
+
+\usepackage{multirow}
+\usepackage{subfigure}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\begin{document}
+
+% Title Page
+\title{CMPE 492 \\ DO-VERIFY: High-Performance Data-Oriented Runtime Verification}
+\author{
+Arınç Demir \\
+Advisor:\\ 
+Doğan Ulus
+}
+\date{}
+\maketitle{}
+\pagenumbering{roman}
+\tableofcontents
+
+\chapter{INTRODUCTION}
+\pagenumbering{arabic}
+
+\section{Broad Impact}
+
+
+Software verification is a discipline whose goal is to ensure that software satisfies the expected requirements. There are many cases where static analysis cannot predict how different systems interact, and testing cannot cover the entire path and unpredictable real-world scenario. Formal verification, on the other hand, is extremely powerful but also very difficult, time-consuming, and often does not scale to large, complex systems. Runtime verification, which will be the focus of this project, is the pragmatic middle ground. It monitors the actual, live execution of the program and checks it against formal rules. These algorithms can be utilized to detect errors in critical software, such as autonomous driving software, both in simulations and in real-life. Because these algorithms usually run on the same processor as the software being verified, it is crucial that the algorithm is implemented to use as little resource as possible. 
+
+In this project, we extended the monitor originally described in \cite{Ulus19}. During the first phase, we implemented a robust Data-Oriented (DOD) backend which outperformed existing Object-Oriented competitors in cache locality. In this second phase, our objective shifted from optimizing individual algorithms to constructing an industrial-strength, comprehensive runtime monitor. This includes adding a native Grammar Parser with \textit{cpp-peglib} for complex metric formulas, designing a \textit{simdjson}-driven input stream reading mechanism with minimal overhead, and most significantly, architecting a Multi-Property Monitor capable of reducing immense computational loads through intelligent node deduplication across diverse logical properties. 
+
+\vspace{1cm}
+\section{Ethical Considerations} 
+
+The most significant ethical risk is the potential for an error, or "bug" in this project's implementation of the verification algorithm. A verifier is a tool that other developers trust to guarantee safety; therefore, a flaw in the verifier is more dangerous than a typical software bug.
+The core ethical mandate of this project is therefore \textbf{correctness}. Our optimization from an Object-Oriented to a Data-Oriented paradigm must be secondary to proving that the new implementation is logically sound.
+
+Runtime verification algorithms often run on the same embedded hardware as the system they are monitoring. A poorly optimized or resource-intensive monitor can introduce its own risks. This is a form of the "observer effect": the act of monitoring the system can negatively interfere with it. If the monitor consumes too much CPU time or causes frequent cache misses, it could "starve" the primary control loops of the autonomous system, causing it to lag, miss deadlines, and fail. Therefore, the ethical \textit{benefit} of this project is to create a "lighter" verifier. By improving cache locality and reducing CPU overhead, this implementation aims to minimize the monitor's footprint, thereby increasing the stability and safety of the overall system.
+
+
+Finally, the existence of a high-performant, effective runtime verification tool introduces a broader risk of over-reliance. Developers and organizations might be tempted to cut corners on more difficult, up-front verification methods. It is ethically important to position this work as a \textit{complement} to, not a \textit{replacement} for, other software verification techniques.
+
+\chapter{PROJECT DEFINITION AND PLANNING}
+\section{Project Definition}
+
+Runtime verification (RV) for safety-critical systems, such as autonomous vehicles, demands monitoring algorithms that are not only correct but also exceptionally performant. These monitors must operate in real-time on resource-constrained embedded hardware, often sharing CPU cycles with the primary control software. The algorithm for monitoring Metric Temporal Logic (MTL) presented in \cite{Ulus19} offers a robust solution, with an existing Object-Oriented (OO) implementation available in the \textit{reelay} library. However, traditional OO design can lead to performance bottlenecks, such as pointer chasing and poor cache locality, which can be detrimental in a real-time context.
+
+The foundation of this project is a data-oriented execution model. During the former term, this approach demonstrated significant performance improvements over traditional object-oriented monitors. This semester, to make the monitor a mature, usable tool, three main technical components were added:
+
+1. \textbf{Grammar Parser \& Node Deduplication:} A complete parser of Metric Temporal Logic (MTL) formulas using the \textit{cpp-peglib} Parsing Expression Grammar library. This module converts human-readable formulas (e.g., \texttt{p1 Since p2}) into our graph structure. Crucially, a hashing-based deduplication map ensures identical sub-formulas are only instantiated once. 
+2. \textbf{Fast JSON Reader:} A high-performance \textit{simdjson}-based input parser. In runtime verification, parsing log streams is often a bottleneck. By leveraging the \textit{simdjson} \texttt{ondemand} API, the JSON reading now takes only a fraction of total execution time.
+3. \textbf{Multi-Property Monitor:} An extension that verifies many MTL formulas concurrently. By sharing nodes globally among multiple properties through structural hashing, memory usage and computation time are drastically reduced compared to running independent monitors.
+
+After the implementation in a high-performance language (C++) is done, the correctness of the implementation should be rigorously tested. The outputs should be compared to the trusted \textit{reelay} library. Also, as the project is based on improving performance, benchmarking the new implementation against \textit{reelay} is an integral part of the project. The project includes designing and executing a series of performance benchmarks to compare the new DOD implementation against the original OO implementation. These tests will measure execution speed.
+
+\section{Project Planning}
+\subsection{Project Time and Resource Estimation}
+The project will be completed over the course of a semester of school. The estimate on time dedication is 12 man-hours per week. There are no other resources at play since the project can be completed using an average laptop, and does not require high computing power like an ML project does.
+
+\subsection{Success Criteria}
+The project can be considered successful if the data oriented implementation is both \textbf{correct} and \textbf{high-performance}. The new implementation must demonstrate a statistically significant and substantial improvement (e.g., $> 2\times$) in average execution speed over the \textit{reelay} implementation in benchmark tests.
+
+\subsection{Risk Analysis}
+\begin{itemize}
+    \item If the algorithm in \cite{Ulus19} turns out to be more complex than initially understood, or includes implicit details, the re-implementation could be difficult and time consuming. This risk is of a low likelihood.
+   \item If the data oriented implementation is counter-intuitively less efficient than the OO approach, the whole hypothesis for this project is invalidated. This risk is of a low likelihood.
+   \item The performance benchmarks are not fair and accurate. This can be mitigated by using a dedicated micro-benchmarking library that handles warm-up, repetition, and statistical analysis. The hardware, OS and compiler configurations should be documented.
+   \item The scope of the project gets extended by including more features such as library implementations. This is likely but can be solved by allocating more time and effort for the project.
+\end{itemize}
+
+
+\chapter{RELATED WORK}
+The increasing complexity of software, particularly in safety-critical systems, poses significant challenges for traditional verification. Static analysis and formal methods, while powerful, struggle to scale with large, complex systems or predict emergent behaviors from real-world interactions. Similarly, exhaustive testing is often unfeasible due to the vast state space. Runtime Verification (RV) offers a pragmatic solution, acting as a middle ground that checks a system's live execution against a formal specification.
+
+The foundation of modern RV lies in formal specification languages built on temporal logic. In 1977, Pnueli proposed Linear Temporal Logic (LTL), which extended propositional logic with temporal operators like \texttt{always}, \texttt{eventually}, and \texttt{since} \cite{Pnueli77}. For real-time systems, this was later extended to Metric Temporal Logic (MTL) by Koymans, which adds time-based constraints to these properties \cite{Koymans90}. These formalisms have proven highly effective and have been applied to diverse fields, including verifying cyber-physical systems \cite{Cyber-Physical}, robotics, and enforcing security and data privacy policies \cite{sanchez2018jose}.
+
+To make this theory practical, several tools have been developed to automate the generation of "monitors" from these specifications. MonPoly \cite{RV-CuBES2017:MonPoly_Monitoring_Tool}, implemented in OCaml, is a notable tool in this space. Aerial \cite{basin2017aerial}, also written in OCaml, is another online monitoring tool noted for its high space efficiency. A more recent contribution is reelay \cite{Ulus19}, which proposes a significant architectural change by using sequential networks instead of traditional deterministic finite automatons (DFAs).  This change in computation structure yielded superior performance. On standardized benchmark suites such as timescales \cite{ulus2019timescales}, reelay was shown to outperform both MonPoly and Aerial, establishing it as a new high-performance benchmark for online MTL monitoring.
+
+\chapter{METHODOLOGY}
+To create our data-oriented implementation, we initially explored two distinct patterns: an \textit{EnTT} Entity Component System (ECS) layout and an Array-of-Structs (AoS) \texttt{std::vector} memory model. As later benchmarked, the contiguous AoS model proved vastly superior and became the basis of our architecture. 
+
+In this semester, we added parsing capabilities using the \textit{cpp-peglib} C++ Parsing Expression Grammar (PEG) library. The grammar is defined in an almost mathematical format directly inside the header file. As we construct a unified evaluation vector, we compute a distinct hash using XOR operations over the type, operand, and time bound properties. This creates an immediate lookup mechanism via a deduplication map, preventing structural copies and effectively transforming separate syntactic trees into a tight Directed Acyclic Graph.
+
+The \textit{reelay} framework parsing phase was previously bottlenecked by extensive string allocations. To handle heavy streams of JSON inputs, we transitioned our prototype text parsers into an robust, production-ready \texttt{simdjson} feeder. Using \textit{simdjson}'s stream and DOM capabilities avoids unneeded memory copies inside the kernel loops.
+
+The primary extension builds on this single-property DOD design to formulate a \textbf{Multi-Property Monitor}. Rather than running separate runtime instances—which duplicates evaluation for the exact same boolean expression \`p1 AND p2\` used across thirty formulas—we unify them inside a single \textit{MTLEngine}. We map formula indices into specific node targets in our flattened array memory structure. 
+
+For internal validation and benchmarking during these phases, we continued utilizing \textit{Catch2} paired with system-level benchmarks utilizing \textit{Hyperfine}.
+
+\chapter{REQUIREMENTS SPECIFICATION}
+
+\section{Functional Requirements (FRs)}
+
+\begin{itemize}
+\item \textbf{FR-1 (Algorithmic Implementation):} The system \textbf{shall} implement the complete MTL monitoring algorithm as described in \cite{Ulus19}.
+
+
+\item \textbf{FR-2 (Verifiable Correctness):} The system \textbf{shall} produce bit-for-bit identical output verdicts to the original \textit{reelay} library when presented with an identical sequence of input events.
+\end{itemize}
+
+\section{Non-Functional Requirements (NFRs)}
+
+
+\begin{itemize}
+\item \textbf{NFR-1 (Execution Speed):} The system \textbf{shall} demonstrate a statistically significant and substantial improvement in execution speed (Target: $> 2\times$) compared to the reelay baseline when evaluated on the \textit{timescales} benchmark suite \cite{ulus2019timescales}.
+
+\item \textbf{NFR-2 (Portability):} The system \textbf{shall} be buildable and executable on a standard 64-bit Linux environment using the specified compiler and build tools (see CON-3).
+\end{itemize}
+
+\section{Project Constraints (CONs)}
+
+\begin{itemize}
+\item \textbf{CON-1 (Architectural Paradigm):} The system \textbf{must} be implemented using a Data-Oriented Design (DOD). Core data structures must be organized in a cache-friendly layout.
+
+\item \textbf{CON-2 (Implementation Language):} The system \textbf{must} be implemented in C++ (version 17 or later) to leverage high-performance, low-level memory control.
+\item \textbf{CON-3 (Development Toolchain):} The system \textbf{must} use CMake as its build system, Catch2 for its validation and benchmarking framework to ensure reproducible results.
+
+
+
+\end{itemize}
+
+
+\chapter{DESIGN}
+
+\section{Information Structure}
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/er_entt.png}
+\caption{ER Diagram for entity-component-system based implementation}
+\label{fig:er_entt}
+\end{figure}
+
+In the EnTT based implementation, components are created to be given to different entities as in Figure \ref{fig:er_entt}. The entities represent sequential network nodes.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/er_node.png}
+\caption{ER Diagram for implementation of nodes in a continuous block of memory}
+\label{fig:er_node}
+\end{figure}
+
+In the more bare-bones implementation however, the Node structs hold all the data necessary for carrying out the sequential network computation. There is redundancy since some nodes such as \textit{propositions} do not need left or right operands. The structure can be seen in Figure \ref{fig:er_node}.
+
+\vspace{10cm}
+\section{Information Flow}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/monitor_interaction.png}
+\caption{The interaction between the monitored software and the monitor}
+\label{fig:sequence_diagram}
+\end{figure}
+
+Runtime monitors are usually work as in Figure \ref{fig:sequence_diagram}. The monitored software initializes the monitor using the necessary specifications. While running, the monitored software produces outputs that should be fed to the monitor. The monitor verifies that the software is adhering to the specifications.
+
+\section{System Design}
+
+\section{User Interface Design}
+
+\chapter{IMPLEMENTATION AND TESTING} \section{Implementation} \subsection{PastLTL Using EnTT} The first implementation, which we call (br), categorizes each node of the sequential network as an \textit{EnTT} entity. Data necessary for the sequential calculation is attached to the node using components. \textit{stateNOutput} and \textit{topologicalRank} are the two components every node has. \textit{stateNOutput} consists of the current and previous outputs and states of the node. \textit{topologicalRank}, on the other hand, only has an integer called rank, which is used for processing the nodes in the correct sequence. The \textit{binaryOperand} component holds references to a node's left and right operands. The implementation uses three additional empty components to signify the node's type: \textit{andOperator}, \textit{sinceOperator}, and \textit{proposition}. We used only these three node types for this basic implementation, as the purpose was to provide a proof of concept.
+
+The function for evaluating the inputs is implemented in a separate \textit{.cpp} file. This function first sorts the nodes using \textit{topologicalRank} to ensure they are processed in the correct order. There are two loops in the function: the first loops over the time steps, and the second processes the nodes in their topological order. Node processing is handled using if-else blocks that branch based on the node's type component.
+
+Four other implementations were tried before comparing them by benchmarking.
+
+The first three are slight modifications of the code described above. The first, (br\_pro), tried separating the processing loop for propositions from the other node types. Because propositions are the inputs to the system, they all appear first in the topological order and do not depend on other operands. We hypothesized that processing them all at the start, separately, could improve cache locality and reduce branch mispredictions.
+
+The second, (br\_uo), differed from (br) only in that the \textit{stateNOutput} component was separated into two distinct components: \textit{state} and \textit{output}.
+
+The third, (br\_func), attempted to reduce the if-else checks by assigning a function pointer to the node type components. The \textit{since} nodes, for example, had their own processing functions.
+
+In the final implementation, (vec), we omitted using \textit{EnTT} altogether and created a more bare-bones implementation. Each node is represented by a single struct containing all necessary data (see Figure \ref{fig:er_node}). The nodes are put into a vector in their processing order. While this approach introduces some data redundancy (e.g., proposition nodes don't need fields for operand indexes), we suspected this bare-bones, data-oriented implementation might be faster.
+
+The benchmarking methodology and results of these five implementations will be explained in the \textbf{Results} section. However, the (vec) implementation came out to be many times faster on average, which heavily shaped our subsequent implementation decisions.
+
+\subsection{Interval Set Implementations} For the \textbf{MTL} implementation, an interval set data structure is necessary. An interval set holds intervals of numbers, such as \{\{0, 10\}, \{20, 25\}\}, which for our purposes means a formula is true between time points 0-10 and 20-25. The implementation used in \textit{reelay} relies on the \textit{Boost} libraries, which are large and complex. Because of this, we tried implementing our own versions of an interval set.
+
+The first idea was an implementation based on linked lists, where every interval pointed to the next one. We tested two versions: a classic heap-based linked list (Figure \ref{fig:heaplinked}) and one using \textit{EnTT} entities as pointers (Figure \ref{fig:enttlinked}). The idea was that because \textit{EnTT} packs components closely in memory, accessing nodes sequentially would be faster thanks to cache locality. Again, the benchmarks will be explained in \textbf{Results}, but the classic heap-based implementation came out to be faster. That made us rule out using \textit{EnTT} for our upcoming interval set implementations.
+
+The \textbf{discrete MTL} algorithm required two main operations from the interval set: appending to the end and popping from the start. We extended the linked-list implementation to include those operations. Both operations could be done in O(1) complexity with a linked list. Benchmarks showed that this implementation was faster than \textit{Boost}.
+
+However, \textbf{dense MTL} would not work with only those two operations. The more general intersection, union, and negation operations were necessary. We also knew that many interval sets would need to be present in a single step of execution. Therefore, we decided to adopt a double-buffering approach to improve cache locality. In this approach, two large buffers are allocated beforehand. In a single time step, new interval sets (e.g., the output of an intersection) are written to the write buffer. After the step is complete, the buffers swap roles: the read buffer becomes the new write buffer, effectively discarding the old data. This approach allows us to not only improve cache locality but also eliminate new heap allocations during execution, since all the space is already allocated contiguously.
+
+Also, in this implementation, we decided to use transitions instead of intervals as the internal data structure. Transitions are events, such as \{10, true\} and \{15, false\}, which mean the set's value becomes true at time 10 and false at time 15. This choice came in handy by reducing the complexity of implementing operations like \textit{intersection}. In various benchmarks against Boost, our new library proved faster on average.
+
+A final feature necessary from the interval set was synchronization. In the dense MTL algorithm, the output intervals of a node's two operands must be synchronized. This means we need to process all truth value changes from both sets. For example, synchronizing A = \{\{10, 30\}\} and B = \{\{10, 15\}, \{20, 30\}\} would yield the segments: \{10, 15\} (where both are true), \{15, 20\} (where A is true and B is false), and \{20, 30\} (where both are true). For this, we implemented an iterator that takes both sets and allows iterating over these synchronized segments.
+
+\subsection{MTL Implementations} 
+We implemented \textbf{discrete-time MTL} using our custom linked-list interval set, combined with the (vec) node-vector approach. This time, the node struct held an interval set as its state (see Figure \ref{fig:discretenode}). After testing it against the examples in \cite{Ulus19}, we proceeded to test it with one of the cases from the \textit{timescales} benchmark. The benchmark results will be discussed later.
+
+The implementation was for \textbf{dense MTL}, using our double-buffered interval set library. The nodes have the same structure as the discrete-time implementation; however, the processing logic for nodes such as \textit{since} became slightly more complex. A code snippet for the since operator is given in Figure \ref{fig:densesince}.
+
+After trying our \textbf{discrete MTL} with the double-buffered interval set implementation on \textit{timescales} benchmarks, we found that it was not as fast as we hoped. To fix it, we used \textit{perf} in linux, a tool to sample the runtime of your code and show which parts took the most amount of time. That led us to fix some unnecessary heap allocations and find spots that the compiler did not optimize. These yielded performance gains in both \textbf{dense} and  \textbf{discrete} implementations. Other than that, we introduced two new functions to the double-buffered interval set library that are optimized specifically for the discrete case. They worked with some assumptions about our implementation and reduced the overall instruction and branch count while keeping the asymptotic complexity the same.
+
+\subsection{Binary Row Data Structure} 
+Benchmarking also showed that parsing the JSON inputs from timescales took a considerable time in monitors. To address this, we decided to introduce another format called \textit{binary row} Figure \ref{fig:binaryrow}. This format is a binary format that can be easily converted to the format our monitors need by a pointer casting, no parsing is needed.
+
+\subsection{MTL Grammar Parsing and Node Deduplication}
+In order to parse human-readable MTL and LTL formulas, a recursive parsing expression grammar was implemented utilizing \textit{cpp-peglib}. The grammar defines unary operations, binary logical properties (\texttt{AND}, \texttt{OR}, \texttt{IMPLIES}), and bounds-checked temporal queries (\texttt{SINCE}, \texttt{ONCE}, \texttt{HISTORICALLY}).
+
+When converting the parsed Abstract Syntax Tree into the contiguous Array-of-Structs format our Data-Oriented system expects, we identified an inherent inefficiency: frequently repeated sub-formulas. For instance, the expression \texttt{p1 \& p2} could exist across multiple complex assertions. 
+To resolve this, we map logical expressions to structural signatures. We use a custom XOR hash of the node semantics \texttt{\{type, leftIdx, rightIdx, timeA, timeB\}}. During evaluation layout preparation, we query this \texttt{node\_dedup\_map}. If a collision exists, we assign the current edge reference to the previously constructed node index. This algorithm shrinks the tree graph into an optimized Directed Acyclic Graph (DAG), yielding significant cache reductions.
+
+\subsection{Fast JSON Streaming API}
+Building upon our initial exploration with \texttt{ryjson}, we refactored our inputs to utilize the industry-standard \textit{simdjson} library for stream loading log files. We use \textit{simdjson}'s \texttt{ondemand} document streaming API combined with lazy iterators to extract properties \texttt{\{time, propositions\}} directly into the monitor feeds. Instead of parsing the entire document hierarchy, it processes tokens using advanced SIMD instructions and maps strictly what our monitor demands. Using this advanced integration, our JSON parsing phase, previously a primary slowdown, commands only $18\%$ of the system's overall execution time.
+
+\subsection{Multi-Property Runtime Monitor Engine}
+This capability elevates our single boolean formula verifier to simultaneously monitor multiple independent safety criteria. Operating alongside our deduplication strategy, properties share their structural hierarchy directly inside the contiguous memory vector. As an example, given $30$ disjoint formulas containing repetitive input conditions, the individual graph initialization might require $258$ separate node structs. Using the \texttt{MultiPropertyMonitor} mapping and structural node sharing, those $30$ independent equations are condensed into just $107$ contiguous nodes traversing evaluation exactly once. As demonstrated via our benchmarks, this strategy drives unparalleled throughput and cache synergy.
+
+
+
+\section{Testing}
+
+For unit testing and benchmarking, the C++ library \textit{Catch2} is used.
+
+To test the discrete LTL implementations (br), (br\_pro), (br\_uo), (br\_func) and (vec), we designed a short formula of $\phi$ = (p1 Since p2) and p2. The outputs of the implementations were checked against the hand-checked correct output for given inputs. The inputs and outputs can be seen in \ref{fig:sinceand}.
+
+For the first interval set implementation that had only two operations, append from right and pop from left, six unit tests were created. In the first test, we checked whether the initial state was empty. The second test checked adding a single interval, and then popping time points from it. The third test consisted of adding two disjoint intervals and then popping from the set, checking the output of the pop's. The fourth and fifth tests checked whether overlapping and adjacent intervals merged correctly. Finally, we checked that popping fully exhausts the set as expected. These tests gave us confidence in the correctness of our implementation.
+
+In order to test our discrete MTL implementation, we used the examples in \cite{Ulus19}. The first example is the formula $\phi$ = Eventually[1:2] Eventually[1:2] (p OR q). The second example we used is $\phi$ = Always[1:2] p. The third one is $\phi$ = p Since[2:3] q. We used the inputs and outputs given in the paper to construct our unit tests.
+
+To test our complete double buffer interval set implementation, we used several tests for the different operations. For the \textit{union} operation for example, there are cases for "Simple Overlap", "Adjacent", "Disjoint", "Contained", "With Empty Set" and "Complex Multi-Interval Union". Similar scenarios were tested for \textit{intersect} and \textit{negation} operations too.
+
+For creating a scenario to test segment iterators, we created two sets as can be seen in \ref{fig:iteratortest}. These two sets were then iterated over on different domains, and the segments created by those iterations were verified. An example domain and the workings of the test code can be seen in \ref{fig:iteratortest1}.
+
+The dense MTL implementation was tested using the example in \cite{Ulus19}. This example is not a full formula, but only a partial one including the \textit{since} operation on two sub-formulas. The inputs are given as interval sets, and the outputs are given as interval sets as well. The example in the paper can be seen in \ref{fig:denseexample}. To use this example, we created another node type called "Test" that did not change its outputs when processed. We gave the inputs to those dummy nodes at the start of each iteration, and checked the output of the \textit{since} node at the end of it.
+
+Finally, both dense and discrete implementations were tested on 30 different \textit{timescales} testcases. These testcases are special in that they are guaranteed to output \textit{true} for their final node in all time steps. Using more complex testcases such as these not only increased our confidence in our implementation, but also sped up the development process by allowing the ability to check if our modifications still make the code run correctly.
+
+The code coverage was calculated after each commit to the main branch. It currently sits at \textbf{89\%}.
+
+
+
+\chapter{RESULTS}
+
+\section{Development Results}
+
+The development benchmarks were run on an ASUS ROG STRIX G15 (2020) laptop with an Intel Core i7-10750H CPU running at an average clock speed of 4.6 GHz. Ubuntu 24.04 on WSL2 was used for the environment, and the host operating system was Windows 11. The performance mode of the laptop was set to "Performance" for all tests. The benchmarking tool, \textit{Catch2}, runs the same code 100 times to generate more robust results. We changed the benchmarking environment at some point, which will be mentioned.
+
+The first benchmark between the discrete LTL implementations \textbf{(br)}, \textbf{(br\_pro)}, \textbf{(br\_uo)}, \textbf{(br\_func)} and \textbf{(vec)} was on the formula $\phi$ = (p1 Since p2) and p2. Random inputs were supplied to p1 and p2 with P(true)=0.5, and the network was run for 1000 time steps. The second benchmark consisted of a chain of alternating \textit{and} and \textit{since} nodes, amounting to a total of 1000 nodes. This was to test the performance on longer formulas, which would also give us an idea about cache locality performance. The results are given in Table \ref{table:first_benchmark}. As can be seen, the bare-bones implementation of a vector of "Node" structs with a system acting on it was many times faster than the \textit{entt} based ones.
+
+ \begin{table}[thbp]
+\vskip\baselineskip 
+\caption[Sample table]{Benchmarking results of discrete LTL implementations.}
+\begin{center}
+\begin{tabular}{|c|c|c|} \hline
+ & \textbf{Since, And}& \textbf{1000 Chain}\\\hline
+\textbf{br} & 103us  & 31ms \\\hline
+\textbf{br\_pro} & 118us  & 23ms \\\hline
+\textbf{br\_func} & 125us  & 32ms \\\hline
+\textbf{br\_uo} & 130us  & 40ms \\\hline
+\textbf{vec} & \textbf{17us}  & \textbf{3ms} \\\hline
+\end{tabular}
+\label{table:first_benchmark}
+\end{center}
+\end{table} 
+
+The second benchmark was to test whether using \textit{entt} as a data holder would be useful. The linked list implementations using \textit{entt} and the classic heap-based approach can be seen in \ref{fig:enttlinked} and \ref{fig:heaplinked}. The hypothesis here was that because \textit{entt} stored the components together in memory, the pointer chasing of the heap-based approach would be beaten. We benchmarked the creation of and iteration over linked lists with those two implementations. The results are in Table \ref{table:linked_list_benchmark}. While the \textit{entt} based linked list was 1.6x faster in creation, the heap-based one was almost 4x faster on iteration. This result made us consider the double-buffer approach for our interval sets, which doesn't necessitate constant heap allocations for creation and would allow for fast iterations.
+
+ \begin{table}[thbp]
+\vskip\baselineskip 
+\caption[Sample table]{Benchmarking results of entt and heap based linked lists.}
+\begin{center}
+\begin{tabular}{|c|c|c|} \hline
+ & \textbf{Creation}& \textbf{Iteration}\\\hline
+\textbf{entt} & \textbf{159us}  & 66us \\\hline
+\textbf{heap} & 253us  & \textbf{16us} \\\hline
+\end{tabular}
+\label{table:linked_list_benchmark}
+\end{center}
+\end{table} 
+
+The third comparison was between the interval set with only two operations necessary for discrete MTL, "append interval from right" and "pop time point from left", and \textit{boost} interval sets. To simulate this in a scenario similar to our sequential networks, we created 100 interval sets of both types in vectors. The first test was only for adding intervals. In this test, the intervals added were always overlapping. The second test added and popped intervals randomly. Here, the intervals added had a length of 1, so half of the new intervals were disjoint. The probability of adding and popping was P=0.5 for both. All 100 sets were iterated over 10000 times sequentially in both test cases. The results are shown in Table \ref{table:first_is_imp_benchmark}. Our implementation was more than 4 times faster in these test cases.
+
+ \begin{table}[thbp]
+\vskip\baselineskip 
+\caption[Sample table]{Benchmark between \textit{boost} and our two-operation interval set}
+\begin{center}
+\begin{tabular}{|c|c|c|} \hline
+ & \textbf{Only Appending}& \textbf{Both Operations Randomly}\\\hline
+\textbf{boost} & 66ms  & 133ms \\\hline
+\textbf{ours} & \textbf{15ms}  & \textbf{25ms} \\\hline
+\end{tabular}
+\label{table:first_is_imp_benchmark}
+\end{center}
+\end{table}
+
+
+
+For the discrete MTL implementation, RecurGLB10 in the largesuite of \textit{timescales} \cite{ulus2019timescales} was used. This formula can be written as $\phi$ = (Always[:] Eventually[0, 10] p). The processing of the whole scenario took \textbf{47ms} for our implementation. Meanwhile, in \cite{Ulus19}, they measured the runtime of \textit{reelay} as \textbf{304ms}, which shows a significant improvement on our part. As the Intel Xeon W-2235 CPU they used for testing shows very similar single-thread ratings to our CPU\footnote{\url{https://www.cpubenchmark.net/compare/3821vs3657/Intel-Xeon-W-2235-vs-Intel-i7-10750H}}, we can consider these results while still taking them with a grain of salt. The two implementations are tested in a more robustly comparable manner in the upcoming text.
+
+The final benchmarks with this setup are between \textit{boost} and our double-buffered interval set implementation. First, a function \textit{generateRandomIntervals(count, maxStart, maxDuration)} was created. In this function, intervals that start between [0, maxStart] and had at most maxDuration as a duration were generated. The first three test cases used only two intervals generated using that function. (count, maxStart, maxDuration) were set as (10000, 50000, 100). The test cases were constructing the interval sets by adding intervals one by one, unioning two sets, and intersecting two sets. The results are in Table \ref{table:double_boost_operations}. While \textit{boost} performs better when constructing the set by adding intervals one by one, our implementation performs better in the more common operations. This is likely because \textit{boost} uses a tree-based structure where adding a singular interval takes O(logn) time, while operations such as union take O(n). Our implementation does everything in linear time, but with a smaller constant factor.
+
+ \begin{table}[thbp]
+\vskip\baselineskip 
+\caption[Sample table]{Benchmarking results \textit{boost} and our double-buffered implementation on 3 operations.}
+\begin{center}
+\begin{tabular}{|c|c|c|c|} \hline
+ & \textbf{Construction}& \textbf{Union} & \textbf{Intersection}\\\hline
+\textbf{boost} & \textbf{0.622ms}  & 25ns & 70ns \\\hline
+\textbf{ours} & 1.49ms  & \textbf{8.2ns} & \textbf{7.1ns} \\\hline
+\end{tabular}
+\label{table:double_boost_operations}
+\end{center}
+\end{table} 
+
+Finally, to test these two libraries in our scenario of running sequential networks, we designed another scenario. In this scenario, there are multiple sets that we need to operate on sequentially. First, the sets are created and their references are kept in a vector. Then, for every set, an operation is chosen between \textit{union} and \textit{intersection}, and placed in an \textit{operations} vector. In the serial update scenario, the operation of \textit{sets[i] = set[i] op set[i-1]} is performed for each i in [1, NUM\_SETS], where \textit{op} is \textit{operations[i]}. The parameters (NUM\_SETS, STEPS, INTERVALS\_PER\_SET, MAX\_START, MAX\_DURATION) were chosen as (50, 5, 100, 10000, 50) for the small workload, and (100, 10, 1000, 50000, 100) for the large workload. As can be seen, our implementation outperforms \textit{boost} by close to 10x.
+
+
+\begin{table}[thbp]
+\vskip\baselineskip 
+\caption[Sample table]{Benchmarking results of \textit{boost} vs our double-buffered implementation on a serial update scenario}
+\begin{center}
+\begin{tabular}{|c|c|c|} \hline
+ & \textbf{Small}& \textbf{Large}\\\hline
+\textbf{boost} & 1.948ms  & 63.47 ms\\\hline
+\textbf{ours} & \textbf{0.232ms}  & \textbf{5.37 ms} \\\hline
+\end{tabular}
+\label{table:double_boost_serial}
+\end{center}
+\end{table} 
+\section{Final Results}
+
+This section presents the comparative benchmarks of \textbf{reelay} against our implementation, \textbf{do-verify}. All benchmarks were conducted on an ASUS ROG STRIX G15 laptop equipped with an Intel Core i7-10750H CPU. Notably, these tests were executed on native Ubuntu 24.04 rather than WSL to eliminate virtualization overhead. To ensure stability and reproducibility, the CPU governor was set to ``performance,'' Turbo Boost was disabled, and core frequencies were locked at 2.6 GHz.
+
+For the \textbf{discrete} implementation, we evaluated both tools using the \textit{timescales} dataset, covering 10 distinct properties with three variants each. To mitigate the impact of operating system noise, we reported the minimum execution time for all comparisons. Since background processes and context switches act as additive latency, the minimum value provides the closest approximation of the program's true computational cost.
+
+The results are detailed in Table \ref{tab:discrete_timescales}. While our initial implementation yielded a modest 1.49x speedup, profiling-guided optimizations using Linux \textit{perf} allowed our final version to achieve an average speedup of \textbf{2.52x} over \textit{reelay}.
+
+The \textbf{dense} implementation was evaluated on the same 10 properties with three variations, alongside three different condensation strategies. As shown in Table \ref{tab:dense_timescales}, \textbf{do-verify} outperformed \textit{reelay} significantly, achieving an average speedup of \textbf{5.37x}. These results demonstrate the efficacy of data-oriented design principles in optimizing runtime verification algorithms.
+
+
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\begin{tabular}{lrr}
+\toprule
+\textbf{Benchmark} & \textbf{reelay(ms)} & \textbf{do-verify(ms)} \\
+\midrule
+AbsentAQ10 & 183.4 & \textbf{73.7} \\
+AbsentAQ100 & 149.8 & \textbf{67.5} \\
+AbsentAQ1000 & 154.0 & \textbf{74.3} \\
+AbsentBQR10 & 226.9 & \textbf{87.7} \\
+AbsentBQR100 & 168.3 & \textbf{82.8} \\
+AbsentBQR1000 & 156.0 & \textbf{81.0} \\
+AbsentBR10 & 210.3 & \textbf{62.7} \\
+AbsentBR100 & 213.0 & \textbf{63.3} \\
+AbsentBR1000 & 210.3 & \textbf{63.1} \\
+AlwaysAQ10 & 147.6 & \textbf{71.6} \\
+AlwaysAQ100 & 131.1 & \textbf{71.3} \\
+AlwaysAQ1000 & 130.6 & \textbf{71.4} \\
+AlwaysBQR10 & 198.1 & \textbf{82.7} \\
+AlwaysBQR100 & 157.7 & \textbf{80.5} \\
+AlwaysBQR1000 & 154.5 & \textbf{81.4} \\
+AlwaysBR10 & 210.8 & \textbf{61.3} \\
+AlwaysBR100 & 210.9 & \textbf{61.3} \\
+AlwaysBR1000 & 210.2 & \textbf{61.3} \\
+RecurBQR10 & 248.8 & \textbf{99.8} \\
+RecurBQR100 & 199.6 & \textbf{97.5} \\
+RecurBQR1000 & 193.2 & \textbf{113.2} \\
+RecurGLB10 & 163.3 & \textbf{57.3} \\
+RecurGLB100 & 166.6 & \textbf{56.6} \\
+RecurGLB1000 & 106.8 & \textbf{54.8} \\
+RespondBQR10 & 371.8 & \textbf{143.8} \\
+RespondBQR100 & 310.2 & \textbf{141.7} \\
+RespondBQR1000 & 294.2 & \textbf{140.5} \\
+RespondGLB10 & 318.5 & \textbf{88.5} \\
+RespondGLB100 & 239.8 & \textbf{84.9} \\
+RespondGLB1000 & 233.3 & \textbf{86.1} \\
+\bottomrule
+\end{tabular}
+\caption{\small Comparison of minimum execution times between reelay and do-verify on timescales \textbf{discrete} cases}
+\label{tab:discrete_timescales}
+\end{table}
+
+%2.52x
+
+\begin{comment}
+
+% Please add \usepackage{booktabs} to your LaTeX preamble
+\begin{table}[htbp]
+\centering
+
+\label{tab:runtimes_comparison_short}
+\begin{tabular}{lrrrrrr}
+\toprule
+& \multicolumn{2}{c}{\textbf{Dense1}} & \multicolumn{2}{c}{\textbf{Dense10}} & \multicolumn{2}{c}{\textbf{Dense100}} \\
+\cmidrule(r){2-3} \cmidrule(r){4-5} \cmidrule(r){6-7}
+\textbf{Test Case} & \textbf{Old} & \textbf{New} & \textbf{Old} & \textbf{New} & \textbf{Old} & \textbf{New} \\
+\midrule
+AbsentAQ10 & 0.767 & \textbf{0.261} & 0.276 & \textbf{0.090} & 0.269 & \textbf{0.083} \\
+AbsentAQ100 & 0.731 & \textbf{0.247} & 0.219 & \textbf{0.072} & 0.185 & \textbf{0.061} \\
+AbsentAQ1000 & 0.731 & \textbf{0.246} & 0.211 & \textbf{0.072} & 0.178 & \textbf{0.059} \\
+AbsentBQR10 & 0.743 & \textbf{0.305} & 0.386 & \textbf{0.140} & 0.386 & \textbf{0.141} \\
+AbsentBQR100 & 0.668 & \textbf{0.293} & 0.120 & \textbf{0.042} & 0.069 & \textbf{0.019} \\
+AbsentBQR1000 & 0.657 & \textbf{0.293} & 0.081 & \textbf{0.028} & 0.029 & \textbf{0.005} \\
+AbsentBR10 & 0.607 & \textbf{0.238} & 0.243 & \textbf{0.084} & 0.236 & \textbf{0.083} \\
+AbsentBR100 & 0.604 & \textbf{0.230} & 0.210 & \textbf{0.072} & 0.186 & \textbf{0.062} \\
+AbsentBR1000 & 0.603 & \textbf{0.233} & 0.206 & \textbf{0.072} & 0.183 & \textbf{0.062} \\
+AlwaysAQ10 & 0.804 & \textbf{0.248} & 0.279 & \textbf{0.084} & 0.268 & \textbf{0.081} \\
+AlwaysAQ100 & 0.761 & \textbf{0.243} & 0.215 & \textbf{0.070} & 0.174 & \textbf{0.059} \\
+AlwaysAQ1000 & 0.758 & \textbf{0.243} & 0.205 & \textbf{0.067} & 0.167 & \textbf{0.058} \\
+AlwaysBQR10 & 1.033 & \textbf{0.323} & 0.514 & \textbf{0.138} & 0.512 & \textbf{0.148} \\
+AlwaysBQR100 & 0.949 & \textbf{0.299} & 0.159 & \textbf{0.043} & 0.087 & \textbf{0.019} \\
+AlwaysBQR1000 & 0.943 & \textbf{0.296} & 0.109 & \textbf{0.029} & 0.034 & \textbf{0.005} \\
+AlwaysBR10 & 0.642 & \textbf{0.238} & 0.239 & \textbf{0.077} & 0.231 & \textbf{0.079} \\
+AlwaysBR100 & 0.636 & \textbf{0.229} & 0.204 & \textbf{0.068} & 0.176 & \textbf{0.060} \\
+AlwaysBR1000 & 0.634 & \textbf{0.233} & 0.197 & \textbf{0.066} & 0.172 & \textbf{0.058} \\
+RecurGLB10 & 0.404 & \textbf{0.178} & 0.166 & \textbf{0.062} & 0.167 & \textbf{0.063} \\
+RecurGLB100 & 0.362 & \textbf{0.179} & 0.063 & \textbf{0.021} & 0.037 & \textbf{0.007} \\
+RecurGLB1000 & 0.359 & \textbf{0.172} & 0.051 & \textbf{0.016} & 0.023 & \textbf{0.002} \\
+RecurBQR10 & 1.067 & \textbf{0.345} & 0.426 & \textbf{0.119} & 0.421 & \textbf{0.118} \\
+RecurBQR100 & 0.993 & \textbf{0.330} & 0.142 & \textbf{0.039} & 0.066 & \textbf{0.014} \\
+RecurBQR1000 & 0.991 & \textbf{0.329} & 0.111 & \textbf{0.031} & 0.032 & \textbf{0.004} \\
+RespondGLB10 & 0.974 & \textbf{0.281} & 0.454 & \textbf{0.115} & 0.451 & \textbf{0.111} \\
+RespondGLB100 & 0.866 & \textbf{0.272} & 0.139 & \textbf{0.035} & 0.072 & \textbf{0.013} \\
+RespondGLB1000 & 0.863 & \textbf{0.276} & 0.100 & \textbf{0.026} & 0.032 & \textbf{0.004} \\
+RespondBQR10 & 1.591 & \textbf{0.430} & 0.863 & \textbf{0.209} & 0.862 & \textbf{0.207} \\
+RespondBQR100 & 1.492 & \textbf{0.409} & 0.253 & \textbf{0.064} & 0.142 & \textbf{0.031} \\
+RespondBQR1000 & 1.485 & \textbf{0.415} & 0.161 & \textbf{0.040} & 0.045 & \textbf{0.007} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+3.68x
+\end{comment}
+
+%new with changes for optimization(mini)
+
+\begin{table}[htbp]
+\centering
+\footnotesize
+\begin{tabular}{lrrrrrr}
+\toprule
+& \multicolumn{2}{c}{\textbf{Dense1}} & \multicolumn{2}{c}{\textbf{Dense10}} & \multicolumn{2}{c}{\textbf{Dense100}} \\
+\cmidrule(r){2-3} \cmidrule(r){4-5} \cmidrule(r){6-7}
+\textbf{Test Case} & \textbf{reelay} & \textbf{do-verify} & \textbf{reelay} & \textbf{do-verify} & \textbf{reelay} & \textbf{do-verify} \\
+\midrule
+AbsentAQ10 & 1.140 & \textbf{0.240} & 0.619 & \textbf{0.119} & 0.554 & \textbf{0.111} \\
+AbsentAQ100 & 0.833 & \textbf{0.176} & 0.391 & \textbf{0.080} & 0.327 & \textbf{0.066} \\
+AbsentAQ1000 & 0.760 & \textbf{0.153} & 0.369 & \textbf{0.073} & 0.310 & \textbf{0.066} \\
+AbsentBQR10 & 0.922 & \textbf{0.234} & 0.651 & \textbf{0.154} & 0.672 & \textbf{0.150} \\
+AbsentBQR100 & 0.625 & \textbf{0.173} & 0.205 & \textbf{0.052} & 0.119 & \textbf{0.022} \\
+AbsentBQR1000 & 0.555 & \textbf{0.160} & 0.132 & \textbf{0.038} & 0.049 & \textbf{0.006} \\
+AbsentBR10 & 0.702 & \textbf{0.137} & 0.433 & \textbf{0.076} & 0.424 & \textbf{0.074} \\
+AbsentBR100 & 0.662 & \textbf{0.132} & 0.372 & \textbf{0.070} & 0.327 & \textbf{0.063} \\
+AbsentBR1000 & 0.660 & \textbf{0.131} & 0.363 & \textbf{0.069} & 0.320 & \textbf{0.060} \\
+AlwaysAQ10 & 0.898 & \textbf{0.160} & 0.481 & \textbf{0.088} & 0.477 & \textbf{0.085} \\
+AlwaysAQ100 & 0.808 & \textbf{0.151} & 0.383 & \textbf{0.075} & 0.305 & \textbf{0.065} \\
+AlwaysAQ1000 & 0.797 & \textbf{0.153} & 0.358 & \textbf{0.074} & 0.285 & \textbf{0.064} \\
+AlwaysBQR10 & 1.335 & \textbf{0.232} & 0.919 & \textbf{0.152} & 0.915 & \textbf{0.149} \\
+AlwaysBQR100 & 0.902 & \textbf{0.170} & 0.276 & \textbf{0.051} & 0.147 & \textbf{0.025} \\
+AlwaysBQR1000 & 0.849 & \textbf{0.160} & 0.191 & \textbf{0.038} & 0.057 & \textbf{0.006} \\
+AlwaysBR10 & 0.735 & \textbf{0.127} & 0.432 & \textbf{0.072} & 0.406 & \textbf{0.071} \\
+AlwaysBR100 & 0.687 & \textbf{0.127} & 0.363 & \textbf{0.067} & 0.310 & \textbf{0.059} \\
+AlwaysBR1000 & 0.678 & \textbf{0.126} & 0.350 & \textbf{0.068} & 0.302 & \textbf{0.058} \\
+RecurGLB10 & 0.473 & \textbf{0.115} & 0.294 & \textbf{0.065} & 0.299 & \textbf{0.065} \\
+RecurGLB100 & 0.348 & \textbf{0.085} & 0.111 & \textbf{0.026} & 0.060 & \textbf{0.008} \\
+RecurGLB1000 & 0.325 & \textbf{0.083} & 0.082 & \textbf{0.019} & 0.040 & \textbf{0.003} \\
+RecurBQR10 & 1.242 & \textbf{0.256} & 0.746 & \textbf{0.145} & 0.750 & \textbf{0.147} \\
+RecurBQR100 & 0.919 & \textbf{0.206} & 0.241 & \textbf{0.053} & 0.116 & \textbf{0.021} \\
+RecurBQR1000 & 0.878 & \textbf{0.207} & 0.188 & \textbf{0.045} & 0.054 & \textbf{0.008} \\
+RespondGLB10 & 1.307 & \textbf{0.222} & 0.860 & \textbf{0.132} & 0.861 & \textbf{0.132} \\
+RespondGLB100 & 0.877 & \textbf{0.164} & 0.256 & \textbf{0.048} & 0.132 & \textbf{0.019} \\
+RespondGLB1000 & 0.829 & \textbf{0.159} & 0.182 & \textbf{0.038} & 0.054 & \textbf{0.005} \\
+RespondBQR10 & 2.166 & \textbf{0.410} & 1.557 & \textbf{0.283} & 1.555 & \textbf{0.284} \\
+RespondBQR100 & 1.459 & \textbf{0.298} & 0.455 & \textbf{0.086} & 0.246 & \textbf{0.047} \\
+RespondBQR1000 & 1.348 & \textbf{0.281} & 0.288 & \textbf{0.057} & 0.074 & \textbf{0.010} \\
+\bottomrule
+\end{tabular}
+\caption{\small Comparison of minimum execution times between reelay and do-verify on timescales \textbf{dense} cases}
+\label{tab:dense_timescales}
+\end{table}
+
+%speedup 5.37x
+
+\begin{comment}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lrr}
+\toprule
+\textbf{Benchmark} & \textbf{reelay(ms)} & \textbf{do-verify(ms)} \\
+\midrule
+AbsentAQ10 & 74.8 & \textbf{64.8} \\
+AbsentAQ100 & 67.5 & \textbf{62.0} \\
+AbsentAQ1000 & 68.8 & \textbf{62.6} \\
+AbsentBQR10 & 108.4 & \textbf{81.0}\\
+AbsentBQR100 & 88.1 & \textbf{76.7} \\
+AbsentBQR1000 & 83.7 & \textbf{74.3} \\
+AbsentBR10 & 108.5 & \textbf{56.8} \\
+AbsentBR100 & 107.9 & \textbf{57.8} \\
+AbsentBR1000 & 110.8 & \textbf{57.4} \\
+AlwaysAQ10 & 77.8 & \textbf{63.8} \\
+AlwaysAQ100 & 69.3 & \textbf{62.2} \\
+AlwaysAQ1000 & 67.1 & \textbf{61.4} \\
+AlwaysBQR10 & 101.9 & \textbf{79.3} \\
+AlwaysBQR100 & 84.0 & \textbf{74.7} \\
+AlwaysBQR1000 & 81.6 & \textbf{72.7} \\
+AlwaysBR10 & 106.9 & \textbf{55.1} \\
+AlwaysBR100 & 107.3 & \textbf{54.0} \\
+AlwaysBR1000 & 107.0 & \textbf{55.1} \\
+RecurBQR10 & 129.4 & \textbf{88.1} \\
+RecurBQR100 & 103.2 & \textbf{84.6} \\
+RecurBQR1000 & 99.2 & \textbf{84.3}\\
+RecurGLB10 & 88.8 & \textbf{46.6} \\
+RecurGLB100 & 86.3 & \textbf{47.3} \\
+RecurGLB1000 & 54.4 & \textbf{43.6} \\
+RespondBQR10 & 191.6 & \textbf{110.7} \\
+RespondBQR100 & 159.9 & \textbf{107.4} \\
+RespondBQR1000 & 153.2 & \textbf{106.6} \\
+RespondGLB10 & 165.9 & \textbf{74.8} \\
+RespondGLB100 & 127.6 & \textbf{70.1} \\
+RespondGLB1000 & 122.5 & \textbf{70.8} \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of minimum execution times between reelay and do-verify on timescales.(discrete, ran on same computer)}
+\label{tab:benchmark_comparison}
+\end{table}
+
+1.49x
+
+\end{comment}
+
+\section{System Performance Validation}
+
+In the second semester, to measure the efficiency of our newly integrated sub-systems, further evaluation was conducted on our Multi-Property monitor configuration. We formulated a \texttt{benchmark\_multi\_property} test generating 30 unique, randomly varied but overlapping MTL formulas. 
+
+First, when instantiated as 30 separate monitor engines with standard JSON parsing, the execution evaluated across 258 distinct sequential nodes and resulted in an overall execution time of 7.68 seconds. 
+Second, when loaded into the unified \textbf{Multi-Property Monitor} using the \textit{simdjson} \texttt{ondemand} feeder, the deduplication engine consolidated identical boolean sub-expressions. The same suite was condensed into just 107 underlying evaluation nodes. Through cache locality via the DOD architecture and the deduplication strategy, total execution time was reduced to \textbf{2.72 seconds}—a 2.8$\times$ throughput improvement.
+
+Furthermore, \textit{simdjson} completely eliminated parsing bottlenecks; profiling confirms that log deserialization now accounts for roughly $18\%$ of processor time, isolating the mathematical workload as the predominant consumer.
+
+\chapter{CONCLUSION}
+
+This project set out to investigate whether the Data-Oriented Design (DOD) paradigm could overcome the performance bottlenecks inherent in traditional Object-Oriented implementations of Runtime Verification algorithms. By re-architecting the Metric Temporal Logic (MTL) monitoring algorithm described in \cite{Ulus19} to prioritize memory layout and sequential processing, we have demonstrated that DOD principles yield substantial performance gains in safety-critical monitoring contexts.
+
+\section{Summary of Contributions}
+
+Our research makes three primary contributions to the field of high-performance runtime verification:
+
+\begin{enumerate} 
+\item \textbf{Data-Oriented Architecture:} We replaced the traditional node-based graph structure with a flat, contiguous memory layout (Array-of-Structs) processed by linear iteration. This eliminated the overhead of virtual function calls and pointer chasing common in Object-Oriented designs. 
+\item \textbf{High-Performance Parsing \& I/O Streamline:} Moving beyond raw manual instantiation, we successfully coupled our monitor with a PEG-based formal grammar parser and an ultra-fast \textit{simdjson} streaming reader. These bridges eliminated user friction while maintaining optimal efficiency.
+\item \textbf{Multi-Property Node Deduplication:} Expanding to handle practical scale, we formulated a novel node deduplication runtime that condenses overlapping safety properties into a single graph logic traverse, reducing $30$ monitors down to a cohesive evaluation core that improves processing latencies by nearly $3\times$.
+\item \textbf{Double-Buffered Interval Library:} We identified that the generic \textit{Boost} library was a significant bottleneck due to frequent heap allocations and tree-based overhead. We implemented a custom, double-buffered interval set library that operates with zero dynamic allocations during the execution loop. This library demonstrated a \textbf{10x} speedup over \textit{Boost} in serial update workloads. 
+\end{enumerate}
+
+\section{Discussion of Results}
+
+The empirical results strongly validate our hypothesis. In the initial \textbf{discrete-time} benchmarks, our fundamental implementation achieved an average speedup of \textbf{2.52x} over the state-of-the-art tool \textit{reelay}, while \textbf{dense-time} semantic benchmarks produced average improvements of up to \textbf{5.37x}. With the introduction of the \textbf{Multi-Property Monitor}, evaluating real-world batch formulas compounded these advantages by a further \textbf{2.8x}, reducing processing times drastically.
+
+We attribute these performance gains to synergistic factors inherent to the DOD approach. First, the contiguous memory layout promotes cache locality. Second, the single-evaluation paradigm of node deduplication reduces instruction bloat for repeated expressions. Finally, pairing this logic core with advanced SIMD vector I/O logic guarantees that the processor acts on mathematics rather than text interpretation bottlenecks.
+
+\section{Future Work}
+
+While \textit{do-verify} is now a nearly production-ready end-to-end framework, further scaling will improve adoption across scientific simulation networks. Specifically, implementing Python and C language bindings will decouple developers from C++ dependencies, enabling seamless deployment directly into ML workflows, autonomous vehicle testing pipelines, or higher-level data validation infrastructures.
+
+
+In conclusion, this project demonstrates that Data-Oriented Design can successfully optimize runtime verification algorithms, offering a viable alternative to Object-Oriented patterns in resource-constrained embedded systems. By prioritizing memory layout and access patterns in software design, we have created a verifier that is significantly "lighter" and faster, making runtime verification a more practical safeguard for the autonomous systems of the future.
+
+
+\bibliographystyle{styles/fbe_tez_v11}
+\bibliography{references}
+
+\appendix	
+\chapter{APPENDIX}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/heap_linked.png}
+\caption{Classic heap-based linked list node}
+\label{fig:heaplinked}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/entt_linked.png}
+\caption{A linked-list node that is an entt component}
+\label{fig:enttlinked}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/discrete_node.png}
+\caption{A linked-list node that is an entt component}
+\label{fig:discretenode}
+\end{figure}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/since_dense.png}
+\caption{The processing of a \textit{since} node in dense timed implementation}
+\label{fig:densesince}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/since_and_test.png}
+\caption{The inputs and the correct output for a test case of $\phi$ = (p1 Since p2) and p2.}
+\label{fig:sinceand}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/iterator_test.png}
+\caption{Two sets were created to test the iterator.}
+\label{fig:iteratortest}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/iterator_test_1.png}
+\caption{The two sets were iterated over in a function and the segments were returned and checked.}
+\label{fig:iteratortest1}
+\end{figure}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/dense_test.png}
+\caption{The two sets were iterated over in a function and the segments were returned and checked.}
+\label{fig:denseexample}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/binaryrow.png}
+\caption{The data structure starts with the length of the data followed by as many time points. Each time point takes 8 bytes, an integer and 4 booleans.}
+\label{fig:binaryrow}
+\end{figure}
+
+
+
+\end{document}

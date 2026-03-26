@@ -208,6 +208,17 @@ bool run_evaluation(std::vector<DiscreteNode> &nodes, db_interval_set::IntervalS
     
 }
 
+// TODO
+// feature list çıkar (double buffer)
+// testlere bak
+// feature list: binary executable mi / library mi
+// timescales birleştirme
+// random propertyler / doğru olmasına gerek yok
+// bir de timecales gibi doğru olan multi-property
+// text filedan propertyleri okusun binary
+// hyperfine kullan
+// 
+
 bool run_evaluation(std::vector<DiscreteNode> &nodes, std::map<std::string, unsigned int, std::less<>> &proposition_map, db_interval_set::IntervalSetHolder &setHolder, const int time, const std::vector<std::pair<std::string_view, bool>> &propositionInputs) {
     for (const auto &propInput : propositionInputs) {
         auto &propNode = nodes[proposition_map.find(propInput.first)->second];
