@@ -85,6 +85,11 @@ add_executable(check-grammar
 )
 target_link_libraries(check-grammar PRIVATE do-verify)
 
+add_executable(count-nodes
+    src/count_nodes.cpp
+)
+target_link_libraries(count-nodes PRIVATE do-verify)
+
 add_executable(test-json src/json_read_main.cpp)
 target_link_libraries(test-json PRIVATE simdjson)
 
