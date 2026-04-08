@@ -24,9 +24,17 @@ static bool trees_equal(const std::vector<DenseNode>& a, int rootA,
     if (na.type == NodeType::NOT || na.type == NodeType::EVENTUALLY || na.type == NodeType::ALWAYS)
         return trees_equal(a, na.rightOperandIndex, b, nb.rightOperandIndex);
 
-    // Binary operators (AND, OR, IMPLIES, SINCE): both children must match
-    return trees_equal(a, na.leftOperandIndex, b, nb.leftOperandIndex)
-        && trees_equal(a, na.rightOperandIndex, b, nb.rightOperandIndex);
+    // Binary operators (IMPLIES, SINCE): both children must match
+    if (na.type == NodeType::IMPLIES || na.type == NodeType::SINCE) {
+        return trees_equal(a, na.leftOperandIndex, b, nb.leftOperandIndex)
+            && trees_equal(a, na.rightOperandIndex, b, nb.rightOperandIndex);
+    }
+    // Commutative Binary operators (AND, OR): both children must match, but order can change.
+    return (trees_equal(a, na.leftOperandIndex, b, nb.leftOperandIndex)
+        && trees_equal(a, na.rightOperandIndex, b, nb.rightOperandIndex))
+        ||
+        (trees_equal(a, na.leftOperandIndex, b, nb.rightOperandIndex)
+        && trees_equal(a, na.rightOperandIndex, b, nb.leftOperandIndex));
 }
 
 

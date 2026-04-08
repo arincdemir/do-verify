@@ -35,7 +35,12 @@ struct ptl_parser : ptl_grammar{
   std::unordered_map<NodeKey, int, NodeKeyHash> node_dedup_map;
   std::string last_error;
 
-  int add_or_find_node(const ParsedNode &node) {
+  int add_or_find_node(ParsedNode node) {
+    if (node.type == NodeType::AND || node.type == NodeType::OR) {
+      if (node.leftOperandIndex > node.rightOperandIndex) {
+        std::swap(node.leftOperandIndex, node.rightOperandIndex);
+      }
+    }
     NodeKey key{node.type, node.leftOperandIndex, node.rightOperandIndex, node.a, node.b};
     auto it = node_dedup_map.find(key);
     if (it != node_dedup_map.end()) {
