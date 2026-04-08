@@ -126,7 +126,7 @@ void dense_case(const arguments &args)
         exit(1);
     }
 
-    DenseMultiPropertyMonitor monitor = createDenseMultiPropertyMonitor(3000);
+    DenseMultiPropertyMonitor monitor = createDenseMultiPropertyMonitor(8);
     ptl_parser parser;
 
     for (const auto &f : formulas)
@@ -179,7 +179,7 @@ void discrete_case(const arguments &args)
         exit(1);
     }
 
-    DiscreteMultiPropertyMonitor monitor = createDiscreteMultiPropertyMonitor(3000);
+    DiscreteMultiPropertyMonitor monitor = createDiscreteMultiPropertyMonitor(8);
     ptl_parser parser;
 
     for (const auto &f : formulas)

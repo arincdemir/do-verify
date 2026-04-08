@@ -27,7 +27,7 @@ TEST_CASE("Discrete Implementation Tests", "[discrete]") {
         std::vector<bool> expectedOutput = {false, false, true, true, true, false};
 
         ptl_parser parser;
-        auto monitor = createDiscreteMultiPropertyMonitor(1000);
+        auto monitor = createDiscreteMultiPropertyMonitor(8);;
         parser.parse_discrete("once[1:2](once[1:2]({p} || {q}))", monitor);
         finalize_monitor(monitor, {"p", "q"});
 
@@ -49,7 +49,7 @@ TEST_CASE("Discrete Implementation Tests", "[discrete]") {
         std::vector<bool> expectedOutput = {true, false, false, false, true, true};
 
         ptl_parser parser;
-        auto monitor = createDiscreteMultiPropertyMonitor(1000);
+        auto monitor = createDiscreteMultiPropertyMonitor(8);;
         parser.parse_discrete("H[1:2]{p}", monitor);
         finalize_monitor(monitor, {"p"});
 
@@ -70,7 +70,7 @@ TEST_CASE("Discrete Implementation Tests", "[discrete]") {
         std::vector<bool> expectedOutput = {false, false, false, true, true, false};
 
         ptl_parser parser;
-        auto monitor = createDiscreteMultiPropertyMonitor(1000);
+        auto monitor = createDiscreteMultiPropertyMonitor(8);;
         parser.parse_discrete("{p} S[2:3] {q}", monitor);
         finalize_monitor(monitor, {"p", "q"});
 
@@ -109,7 +109,7 @@ TEST_CASE("Discrete AbsentAQ", "[discrete][AbsentAQ]") {
 
     SECTION("AbsentAQ " + benchmarkName) {
         ptl_parser parser;
-        auto monitor = createDiscreteMultiPropertyMonitor(1000);
+        auto monitor = createDiscreteMultiPropertyMonitor(8);;
         parser.parse_discrete("historically((once[:" + std::to_string(TIMINGS) + "]{q}) -> ((not{p}) since {q}))", monitor);
         finalize_monitor(monitor, {"q", "p"});
 
@@ -156,7 +156,7 @@ TEST_CASE("Discrete AbsentBQR", "[discrete][AbsentBQR]") {
         const int since_b = TIMINGS;
 
         ptl_parser parser;
-        auto monitor = createDiscreteMultiPropertyMonitor(1000);
+        auto monitor = createDiscreteMultiPropertyMonitor(8);;
         parser.parse_discrete("historically(({r} && !{q} && once{q}) -> ((not{p}) since[" + std::to_string(since_a) + ":" + std::to_string(since_b) + "] {q}))", monitor);
         finalize_monitor(monitor, {"q", "p", "r"});
 
@@ -199,7 +199,7 @@ TEST_CASE("Discrete AbsentBR", "[discrete][AbsentBR]") {
 
     SECTION("AbsentBR " + benchmarkName) {
         ptl_parser parser;
-        auto monitor = createDiscreteMultiPropertyMonitor(1000);
+        auto monitor = createDiscreteMultiPropertyMonitor(8);;
         parser.parse_discrete("historically({r} -> (historically[:" + std::to_string(TIMINGS) + "](not{p})))", monitor);
         finalize_monitor(monitor, {"q", "p", "r"});
 
@@ -242,7 +242,7 @@ TEST_CASE("Discrete AlwaysAQ", "[discrete][AlwaysAQ]") {
 
     SECTION("AlwaysAQ " + benchmarkName) {
         ptl_parser parser;
-        auto monitor = createDiscreteMultiPropertyMonitor(1000);
+        auto monitor = createDiscreteMultiPropertyMonitor(8);;
         parser.parse_discrete("historically((once[:" + std::to_string(TIMINGS) + "]{q}) -> ({p} since {q}))", monitor);
         finalize_monitor(monitor, {"q", "p", "r"});
 
@@ -288,7 +288,7 @@ TEST_CASE("Discrete AlwaysBQR", "[discrete][AlwaysBQR]") {
         const int since_b = TIMINGS;
 
         ptl_parser parser;
-        auto monitor = createDiscreteMultiPropertyMonitor(1000);
+        auto monitor = createDiscreteMultiPropertyMonitor(8);;
         parser.parse_discrete("historically(({r} && !{q} && once{q}) -> ({p} since[" + std::to_string(since_a) + ":" + std::to_string(since_b) + "] {q}))", monitor);
         finalize_monitor(monitor, {"q", "p", "r"});
 
@@ -331,7 +331,7 @@ TEST_CASE("Discrete AlwaysBR", "[discrete][AlwaysBR]") {
 
     SECTION("AlwaysBR " + benchmarkName) {
         ptl_parser parser;
-        auto monitor = createDiscreteMultiPropertyMonitor(1000);
+        auto monitor = createDiscreteMultiPropertyMonitor(8);;
         parser.parse_discrete("historically({r} -> (historically[:" + std::to_string(TIMINGS) + "]{p}))", monitor);
         finalize_monitor(monitor, {"q", "p", "r"});
 
@@ -374,7 +374,7 @@ TEST_CASE("Discrete RecurBQR", "[discrete][RecurBQR]") {
 
     SECTION("RecurBQR " + benchmarkName) {
         ptl_parser parser;
-        auto monitor = createDiscreteMultiPropertyMonitor(1000);
+        auto monitor = createDiscreteMultiPropertyMonitor(8);;
         parser.parse_discrete("historically(({r} && !{q} && once{q}) -> ((once[:" + std::to_string(TIMINGS) + "]({p} or {q})) since {q}))", monitor);
         finalize_monitor(monitor, {"q", "p", "r"});
 
@@ -417,7 +417,7 @@ TEST_CASE("Discrete RecurGLB", "[discrete][RecurGLB]") {
 
     SECTION("RecurGLB " + benchmarkName) {
         ptl_parser parser;
-        auto monitor = createDiscreteMultiPropertyMonitor(1000);
+        auto monitor = createDiscreteMultiPropertyMonitor(8);;
         parser.parse_discrete("historically(once[:" + std::to_string(TIMINGS) + "]{p})", monitor);
         finalize_monitor(monitor, {"p"});
 
@@ -464,7 +464,7 @@ TEST_CASE("Discrete RespondBQR", "[discrete][RespondBQR]") {
         const int since_a = TIMINGS;
 
         ptl_parser parser;
-        auto monitor = createDiscreteMultiPropertyMonitor(1000);
+        auto monitor = createDiscreteMultiPropertyMonitor(8);;
         parser.parse_discrete("historically(({r} && !{q} && once{q}) -> ( (({s} -> once[" + std::to_string(once_a) + ":" + std::to_string(once_b) + "]{p}) and not((not {s}) since[" + std::to_string(since_a) + ":] {p})) since {q}))", monitor);
         finalize_monitor(monitor, {"q", "p", "s", "r"});
 
@@ -511,7 +511,7 @@ TEST_CASE("Discrete RespondGLB", "[discrete][RespondGLB]") {
         const int since_a = TIMINGS;
 
         ptl_parser parser;
-        auto monitor = createDiscreteMultiPropertyMonitor(1000);
+        auto monitor = createDiscreteMultiPropertyMonitor(8);;
         parser.parse_discrete("historically(({s} -> once[" + std::to_string(once_a) + ":" + std::to_string(once_b) + "]{p}) and not((not {s}) since[" + std::to_string(since_a) + ":] {p}))", monitor);
         finalize_monitor(monitor, {"p", "s"});
 

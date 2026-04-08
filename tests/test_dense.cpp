@@ -64,7 +64,7 @@ TEST_CASE("Dense Timescales Tests", "[dense][old]") {
     using namespace do_verify;
 
     ptl_parser parser;
-    auto monitor = createDenseMultiPropertyMonitor(1000);
+    auto monitor = createDenseMultiPropertyMonitor(8);
     parser.parse_dense("historically(once[:10]{p})", monitor);
     finalize_monitor(monitor, {"p"});
 
@@ -122,7 +122,7 @@ TEST_CASE("Dense AbsentAQ", "[dense][AbsentAQ]") {
 
     SECTION("AbsentAQ " + benchmarkName) {
         ptl_parser parser;
-        auto monitor = createDenseMultiPropertyMonitor(1000);
+        auto monitor = createDenseMultiPropertyMonitor(8);
         parser.parse_dense("historically((once[:" + std::to_string(TIMINGS) + "]{q}) -> ((not{p}) since {q}))", monitor);
         finalize_monitor(monitor, {"q", "p"});
 
@@ -167,7 +167,7 @@ TEST_CASE("Dense AbsentBQR", "[dense][AbsentBQR]") {
         const int since_b = TIMINGS;
 
         ptl_parser parser;
-        auto monitor = createDenseMultiPropertyMonitor(1000);    
+        auto monitor = createDenseMultiPropertyMonitor(8);    
         parser.parse_dense("historically(({r} && !{q} && once{q}) -> ((not{p}) since[" + std::to_string(since_a) + ":" + std::to_string(since_b) + "] {q}))", monitor);
         finalize_monitor(monitor, {"q", "p", "r"});  // TODO jsondan çek mapte tut eşle
 
@@ -215,7 +215,7 @@ TEST_CASE("Dense AbsentBR", "[dense][AbsentBR]") {
 
     SECTION("AbsentBR " + benchmarkName) {
         ptl_parser parser;
-        auto monitor = createDenseMultiPropertyMonitor(1000);
+        auto monitor = createDenseMultiPropertyMonitor(8);
         parser.parse_dense("historically({r} -> (historically[:" + std::to_string(TIMINGS) + "](not{p})))", monitor);
         finalize_monitor(monitor, {"q", "p", "r"});
 
@@ -259,7 +259,7 @@ TEST_CASE("Dense AlwaysAQ", "[dense][AlwaysAQ]") {
 
     SECTION("AlwaysAQ " + benchmarkName) {
         ptl_parser parser;
-        auto monitor = createDenseMultiPropertyMonitor(1000);
+        auto monitor = createDenseMultiPropertyMonitor(8);
         parser.parse_dense("historically((once[:" + std::to_string(TIMINGS) + "]{q}) -> ({p} since {q}))", monitor);
         finalize_monitor(monitor, {"q", "p", "r"});
 
@@ -305,7 +305,7 @@ TEST_CASE("Dense AlwaysBQR", "[dense][AlwaysBQR]") {
         const int since_b = TIMINGS;
 
         ptl_parser parser;
-        auto monitor = createDenseMultiPropertyMonitor(1000);
+        auto monitor = createDenseMultiPropertyMonitor(8);
         parser.parse_dense("historically(({r} && !{q} && once{q}) -> ({p} since[" + std::to_string(since_a) + ":" + std::to_string(since_b) + "] {q}))", monitor);
         finalize_monitor(monitor, {"q", "p", "r"});
 
@@ -348,7 +348,7 @@ TEST_CASE("Dense AlwaysBR", "[dense][AlwaysBR]") {
 
     SECTION("AlwaysBR " + benchmarkName) {
         ptl_parser parser;
-        auto monitor = createDenseMultiPropertyMonitor(1000);
+        auto monitor = createDenseMultiPropertyMonitor(8);
         parser.parse_dense("historically({r} -> (historically[:" + std::to_string(TIMINGS) + "]{p}))", monitor);
         finalize_monitor(monitor, {"q", "p", "r"});
 
@@ -391,7 +391,7 @@ TEST_CASE("Dense RecurBQR", "[dense][RecurBQR]") {
 
     SECTION("RecurBQR " + benchmarkName) {
         ptl_parser parser;
-        auto monitor = createDenseMultiPropertyMonitor(1000);
+        auto monitor = createDenseMultiPropertyMonitor(8);
         parser.parse_dense("historically(({r} && !{q} && once{q}) -> ((once[:" + std::to_string(TIMINGS) + "]({p} or {q})) since {q}))", monitor);
         finalize_monitor(monitor, {"q", "p", "r"});
 
@@ -433,7 +433,7 @@ TEST_CASE("Dense RecurGLB", "[dense][RecurGLB]") {
 
     SECTION("RecurGLB " + benchmarkName) {
         ptl_parser parser;
-        auto monitor = createDenseMultiPropertyMonitor(1000);
+        auto monitor = createDenseMultiPropertyMonitor(8);
         parser.parse_dense("historically(once[:" + std::to_string(TIMINGS) + "]{p})", monitor);
         finalize_monitor(monitor, {"p"});
 
@@ -480,7 +480,7 @@ TEST_CASE("Dense RespondBQR", "[dense][RespondBQR]") {
         const int since_a = TIMINGS;
 
         ptl_parser parser;
-        auto monitor = createDenseMultiPropertyMonitor(1000);
+        auto monitor = createDenseMultiPropertyMonitor(8);
         parser.parse_dense("historically(({r} && !{q} && once{q}) -> ( (({s} -> once[" + std::to_string(once_a) + ":" + std::to_string(once_b) + "]{p}) and not((not {s}) since[" + std::to_string(since_a) + ":] {p})) since {q}))", monitor);
         finalize_monitor(monitor, {"q", "p", "s", "r"});
 
@@ -528,7 +528,7 @@ TEST_CASE("Dense RespondGLB", "[dense][RespondGLB]") {
         const int since_a = TIMINGS;
 
         ptl_parser parser;
-        auto monitor = createDenseMultiPropertyMonitor(1000);
+        auto monitor = createDenseMultiPropertyMonitor(8);
         parser.parse_dense("historically(({s} -> once[" + std::to_string(once_a) + ":" + std::to_string(once_b) + "]{p}) and not((not {s}) since[" + std::to_string(since_a) + ":] {p}))", monitor);
         finalize_monitor(monitor, {"p", "s"});
 
