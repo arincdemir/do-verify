@@ -97,4 +97,5 @@ target_link_libraries(test-json PRIVATE simdjson)
 # Add Subdirectories
 enable_testing()
 add_subdirectory(tests)
-add_subdirectory(benchmarks)
+# TODO add benchmarks again after fixing the interval set
+#add_subdirectory(benchmarks)

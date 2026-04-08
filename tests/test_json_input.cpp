@@ -29,7 +29,7 @@ TEST_CASE("AbsentAQ Json Evaluation", "[json]") {
     std::vector<IntervalSet> output;
     while (feed_next(feeder, output)) {
         REQUIRE((output.size() == 1));
-        REQUIRE((toVectorIntervals(output[0]) == std::vector<Interval>{{feeder_start_time(feeder), feeder_end_time(feeder)}}));
+        REQUIRE((toVectorIntervals(monitor.holder, output[0]) == std::vector<Interval>{{feeder_start_time(feeder), feeder_end_time(feeder)}}));
     }
 
     destroy_feeder(feeder);

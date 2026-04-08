@@ -27,21 +27,21 @@ TEST_CASE("Dense Implementation tests", "[dense]") {
     nodes.push_back(since);
 
     auto out = run_evaluation(nodes, holder, 0, 30, {true, true});
-    auto converted = toVectorIntervals(out);
+    auto converted = toVectorIntervals(holder, out);
     REQUIRE(converted == std::vector<Interval>{{25, 30}});
     swapBuffers(holder);
 
     nodes[0].output = createSetFromIntervals(holder, {{30,35},{39,47}});
     nodes[1].output = createSetFromIntervals(holder, {{38,39}});
     out = run_evaluation(nodes, holder, 30, 47, {true, true});
-    converted = toVectorIntervals(out);
+    converted = toVectorIntervals(holder, out);
     REQUIRE(converted == std::vector<Interval>{{30, 32}});
     swapBuffers(holder);
 
     nodes[0].output = createSetFromIntervals(holder, {{47,49},{63,75}});
     nodes[1].output = createSetFromIntervals(holder, {{70,75}});
     out = run_evaluation(nodes, holder, 47, 75, {true, true});
-    converted = toVectorIntervals(out);
+    converted = toVectorIntervals(holder, out);
     REQUIRE(converted == std::vector<Interval>{});
 
     swapBuffers(holder);
@@ -49,7 +49,7 @@ TEST_CASE("Dense Implementation tests", "[dense]") {
     nodes[0].output = createSetFromIntervals(holder, {{75,99}});
     nodes[1].output = createSetFromIntervals(holder, {{75,89}});
     out = run_evaluation(nodes, holder, 75, 99, {true, true});
-    converted = toVectorIntervals(out);
+    converted = toVectorIntervals(holder, out);
     REQUIRE(converted == std::vector<Interval>{{88, 99}});
 
     swapBuffers(holder);
@@ -77,7 +77,7 @@ TEST_CASE("Dense Timescales Tests", "[dense][old]") {
         if (step != 0) {
             auto newInput = json_reader::read_line(line);
             auto outputs = eval_multi_property(monitor, prevInput.time, newInput.time, prevInput.propositions);
-            if (toVectorIntervals(outputs[0]) != std::vector<Interval>{{prevInput.time, newInput.time}}) {
+            if (toVectorIntervals(monitor.holder ,outputs[0]) != std::vector<Interval>{{prevInput.time, newInput.time}}) {
                 all_correct = false;
             }
             prevInput = newInput;
@@ -132,7 +132,7 @@ TEST_CASE("Dense AbsentAQ", "[dense][AbsentAQ]") {
         int maxHolderUsage = 0;
         for (int i = 1; i < allInputs.size(); i++){
             auto outputs = eval_multi_property(monitor, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p});
-            if (toVectorIntervals(outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
+            if (toVectorIntervals(monitor.holder, outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
                 all_correct = false;
                 std::cout << benchmarkName << std::endl;
                 break;
@@ -185,7 +185,7 @@ TEST_CASE("Dense AbsentBQR", "[dense][AbsentBQR]") {
             // fluent style api araştır
             auto outputs = eval_multi_property(monitor, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
             
-            if (toVectorIntervals(outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
+            if (toVectorIntervals(monitor.holder, outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
                 all_correct = false;
                 std::cout << benchmarkName << std::endl;
                 break;
@@ -228,7 +228,7 @@ TEST_CASE("Dense AbsentBR", "[dense][AbsentBR]") {
         for (int i = 1; i < allInputs.size(); i++){
             auto outputs = eval_multi_property(monitor, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
             
-            if (toVectorIntervals(outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
+            if (toVectorIntervals(monitor.holder, outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
                 all_correct = false;
                 std::cout << benchmarkName << std::endl;
                 break;
@@ -272,7 +272,7 @@ TEST_CASE("Dense AlwaysAQ", "[dense][AlwaysAQ]") {
         for (int i = 1; i < allInputs.size(); i++){
             auto outputs = eval_multi_property(monitor, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
             
-            if (toVectorIntervals(outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
+            if (toVectorIntervals(monitor.holder, outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
                 all_correct = false;
                 std::cout << benchmarkName << std::endl;
                 break;
@@ -318,7 +318,7 @@ TEST_CASE("Dense AlwaysBQR", "[dense][AlwaysBQR]") {
         for (int i = 1; i < allInputs.size(); i++){
             auto outputs = eval_multi_property(monitor, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
             
-            if (toVectorIntervals(outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
+            if (toVectorIntervals(monitor.holder, outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
                 all_correct = false;
                 std::cout << benchmarkName << std::endl;
                 break;
@@ -361,7 +361,7 @@ TEST_CASE("Dense AlwaysBR", "[dense][AlwaysBR]") {
         for (int i = 1; i < allInputs.size(); i++){
             auto outputs = eval_multi_property(monitor, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
             
-            if (toVectorIntervals(outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
+            if (toVectorIntervals(monitor.holder, outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
                 all_correct = false;
                 std::cout << benchmarkName << std::endl;
                 break;
@@ -404,7 +404,7 @@ TEST_CASE("Dense RecurBQR", "[dense][RecurBQR]") {
         for (int i = 1; i < allInputs.size(); i++){
             auto outputs = eval_multi_property(monitor, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
             
-            if (toVectorIntervals(outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
+            if (toVectorIntervals(monitor.holder, outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
                 all_correct = false;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
@@ -446,7 +446,7 @@ TEST_CASE("Dense RecurGLB", "[dense][RecurGLB]") {
         for (int i = 1; i < allInputs.size(); i++){
             auto outputs = eval_multi_property(monitor, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].p});
             
-            if (toVectorIntervals(outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
+            if (toVectorIntervals(monitor.holder, outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
                 all_correct = false;
             }
             maxHolderUsage = std::max(maxHolderUsage, monitor.holder.writeIndex);
@@ -493,7 +493,7 @@ TEST_CASE("Dense RespondBQR", "[dense][RespondBQR]") {
         for (int i = 1; i < allInputs.size(); i++){
             auto outputs = eval_multi_property(monitor, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].s, allInputs[i - 1].r});
             
-            if (toVectorIntervals(outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
+            if (toVectorIntervals(monitor.holder, outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
                 all_correct = false;
                 std::cout << benchmarkName << std::endl;
                 break;
@@ -541,7 +541,7 @@ TEST_CASE("Dense RespondGLB", "[dense][RespondGLB]") {
         for (int i = 1; i < allInputs.size(); i++){
             auto outputs = eval_multi_property(monitor, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].p, allInputs[i - 1].s});
             
-            if (toVectorIntervals(outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
+            if (toVectorIntervals(monitor.holder, outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
                 all_correct = false;
                 std::cout << benchmarkName << std::endl;
                 break;

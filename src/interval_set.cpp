@@ -387,7 +387,7 @@ bool getNextSegment(SegmentIterator& it) {
 
 /**
  * @brief Checks if 'time' is in the set AND returns a new set clipped to [time + 1, INF).
- * Optimized replacement for: includes(holder, t) + intersect(fromInterval(t+1, INF)).
+ * Optimized replacement for: includes(t) + intersect(fromInterval(t+1, INF)).
  * * PRECONDITION: The input set must not contain any transitions before 'time'.
  * (i.e., holder.buffers[set.bufferIndex][set.startIndex].time >= time).
  */
