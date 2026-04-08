@@ -18,22 +18,22 @@ TEST_CASE("Basic Set Creation and Lifecycle", "[interval_set]") {
         // True memory leak detection would require a tool like Valgrind.
         IntervalSetHolder holder = newHolder(128);
         REQUIRE(holder.writeIndex == 0);
-        REQUIRE(holder.readBuffer != nullptr);
-        REQUIRE(holder.writeBuffer != nullptr);
+        REQUIRE(holder.buffers[1 - holder.writeBufferIndex] != nullptr);
+        REQUIRE(holder.buffers[holder.writeBufferIndex] != nullptr);
         destroyHolder(holder);
     }
 
     SECTION("swapBuffers") {
         IntervalSetHolder holder = newHolder(128);
-        Transition* readPtr = holder.readBuffer;
-        Transition* writePtr = holder.writeBuffer;
+        Transition* readPtr = holder.buffers[1 - holder.writeBufferIndex];
+        Transition* writePtr = holder.buffers[holder.writeBufferIndex];
         holder.writeIndex = 5; // Set a dummy index
 
         swapBuffers(holder);
 
         // Pointers should be swapped
-        REQUIRE(holder.readBuffer == writePtr);
-        REQUIRE(holder.writeBuffer == readPtr);
+        REQUIRE(holder.buffers[1 - holder.writeBufferIndex] == writePtr);
+        REQUIRE(holder.buffers[holder.writeBufferIndex] == readPtr);
         
         // Write index should be reset
         REQUIRE(holder.writeIndex == 0);
@@ -46,7 +46,7 @@ TEST_CASE("Basic Set Creation and Lifecycle", "[interval_set]") {
         IntervalSet s = empty(holder);
         
         // Use the helper to convert back to intervals
-        std::vector<Interval> v = toVectorIntervals(s);
+        std::vector<Interval> v = toVectorIntervals(holder, s);
         
         REQUIRE(v.empty());
         destroyHolder(holder);
@@ -57,17 +57,17 @@ TEST_CASE("Basic Set Creation and Lifecycle", "[interval_set]") {
         
         // Test a valid interval
         IntervalSet s1 = fromInterval(holder, {10, 20});
-        std::vector<Interval> v1 = toVectorIntervals(s1);
+        std::vector<Interval> v1 = toVectorIntervals(holder, s1);
         REQUIRE(v1 == std::vector<Interval>{{10, 20}});
 
         // Test an empty interval
         IntervalSet s2 = fromInterval(holder, {30, 30});
-        std::vector<Interval> v2 = toVectorIntervals(s2);
+        std::vector<Interval> v2 = toVectorIntervals(holder, s2);
         REQUIRE(v2.empty());
 
         // Test an invalid interval
         IntervalSet s3 = fromInterval(holder, {40, 30});
-        std::vector<Interval> v3 = toVectorIntervals(s3);
+        std::vector<Interval> v3 = toVectorIntervals(holder, s3);
         REQUIRE(v3.empty());
         
         destroyHolder(holder);
@@ -91,11 +91,11 @@ TEST_CASE("Union Operations (unionSets)", "[interval_set]") {
         auto s2_t = fromInterval(holder, {15, 25});
         swapBuffers(holder);
 
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
-        IntervalSet setB = {holder.readBuffer, s2_t.startIndex, s2_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setB = {1 - holder.writeBufferIndex, s2_t.startIndex, s2_t.endIndex};
         
         IntervalSet result = unionSets(holder, setA, setB);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v == std::vector<Interval>{{10, 25}});
     }
@@ -106,11 +106,11 @@ TEST_CASE("Union Operations (unionSets)", "[interval_set]") {
         auto s2_t = fromInterval(holder, {20, 30});
         swapBuffers(holder);
 
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
-        IntervalSet setB = {holder.readBuffer, s2_t.startIndex, s2_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setB = {1 - holder.writeBufferIndex, s2_t.startIndex, s2_t.endIndex};
         
         IntervalSet result = unionSets(holder, setA, setB);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v == std::vector<Interval>{{10, 30}});
     }
@@ -121,11 +121,11 @@ TEST_CASE("Union Operations (unionSets)", "[interval_set]") {
         auto s2_t = fromInterval(holder, {30, 40});
         swapBuffers(holder);
 
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
-        IntervalSet setB = {holder.readBuffer, s2_t.startIndex, s2_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setB = {1 - holder.writeBufferIndex, s2_t.startIndex, s2_t.endIndex};
         
         IntervalSet result = unionSets(holder, setA, setB);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v == std::vector<Interval>{{10, 20}, {30, 40}});
     }
@@ -136,11 +136,11 @@ TEST_CASE("Union Operations (unionSets)", "[interval_set]") {
         auto s2_t = fromInterval(holder, {20, 30});
         swapBuffers(holder);
 
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
-        IntervalSet setB = {holder.readBuffer, s2_t.startIndex, s2_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setB = {1 - holder.writeBufferIndex, s2_t.startIndex, s2_t.endIndex};
         
         IntervalSet result = unionSets(holder, setA, setB);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v == std::vector<Interval>{{10, 40}});
     }
@@ -151,11 +151,11 @@ TEST_CASE("Union Operations (unionSets)", "[interval_set]") {
         auto s2_t = empty(holder);
         swapBuffers(holder);
 
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
-        IntervalSet setB = {holder.readBuffer, s2_t.startIndex, s2_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setB = {1 - holder.writeBufferIndex, s2_t.startIndex, s2_t.endIndex};
         
         IntervalSet result = unionSets(holder, setA, setB);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v == std::vector<Interval>{{10, 20}});
     }
@@ -171,8 +171,8 @@ TEST_CASE("Union Operations (unionSets)", "[interval_set]") {
         swapBuffers(holder);
         
         // 2. Union them to create Set A
-        IntervalSet i1 = {holder.readBuffer, i1_t.startIndex, i1_t.endIndex};
-        IntervalSet i2 = {holder.readBuffer, i2_t.startIndex, i2_t.endIndex};
+        IntervalSet i1 = {1 - holder.writeBufferIndex, i1_t.startIndex, i1_t.endIndex};
+        IntervalSet i2 = {1 - holder.writeBufferIndex, i2_t.startIndex, i2_t.endIndex};
         auto setA_t = unionSets(holder, i1, i2); // setA_t is in writeBuffer
         
         // 3. Create Set B in writeBuffer
@@ -182,12 +182,12 @@ TEST_CASE("Union Operations (unionSets)", "[interval_set]") {
         swapBuffers(holder);
         
         // 5. Define the final input sets
-        IntervalSet setA = {holder.readBuffer, setA_t.startIndex, setA_t.endIndex};
-        IntervalSet setB = {holder.readBuffer, setB_t.startIndex, setB_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, setA_t.startIndex, setA_t.endIndex};
+        IntervalSet setB = {1 - holder.writeBufferIndex, setB_t.startIndex, setB_t.endIndex};
         
         // 6. Run the final operation
         IntervalSet result = unionSets(holder, setA, setB);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v == std::vector<Interval>{{10, 40}});
     }
@@ -204,11 +204,11 @@ TEST_CASE("Intersection Operations (intersectSets)", "[interval_set]") {
         auto s2_t = fromInterval(holder, {15, 25});
         swapBuffers(holder);
 
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
-        IntervalSet setB = {holder.readBuffer, s2_t.startIndex, s2_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setB = {1 - holder.writeBufferIndex, s2_t.startIndex, s2_t.endIndex};
         
         IntervalSet result = intersectSets(holder, setA, setB);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v == std::vector<Interval>{{15, 20}});
     }
@@ -219,11 +219,11 @@ TEST_CASE("Intersection Operations (intersectSets)", "[interval_set]") {
         auto s2_t = fromInterval(holder, {20, 30});
         swapBuffers(holder);
 
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
-        IntervalSet setB = {holder.readBuffer, s2_t.startIndex, s2_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setB = {1 - holder.writeBufferIndex, s2_t.startIndex, s2_t.endIndex};
         
         IntervalSet result = intersectSets(holder, setA, setB);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v.empty());
     }
@@ -234,11 +234,11 @@ TEST_CASE("Intersection Operations (intersectSets)", "[interval_set]") {
         auto s2_t = fromInterval(holder, {30, 40});
         swapBuffers(holder);
 
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
-        IntervalSet setB = {holder.readBuffer, s2_t.startIndex, s2_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setB = {1 - holder.writeBufferIndex, s2_t.startIndex, s2_t.endIndex};
         
         IntervalSet result = intersectSets(holder, setA, setB);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v.empty());
     }
@@ -249,11 +249,11 @@ TEST_CASE("Intersection Operations (intersectSets)", "[interval_set]") {
         auto s2_t = fromInterval(holder, {20, 30});
         swapBuffers(holder);
 
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
-        IntervalSet setB = {holder.readBuffer, s2_t.startIndex, s2_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setB = {1 - holder.writeBufferIndex, s2_t.startIndex, s2_t.endIndex};
         
         IntervalSet result = intersectSets(holder, setA, setB);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v == std::vector<Interval>{{20, 30}});
     }
@@ -264,11 +264,11 @@ TEST_CASE("Intersection Operations (intersectSets)", "[interval_set]") {
         auto s2_t = empty(holder);
         swapBuffers(holder);
 
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
-        IntervalSet setB = {holder.readBuffer, s2_t.startIndex, s2_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setB = {1 - holder.writeBufferIndex, s2_t.startIndex, s2_t.endIndex};
         
         IntervalSet result = intersectSets(holder, setA, setB);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v.empty());
     }
@@ -285,10 +285,10 @@ TEST_CASE("Negation Operations (negateSet)", "[interval_set]") {
         // A = {10, 20}, Domain = {0, 100} -> Negate = {0, 10}, {20, 100}
         auto s1_t = fromInterval(holder, {10, 20});
         swapBuffers(holder);
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
 
         IntervalSet result = negateSet(holder, setA, domain);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
         
         REQUIRE(v == std::vector<Interval>{{0, 10}, {20, 100}});
     }
@@ -297,10 +297,10 @@ TEST_CASE("Negation Operations (negateSet)", "[interval_set]") {
         // A = {0, 10}, Domain = {0, 100} -> Negate = {10, 100}
         auto s1_t = fromInterval(holder, {0, 10});
         swapBuffers(holder);
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
 
         IntervalSet result = negateSet(holder, setA, domain);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
         
         REQUIRE(v == std::vector<Interval>{{10, 100}});
     }
@@ -309,10 +309,10 @@ TEST_CASE("Negation Operations (negateSet)", "[interval_set]") {
         // A = {90, 100}, Domain = {0, 100} -> Negate = {0, 90}
         auto s1_t = fromInterval(holder, {90, 100});
         swapBuffers(holder);
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
 
         IntervalSet result = negateSet(holder, setA, domain);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
         
         REQUIRE(v == std::vector<Interval>{{0, 90}});
     }
@@ -321,10 +321,10 @@ TEST_CASE("Negation Operations (negateSet)", "[interval_set]") {
         // A = {0, 100}, Domain = {0, 100} -> Negate = {}
         auto s1_t = fromInterval(holder, {0, 100});
         swapBuffers(holder);
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
 
         IntervalSet result = negateSet(holder, setA, domain);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
         
         REQUIRE(v.empty());
     }
@@ -333,10 +333,10 @@ TEST_CASE("Negation Operations (negateSet)", "[interval_set]") {
         // A = {}, Domain = {0, 100} -> Negate = {0, 100}
         auto s1_t = empty(holder);
         swapBuffers(holder);
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
 
         IntervalSet result = negateSet(holder, setA, domain);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
         
         REQUIRE(v == std::vector<Interval>{{0, 100}});
     }
@@ -345,10 +345,10 @@ TEST_CASE("Negation Operations (negateSet)", "[interval_set]") {
         // A = {-10, 10}, Domain = {0, 100} -> Negate = {10, 100}
         auto s1_t = fromInterval(holder, {-10, 10});
         swapBuffers(holder);
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
 
         IntervalSet result = negateSet(holder, setA, domain);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
         
         REQUIRE(v == std::vector<Interval>{{10, 100}});
     }
@@ -357,10 +357,10 @@ TEST_CASE("Negation Operations (negateSet)", "[interval_set]") {
         // A = {-20, -10}, Domain = {0, 100} -> Negate = {0, 100}
         auto s1_t = fromInterval(holder, {-20, -10});
         swapBuffers(holder);
-        IntervalSet setA = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
 
         IntervalSet result = negateSet(holder, setA, domain);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
         
         REQUIRE(v == std::vector<Interval>{{0, 100}});
     }
@@ -374,17 +374,17 @@ TEST_CASE("Negation Operations (negateSet)", "[interval_set]") {
         auto i1_t = fromInterval(holder, {10, 20});
         auto i2_t = fromInterval(holder, {50, 60});
         swapBuffers(holder);
-        IntervalSet i1 = {holder.readBuffer, i1_t.startIndex, i1_t.endIndex};
-        IntervalSet i2 = {holder.readBuffer, i2_t.startIndex, i2_t.endIndex};
+        IntervalSet i1 = {1 - holder.writeBufferIndex, i1_t.startIndex, i1_t.endIndex};
+        IntervalSet i2 = {1 - holder.writeBufferIndex, i2_t.startIndex, i2_t.endIndex};
         auto setA_t = unionSets(holder, i1, i2);
         
         // 2. Swap so setA is in readBuffer
         swapBuffers(holder);
-        IntervalSet setA = {holder.readBuffer, setA_t.startIndex, setA_t.endIndex};
+        IntervalSet setA = {1 - holder.writeBufferIndex, setA_t.startIndex, setA_t.endIndex};
 
         // 3. Run negation
         IntervalSet result = negateSet(holder, setA, domain);
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
         
         REQUIRE(v == std::vector<Interval>{{0, 10}, {20, 50}, {60, 100}});
     }
@@ -415,6 +415,7 @@ struct ExpectedSegment {
 
 // Helper function to run the iteration and collect results
 std::vector<ExpectedSegment> runIteration(
+    db_interval_set::IntervalSetHolder holder,
     db_interval_set::IntervalSet setA,
     db_interval_set::IntervalSet setB,
     db_interval_set::Interval domain)
@@ -422,7 +423,7 @@ std::vector<ExpectedSegment> runIteration(
     std::vector<ExpectedSegment> results;
     
     db_interval_set::SegmentIterator it = 
-        db_interval_set::createSegmentIterator(setA, setB, domain);
+        db_interval_set::createSegmentIterator(holder, setA, setB, domain);
     
     while (db_interval_set::getNextSegment(it)) {
         // Only add non-empty segments
@@ -453,7 +454,7 @@ TEST_CASE("SegmentIterator tests", "[interval_set]") {
 
     SECTION("Full Domain Iteration [0, 50)") {
         Interval domain = {0, 50};
-        std::vector<ExpectedSegment> results = runIteration(setA, setB, domain);
+        std::vector<ExpectedSegment> results = runIteration(holder, setA, setB, domain);
 
         std::vector<ExpectedSegment> expected = {
             { {0, 10},  false, false },
@@ -470,7 +471,7 @@ TEST_CASE("SegmentIterator tests", "[interval_set]") {
 
     SECTION("Partial Domain [12, 32)") {
         Interval domain = {12, 32};
-        std::vector<ExpectedSegment> results = runIteration(setA, setB, domain);
+        std::vector<ExpectedSegment> results = runIteration(holder, setA, setB, domain);
 
         std::vector<ExpectedSegment> expected = {
             { {12, 15}, true,  false },
@@ -484,7 +485,7 @@ TEST_CASE("SegmentIterator tests", "[interval_set]") {
 
     SECTION("Domain before all intervals [0, 5)") {
         Interval domain = {0, 5};
-        std::vector<ExpectedSegment> results = runIteration(setA, setB, domain);
+        std::vector<ExpectedSegment> results = runIteration(holder, setA, setB, domain);
 
         std::vector<ExpectedSegment> expected = {
             { {0, 5}, false, false }
@@ -495,7 +496,7 @@ TEST_CASE("SegmentIterator tests", "[interval_set]") {
 
     SECTION("Domain after all intervals [45, 55)") {
         Interval domain = {45, 55};
-        std::vector<ExpectedSegment> results = runIteration(setA, setB, domain);
+        std::vector<ExpectedSegment> results = runIteration(holder, setA, setB, domain);
    
         std::vector<ExpectedSegment> expected= {
             { {45, 55}, false, false }
@@ -506,7 +507,7 @@ TEST_CASE("SegmentIterator tests", "[interval_set]") {
     
     SECTION("Empty Domain [5, 5)") {
         Interval domain = {5, 5};
-        std::vector<ExpectedSegment> results = runIteration(setA, setB, domain);
+        std::vector<ExpectedSegment> results = runIteration(holder, setA, setB, domain);
         std::vector<ExpectedSegment> expected = {}; // No non-empty segments
         
         REQUIRE(results == expected);
@@ -515,7 +516,7 @@ TEST_CASE("SegmentIterator tests", "[interval_set]") {
     SECTION("Iteration with an empty set") {
         Interval domain = {0, 20};
         // setA = empty, setB = [15, 35) (but we only care up to 20)
-        std::vector<ExpectedSegment> results = runIteration(setEmpty, setB, domain);
+        std::vector<ExpectedSegment> results = runIteration(holder, setEmpty, setB, domain);
 
         std::vector<ExpectedSegment> expected = {
             { {0, 15},  false, false },
@@ -527,7 +528,7 @@ TEST_CASE("SegmentIterator tests", "[interval_set]") {
     
     SECTION("Iteration with two empty sets") {
         Interval domain = {0, 20};
-        std::vector<ExpectedSegment> results = runIteration(setEmpty, setEmpty, domain);
+        std::vector<ExpectedSegment> results = runIteration(holder, setEmpty, setEmpty, domain);
 
         std::vector<ExpectedSegment> expected = {
             { {0, 20}, false, false }
@@ -538,7 +539,7 @@ TEST_CASE("SegmentIterator tests", "[interval_set]") {
     
     SECTION("Domain exactly matching a transition [10, 15)") {
         Interval domain = {10, 15};
-        std::vector<ExpectedSegment> results = runIteration(setA, setB, domain);
+        std::vector<ExpectedSegment> results = runIteration(holder, setA, setB, domain);
         
         std::vector<ExpectedSegment> expected = {
             { {10, 15}, true, false }
@@ -559,11 +560,11 @@ TEST_CASE("Optimized Union (unionIntervalFromRight)", "[interval_set]") {
         
         auto s1_t = fromInterval(holder, {0, 10});
         swapBuffers(holder);
-        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet set = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
 
         // Act
         IntervalSet result = unionIntervalFromRight(holder, set, {20, 30});
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v == std::vector<Interval>{{0, 10}, {20, 30}});
     }
@@ -575,11 +576,11 @@ TEST_CASE("Optimized Union (unionIntervalFromRight)", "[interval_set]") {
         
         auto s1_t = fromInterval(holder, {0, 10});
         swapBuffers(holder);
-        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet set = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
 
         // Act
         IntervalSet result = unionIntervalFromRight(holder, set, {10, 20});
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v == std::vector<Interval>{{0, 20}});
     }
@@ -591,11 +592,11 @@ TEST_CASE("Optimized Union (unionIntervalFromRight)", "[interval_set]") {
         
         auto s1_t = fromInterval(holder, {0, 20});
         swapBuffers(holder);
-        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet set = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
 
         // Act
         IntervalSet result = unionIntervalFromRight(holder, set, {15, 30});
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v == std::vector<Interval>{{0, 30}});
     }
@@ -610,19 +611,19 @@ TEST_CASE("Optimized Union (unionIntervalFromRight)", "[interval_set]") {
         auto s2_t = fromInterval(holder, {20, 30});
         swapBuffers(holder);
         
-        IntervalSet i1 = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
-        IntervalSet i2 = {holder.readBuffer, s2_t.startIndex, s2_t.endIndex};
+        IntervalSet i1 = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet i2 = {1 - holder.writeBufferIndex, s2_t.startIndex, s2_t.endIndex};
         
         // Union them to create the input set in writeBuffer
         auto inputSet_t = unionSets(holder, i1, i2);
         
         // Swap so inputSet is now in readBuffer
         swapBuffers(holder);
-        IntervalSet set = {holder.readBuffer, inputSet_t.startIndex, inputSet_t.endIndex};
+        IntervalSet set = {1 - holder.writeBufferIndex, inputSet_t.startIndex, inputSet_t.endIndex};
 
         // Act
         IntervalSet result = unionIntervalFromRight(holder, set, {25, 40});
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v == std::vector<Interval>{{0, 10}, {20, 40}});
     }
@@ -633,11 +634,11 @@ TEST_CASE("Optimized Union (unionIntervalFromRight)", "[interval_set]") {
         
         auto s1_t = empty(holder);
         swapBuffers(holder);
-        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet set = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
 
         // Act
         IntervalSet result = unionIntervalFromRight(holder, set, {5, 10});
-        std::vector<Interval> v = toVectorIntervals(result);
+        std::vector<Interval> v = toVectorIntervals(holder, result);
 
         REQUIRE(v == std::vector<Interval>{{5, 10}});
     }
@@ -656,11 +657,11 @@ TEST_CASE("Optimized Check and Clip (checkAndClip)", "[interval_set]") {
         
         auto s1_t = fromInterval(holder, {15, 20});
         swapBuffers(holder);
-        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet set = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
 
         // Act
         CheckAndClipResult result = checkAndClip(holder, set, time);
-        std::vector<Interval> v = toVectorIntervals(result.set);
+        std::vector<Interval> v = toVectorIntervals(holder, result.set);
 
         // Assert
         REQUIRE(result.output == false);
@@ -673,11 +674,11 @@ TEST_CASE("Optimized Check and Clip (checkAndClip)", "[interval_set]") {
         
         auto s1_t = fromInterval(holder, {10, 20});
         swapBuffers(holder);
-        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet set = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
 
         // Act
         CheckAndClipResult result = checkAndClip(holder, set, time);
-        std::vector<Interval> v = toVectorIntervals(result.set);
+        std::vector<Interval> v = toVectorIntervals(holder, result.set);
 
         // Assert
         REQUIRE(result.output == true);
@@ -691,11 +692,11 @@ TEST_CASE("Optimized Check and Clip (checkAndClip)", "[interval_set]") {
         
         auto s1_t = fromInterval(holder, {10, 11});
         swapBuffers(holder);
-        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet set = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
 
         // Act
         CheckAndClipResult result = checkAndClip(holder, set, time);
-        std::vector<Interval> v = toVectorIntervals(result.set);
+        std::vector<Interval> v = toVectorIntervals(holder, result.set);
 
         // Assert
         REQUIRE(result.output == true);
@@ -712,15 +713,15 @@ TEST_CASE("Optimized Check and Clip (checkAndClip)", "[interval_set]") {
         swapBuffers(holder);
         // Union to make one set
         auto set_t = unionSets(holder, 
-            {holder.readBuffer, i1.startIndex, i1.endIndex}, 
-            {holder.readBuffer, i2.startIndex, i2.endIndex}
+            {1 - holder.writeBufferIndex, i1.startIndex, i1.endIndex}, 
+            {1 - holder.writeBufferIndex, i2.startIndex, i2.endIndex}
         );
         swapBuffers(holder);
-        IntervalSet set = {holder.readBuffer, set_t.startIndex, set_t.endIndex};
+        IntervalSet set = {1 - holder.writeBufferIndex, set_t.startIndex, set_t.endIndex};
 
         // Act
         CheckAndClipResult result = checkAndClip(holder, set, time);
-        std::vector<Interval> v = toVectorIntervals(result.set);
+        std::vector<Interval> v = toVectorIntervals(holder, result.set);
 
         // Assert
         REQUIRE(result.output == true);
@@ -733,11 +734,11 @@ TEST_CASE("Optimized Check and Clip (checkAndClip)", "[interval_set]") {
         
         auto s1_t = empty(holder);
         swapBuffers(holder);
-        IntervalSet set = {holder.readBuffer, s1_t.startIndex, s1_t.endIndex};
+        IntervalSet set = {1 - holder.writeBufferIndex, s1_t.startIndex, s1_t.endIndex};
 
         // Act
         CheckAndClipResult result = checkAndClip(holder, set, time);
-        std::vector<Interval> v = toVectorIntervals(result.set);
+        std::vector<Interval> v = toVectorIntervals(holder, result.set);
 
         // Assert
         REQUIRE(result.output == false);

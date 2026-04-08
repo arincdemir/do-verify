@@ -47,7 +47,7 @@ db_interval_set::IntervalSet run_evaluation(std::vector<DenseNode> &nodes, db_in
 
             curNode.output = db_interval_set::empty(setHolder);
 
-            auto iterator = db_interval_set::createSegmentIterator(db_interval_set::empty(setHolder), rightOutput, {startTime, endTime});
+            auto iterator = db_interval_set::createSegmentIterator(setHolder, db_interval_set::empty(setHolder), rightOutput, {startTime, endTime});
             int i = 0;
             while (db_interval_set::getNextSegment(iterator)) {
                 if (iterator.interval.end == iterator.interval.start) continue;
@@ -73,7 +73,7 @@ db_interval_set::IntervalSet run_evaluation(std::vector<DenseNode> &nodes, db_in
 
             curNode.output = db_interval_set::empty(setHolder);
 
-            auto iterator = db_interval_set::createSegmentIterator(db_interval_set::empty(setHolder), rightOutput, {startTime, endTime});
+            auto iterator = db_interval_set::createSegmentIterator(setHolder, db_interval_set::empty(setHolder), rightOutput, {startTime, endTime});
             
             while (db_interval_set::getNextSegment(iterator)) {
                 if (iterator.interval.end == iterator.interval.start) continue;
@@ -96,7 +96,7 @@ db_interval_set::IntervalSet run_evaluation(std::vector<DenseNode> &nodes, db_in
             auto rightOutput = nodes[curNode.rightOperandIndex].output;
             curNode.output = db_interval_set::empty(setHolder);
 
-            auto iterator = db_interval_set::createSegmentIterator(leftOutput, rightOutput, {startTime, endTime});
+            auto iterator = db_interval_set::createSegmentIterator(setHolder, leftOutput, rightOutput, {startTime, endTime});
             
             while (db_interval_set::getNextSegment(iterator)) {
                 if (iterator.interval.end == iterator.interval.start) continue;
@@ -408,7 +408,7 @@ db_interval_set::IntervalSet run_evaluation(std::vector<DenseNode> &nodes, std::
 
             curNode.output = db_interval_set::empty(setHolder);
 
-            auto iterator = db_interval_set::createSegmentIterator(db_interval_set::empty(setHolder), rightOutput, {startTime, endTime});
+            auto iterator = db_interval_set::createSegmentIterator(setHolder, db_interval_set::empty(setHolder), rightOutput, {startTime, endTime});
             int i = 0;
             while (db_interval_set::getNextSegment(iterator)) {
                 if (iterator.interval.end == iterator.interval.start) continue;
@@ -434,7 +434,7 @@ db_interval_set::IntervalSet run_evaluation(std::vector<DenseNode> &nodes, std::
 
             curNode.output = db_interval_set::empty(setHolder);
 
-            auto iterator = db_interval_set::createSegmentIterator(db_interval_set::empty(setHolder), rightOutput, {startTime, endTime});
+            auto iterator = db_interval_set::createSegmentIterator(setHolder, db_interval_set::empty(setHolder), rightOutput, {startTime, endTime});
             
             while (db_interval_set::getNextSegment(iterator)) {
                 if (iterator.interval.end == iterator.interval.start) continue;
@@ -457,7 +457,7 @@ db_interval_set::IntervalSet run_evaluation(std::vector<DenseNode> &nodes, std::
             auto rightOutput = nodes[curNode.rightOperandIndex].output;
             curNode.output = db_interval_set::empty(setHolder);
 
-            auto iterator = db_interval_set::createSegmentIterator(leftOutput, rightOutput, {startTime, endTime});
+            auto iterator = db_interval_set::createSegmentIterator(setHolder, leftOutput, rightOutput, {startTime, endTime});
             
             while (db_interval_set::getNextSegment(iterator)) {
                 if (iterator.interval.end == iterator.interval.start) continue;

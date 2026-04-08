@@ -101,10 +101,10 @@ struct DiscreteMultiPropertyMonitor {
     DiscreteMultiPropertyMonitor() = default;
 
     ~DiscreteMultiPropertyMonitor() {
-        if (holder.readBuffer) {
+        if (holder.buffers[0]) {
             db_interval_set::destroyHolder(holder);
-            holder.readBuffer = nullptr;
-            holder.writeBuffer = nullptr;
+            holder.buffers[0] = nullptr;
+            holder.buffers[1] = nullptr;
         }
     }
 
@@ -117,14 +117,14 @@ struct DiscreteMultiPropertyMonitor {
           propertyCount(other.propertyCount),
           propertyRootNodeIndexes(std::move(other.propertyRootNodeIndexes)),
           outputs(std::move(other.outputs)) {
-        other.holder.readBuffer = nullptr;
-        other.holder.writeBuffer = nullptr;
+        other.holder.buffers[0] = nullptr;
+        other.holder.buffers[1] = nullptr;
     }
 
     // Move assignment
     DiscreteMultiPropertyMonitor &operator=(DiscreteMultiPropertyMonitor &&other) noexcept {
         if (this != &other) {
-            if (holder.readBuffer) {
+            if (holder.buffers[0]) {
                 db_interval_set::destroyHolder(holder);
             }
             finalized = other.finalized;
@@ -136,8 +136,8 @@ struct DiscreteMultiPropertyMonitor {
             propertyCount = other.propertyCount;
             propertyRootNodeIndexes = std::move(other.propertyRootNodeIndexes);
             outputs = std::move(other.outputs);
-            other.holder.readBuffer = nullptr;
-            other.holder.writeBuffer = nullptr;
+            other.holder.buffers[0] = nullptr;
+            other.holder.buffers[1] = nullptr;
         }
         return *this;
     }
@@ -172,10 +172,10 @@ struct DenseMultiPropertyMonitor {
     DenseMultiPropertyMonitor() = default;
 
     ~DenseMultiPropertyMonitor() {
-        if (holder.readBuffer) {
+        if (holder.buffers[0]) {
             db_interval_set::destroyHolder(holder);
-            holder.readBuffer = nullptr;
-            holder.writeBuffer = nullptr;
+            holder.buffers[0] = nullptr;
+            holder.buffers[1] = nullptr;
         }
     }
 
@@ -188,14 +188,14 @@ struct DenseMultiPropertyMonitor {
           propertyCount(other.propertyCount),
           propertyRootNodeIndexes(std::move(other.propertyRootNodeIndexes)),
           outputs(std::move(other.outputs)) {
-        other.holder.readBuffer = nullptr;
-        other.holder.writeBuffer = nullptr;
+        other.holder.buffers[0] = nullptr;
+        other.holder.buffers[1] = nullptr;
     }
 
     // Move assignment
     DenseMultiPropertyMonitor &operator=(DenseMultiPropertyMonitor &&other) noexcept {
         if (this != &other) {
-            if (holder.readBuffer) {
+            if (holder.buffers[0]) {
                 db_interval_set::destroyHolder(holder);
             }
             finalized = other.finalized;
@@ -207,8 +207,8 @@ struct DenseMultiPropertyMonitor {
             propertyCount = other.propertyCount;
             propertyRootNodeIndexes = std::move(other.propertyRootNodeIndexes);
             outputs = std::move(other.outputs);
-            other.holder.readBuffer = nullptr;
-            other.holder.writeBuffer = nullptr;
+            other.holder.buffers[0] = nullptr;
+            other.holder.buffers[1] = nullptr;
         }
         return *this;
     }

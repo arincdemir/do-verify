@@ -20,16 +20,16 @@ struct Transition {
     int time;
     bool isStart; // true = start of an interval, false = end of an interval
 };
-
+ 
 struct IntervalSet {
-    Transition *buffer;
+    int bufferIndex;
     int startIndex;
     int endIndex;
 };
 
 struct IntervalSetHolder {
-    Transition *readBuffer;
-    Transition *writeBuffer;
+    Transition *buffers[2];
+    int writeBufferIndex;
     int writeIndex;
     int bufferSize;
 };
@@ -44,6 +44,7 @@ struct SegmentIterator {
     Interval interval;  // The interval [start, end) for this segment
 
     // --- Config fields (set at creation) ---
+    const IntervalSetHolder *holder;
     IntervalSet leftIntervalSet;
     IntervalSet rightIntervalSet;
     Interval domain; // The "world" boundaries for the iteration
@@ -71,6 +72,8 @@ IntervalSetHolder newHolder(int bufferSize);
 
 void swapBuffers(IntervalSetHolder &holder);
 
+void ensureCapacity(IntervalSetHolder &holder, int requiredSpace);
+
 IntervalSet empty(IntervalSetHolder &holder);
 
 /**
@@ -81,7 +84,7 @@ IntervalSet empty(IntervalSetHolder &holder);
  * @param time The time point to query.
  * @return true if the time point is in the set, false otherwise.
  */
-bool includes(const IntervalSet& set, int time);
+bool includes(const IntervalSetHolder& holder, const IntervalSet& set, int time);
 
 /**
  * @brief Creates a new set from a single [start, end) interval.
@@ -134,7 +137,7 @@ void destroyHolder(IntervalSetHolder &holder);
  * @param domain The interval [start, end) to iterate over.
  * @return An initialized SegmentIterator.
  */
-SegmentIterator createSegmentIterator(IntervalSet setA, IntervalSet setB, Interval domain);
+SegmentIterator createSegmentIterator(const IntervalSetHolder& holder, IntervalSet setA, IntervalSet setB, Interval domain);
 
 /**
  * @brief Advances the iterator to the next segment.
@@ -152,12 +155,12 @@ CheckAndClipResult checkAndClip(IntervalSetHolder &holder, IntervalSet set, int 
  * @brief Converts an IntervalSet (of transitions) back to a
  * std::vector<Interval> for inspection.
  */
-std::vector<Interval> toVectorIntervals(const IntervalSet& set);
+std::vector<Interval> toVectorIntervals(const IntervalSetHolder& holder, const IntervalSet& set);
 
 /**
  * @brief Converts an IntervalSet to a std::vector of its raw transitions.
  */
-std::vector<Transition> toVectorTransitions(const IntervalSet& set);
+std::vector<Transition> toVectorTransitions(const IntervalSetHolder& holder, const IntervalSet& set);
 
 // Helper for std::sort
 bool compareTransitions(const Transition& a, const Transition& b);
