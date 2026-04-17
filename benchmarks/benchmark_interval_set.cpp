@@ -197,7 +197,7 @@ TEST_CASE("Correctness: DBSet matches Boost.ICL",
 // ============================================================
 
 TEST_CASE("Basic Performance Benchmarks", "[interval_set][basic]") {
-  auto N = GENERATE(100, 1000, 10000);
+  auto N = GENERATE(50, 100, 500, 1000, 5000, 10000, 50000);
 
   // --- Non-overlapping intervals for Union/Intersect ---
   // Set A: even-positioned intervals [0,5), [20,25), [40,45), ...
@@ -215,9 +215,10 @@ TEST_CASE("Basic Performance Benchmarks", "[interval_set][basic]") {
 
   // --- Random overlapping intervals for Build benchmark ---
   std::mt19937 gen(1337);
-  auto randomIntervals = generateRandomIntervals(gen, N, N * 5, 100);
+  auto randomIntervals =
+      generateRandomIntervals(gen, N, N * 5, std::max(10, N / 10));
 
-  int bufferSize = std::max(N * 12, 10000);
+  int bufferSize = std::max(N * 16, 10000);
   auto holder = newHolder(bufferSize);
 
   // Pre-build DBSets for union/intersect in readBuffer
@@ -306,8 +307,14 @@ static void run_scenario_boost(std::vector<BoostSet> &sets, int steps,
 TEST_CASE("Serial Update Benchmark", "[interval_set][serial]") {
   auto params = GENERATE(table<int, int, int, int, int>({
       // NUM_SETS, STEPS, INTERVALS_PER_SET, MAX_START, MAX_DURATION
-      {50, 5, 100, 10000, 50},
-      {100, 10, 1000, 50000, 100},
+      {10, 100, 5, 10000, 20},   // 10 sets,  5 iv/set, sparse
+      {10, 100, 5, 1000, 100},   // 10 sets,  5 iv/set, dense
+      {10, 100, 50, 10000, 20},  // 10 sets, 50 iv/set, sparse
+      {10, 100, 50, 1000, 100},  // 10 sets, 50 iv/set, dense
+      {100, 100, 5, 10000, 20},  // 100 sets,  5 iv/set, sparse
+      {100, 100, 5, 1000, 100},  // 100 sets,  5 iv/set, dense
+      {100, 100, 50, 10000, 20}, // 100 sets, 50 iv/set, sparse
+      {100, 100, 50, 1000, 100}, // 100 sets, 50 iv/set, dense
   }));
 
   int NUM_SETS, STEPS, INTERVALS_PER_SET, MAX_START, MAX_DURATION;
@@ -378,9 +385,9 @@ TEST_CASE("Serial Update Benchmark", "[interval_set][serial]") {
 
 TEST_CASE("unionIntervalFromRight vs Generic Union",
           "[interval_set][specialized]") {
-  auto count = GENERATE(100, 1000, 10000);
+  auto count = GENERATE(50, 100, 500, 1000, 5000, 10000, 50000);
 
-  IntervalSetHolder holder = newHolder(count * 8);
+  IntervalSetHolder holder = newHolder(count * 12);
 
   // Create evenly-spaced base set: [0,5), [10,15), ..., [(N-1)*10, (N-1)*10+5)
   std::vector<Interval> initialIntervals;
@@ -449,9 +456,9 @@ TEST_CASE("unionIntervalFromRight vs Generic Union",
 
 TEST_CASE("checkAndClip vs Separate Operations",
           "[interval_set][specialized]") {
-  auto count = GENERATE(10, 100, 1000);
+  auto count = GENERATE(10, 50, 100, 500, 1000, 5000);
 
-  IntervalSetHolder holder = newHolder(count * 8);
+  IntervalSetHolder holder = newHolder(count * 12);
 
   // Simulate temporal operator state: intervals starting at time 100
   // [100,110), [120,130), ..., [100+(N-1)*20, 110+(N-1)*20)
