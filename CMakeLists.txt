@@ -39,6 +39,7 @@ add_library(do-verify STATIC
     src/binary_row_reader.cpp
     src/json_reader.cpp
     src/json_feeder.cpp
+    src/binary_feeder.cpp
 )
 
 # Tell CMake where the headers are
