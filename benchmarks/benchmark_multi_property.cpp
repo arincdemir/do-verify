@@ -116,14 +116,11 @@ TEST_CASE("Multi-property anti-redundancy benchmark", "[multi_property]") {
           feeders.push_back(feeder);
         }
 
-        // Process all feeders: for each time step, feed all 30 monitors
         bool any_active = true;
-        std::vector<std::vector<IntervalSet>> outputs(feeders.size());
-
         while (any_active) {
           any_active = false;
           for (size_t i = 0; i < feeders.size(); i++) {
-            if (feeders[i] && feed_next(feeders[i], outputs[i])) {
+            if (feeders[i] && feed_next(feeders[i]) != nullptr) {
               any_active = true;
             }
           }
@@ -165,12 +162,11 @@ TEST_CASE("Multi-property anti-redundancy benchmark", "[multi_property]") {
         finalize_monitor(bench_monitor);
 
         auto *feeder = create_dense_json_feeder(bench_monitor, INPUT_FILE);
-        std::vector<IntervalSet> output;
-        while (feed_next(feeder, output)) {
+        while (feed_next(feeder)) {
           // consume
         }
         destroy_feeder(feeder);
-        return output.size();
+        return 0;
       });
     };
   }

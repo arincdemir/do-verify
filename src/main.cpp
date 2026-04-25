@@ -162,8 +162,7 @@ void dense_case(const arguments &args)
         exit(1);
     }
 
-    std::vector<IntervalSet> output;
-    while (feed_next(feeder, output))
+    while (feed_next(feeder))
     {
     }
 
@@ -215,8 +214,7 @@ void dense_binary_case(const arguments &args)
         exit(1);
     }
 
-    std::vector<IntervalSet> output;
-    while (feed_next(feeder, output))
+    while (feed_next(feeder))
     {
     }
 
@@ -268,8 +266,7 @@ void discrete_case(const arguments &args)
         exit(1);
     }
 
-    std::vector<bool> output;
-    while (feed_next(feeder, output))
+    while (feed_next(feeder))
     {
     }
 
@@ -321,8 +318,7 @@ void discrete_binary_case(const arguments &args)
         exit(1);
     }
 
-    std::vector<bool> output;
-    while (feed_next(feeder, output))
+    while (feed_next(feeder))
     {
     }
 

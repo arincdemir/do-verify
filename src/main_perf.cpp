@@ -27,8 +27,7 @@ int main(int argc, char **argv)
 
         auto *feeder = create_dense_json_feeder(monitor, "/home/arincdemir/workspace/do-verify/data/fullsuite/RecurBQR/Dense1/1M/RecurBQR10.jsonl");
         
-        std::vector<IntervalSet> outputs;
-        while (feed_next(feeder, outputs)) {
+        while (feed_next(feeder)) {
             // Processing loop, pulling and consuming results
         }
         

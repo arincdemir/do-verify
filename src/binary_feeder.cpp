@@ -48,13 +48,13 @@ create_dense_binary_feeder(DenseMultiPropertyMonitor &monitor,
   return new DenseBinaryFeeder(monitor, std::move(rows));
 }
 
-bool feed_next(DenseBinaryFeeder *feeder,
-               std::vector<db_interval_set::IntervalSet> &output) {
+const std::vector<db_interval_set::IntervalSet> *
+feed_next(DenseBinaryFeeder *feeder) {
   if (!feeder)
-    return false;
+    return nullptr;
 
   if (feeder->cursor >= feeder->rows.size())
-    return false;
+    return nullptr;
 
   const auto &prev = feeder->rows[feeder->cursor - 1];
   const auto &cur = feeder->rows[feeder->cursor];
@@ -69,9 +69,8 @@ bool feed_next(DenseBinaryFeeder *feeder,
   feeder->lastStartTime = prev.time;
   feeder->lastEndTime = cur.time;
 
-  output = eval_multi_property(feeder->monitor, prev.time, cur.time,
-                               feeder->propInputs);
-  return true;
+  return &eval_multi_property(feeder->monitor, prev.time, cur.time,
+                              feeder->propInputs);
 }
 
 int feeder_start_time(const DenseBinaryFeeder *feeder) {
@@ -119,12 +118,12 @@ create_discrete_binary_feeder(DiscreteMultiPropertyMonitor &monitor,
   return new DiscreteBinaryFeeder(monitor, std::move(rows));
 }
 
-bool feed_next(DiscreteBinaryFeeder *feeder, std::vector<bool> &output) {
+const std::vector<bool> *feed_next(DiscreteBinaryFeeder *feeder) {
   if (!feeder)
-    return false;
+    return nullptr;
 
   if (feeder->cursor >= feeder->rows.size())
-    return false;
+    return nullptr;
 
   const auto &row = feeder->rows[feeder->cursor];
   ++feeder->cursor;
@@ -136,10 +135,7 @@ bool feed_next(DiscreteBinaryFeeder *feeder, std::vector<bool> &output) {
 
   feeder->lastTime = row.time;
 
-  const auto &result =
-      eval_multi_property(feeder->monitor, row.time, feeder->propInputs);
-  output.assign(result.begin(), result.end());
-  return true;
+  return &eval_multi_property(feeder->monitor, row.time, feeder->propInputs);
 }
 
 int feeder_time(const DiscreteBinaryFeeder *feeder) {
