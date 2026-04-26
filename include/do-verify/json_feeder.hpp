@@ -19,9 +19,10 @@ struct DiscreteJsonFeeder;
 // Returns nullptr on failure (file not found, parse error, etc.)
 DenseJsonFeeder *create_dense_json_feeder(DenseMultiPropertyMonitor &monitor, const std::string &file_path);
 
-// Advance to the next timestep. Populates `output` with evaluation results.
-// Returns true if a result was produced, false when the stream is exhausted.
-bool feed_next(DenseJsonFeeder *feeder, std::vector<db_interval_set::IntervalSet> &output);
+// Advance to the next timestep.
+// Returns a pointer to the monitor's internal result vector, or nullptr when
+// the stream is exhausted. The pointer is valid until the next call to feed_next.
+const std::vector<db_interval_set::IntervalSet> *feed_next(DenseJsonFeeder *feeder);
 
 // Returns the start time of the most recently evaluated interval.
 int feeder_start_time(const DenseJsonFeeder *feeder);
@@ -39,9 +40,10 @@ void destroy_feeder(DenseJsonFeeder *feeder);
 // Returns nullptr on failure (file not found, parse error, etc.)
 DiscreteJsonFeeder *create_discrete_json_feeder(DiscreteMultiPropertyMonitor &monitor, const std::string &file_path);
 
-// Advance to the next timestep. Populates `output` with evaluation results.
-// Returns true if a result was produced, false when the stream is exhausted.
-bool feed_next(DiscreteJsonFeeder *feeder, std::vector<bool> &output);
+// Advance to the next timestep.
+// Returns a pointer to the monitor's internal result vector, or nullptr when
+// the stream is exhausted. The pointer is valid until the next call to feed_next.
+const std::vector<bool> *feed_next(DiscreteJsonFeeder *feeder);
 
 // Returns the time of the most recently evaluated row.
 int feeder_time(const DiscreteJsonFeeder *feeder);
