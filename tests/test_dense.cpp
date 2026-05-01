@@ -169,7 +169,7 @@ TEST_CASE("Dense AbsentBQR", "[dense][AbsentBQR]") {
         ptl_parser parser;
         auto monitor = createDenseMultiPropertyMonitor(1000);    
         parser.parse_dense("historically(({r} && !{q} && once{q}) -> ((not{p}) since[" + std::to_string(since_a) + ":" + std::to_string(since_b) + "] {q}))", monitor);
-        finalize_monitor(monitor, {"q", "p", "r"});  // TODO jsondan çek mapte tut eşle
+        finalize_monitor(monitor, {"q", "p", "r"}); 
 
         std::string file_name = "data/fullsuite/AbsentBQR/" + CONDENSATION + "/1M/AbsentBQR" + std::to_string(TIMINGS) +".row.bin";
         const auto& allInputs = binary_row_reader::readInputFile(file_name);
@@ -178,11 +178,6 @@ TEST_CASE("Dense AbsentBQR", "[dense][AbsentBQR]") {
         int maxHolderUsage = 0;
 
         for (int i = 1; i < allInputs.size(); i++){
-            // TODO simd json, time vs inputları data structure yap. reelaya bak
-            // TODO nasıl multi property test case oluşturacağız
-            // synthethic olabilir random timescalse birleştir
-            // doğru çıkan bul
-            // fluent style api araştır
             auto outputs = eval_multi_property(monitor, allInputs[i - 1].time, allInputs[i].time, {allInputs[i - 1].q, allInputs[i - 1].p, allInputs[i - 1].r});
             
             if (toVectorIntervals(outputs[0]) != std::vector<Interval>{{allInputs[i - 1].time, allInputs[i].time}}) {
