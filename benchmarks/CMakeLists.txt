@@ -9,7 +9,7 @@ add_executable(bench_runner
 )
 
 # Link the SAME library and SAME Catch2, plus Boost headers
-target_link_libraries(bench_runner PRIVATE do-verify Catch2::Catch2WithMain Boost::boost)
+target_link_libraries(bench_runner PRIVATE loomrv_lib Catch2::Catch2WithMain Boost::boost)
 
 # Copy Data: Root/data -> build/benchmarks/data
 # We copy it here too, so the benchmark executable can find it locally

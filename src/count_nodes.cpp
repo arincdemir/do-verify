@@ -2,10 +2,10 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <do-verify/ptl.hpp>
-#include <do-verify/MTLEngine.hpp>
+#include <loomrv/ptl.hpp>
+#include <loomrv/MTLEngine.hpp>
 
-using namespace do_verify;
+using namespace loomrv;
 
 int main(int argc, char** argv) {
     if (argc < 2) {

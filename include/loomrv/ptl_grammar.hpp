@@ -8,7 +8,7 @@
  
 #pragma once
 
-namespace do_verify {
+namespace loomrv {
 
 struct ptl_grammar {
 
@@ -54,4 +54,4 @@ struct ptl_grammar {
     )";
 };
 
-} // namespace do_verify
+} // namespace loomrv

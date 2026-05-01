@@ -4,13 +4,13 @@
 #include <catch2/catch_all.hpp>
 #include <catch2/catch_test_macros.hpp>
 
-#include <do-verify/MTLEngine.hpp>
-#include <do-verify/binary_feeder.hpp>
-#include <do-verify/interval_set.hpp>
-#include <do-verify/json_feeder.hpp>
-#include <do-verify/ptl.hpp>
+#include <loomrv/MTLEngine.hpp>
+#include <loomrv/binary_feeder.hpp>
+#include <loomrv/interval_set.hpp>
+#include <loomrv/json_feeder.hpp>
+#include <loomrv/ptl.hpp>
 
-using namespace do_verify;
+using namespace loomrv;
 using namespace db_interval_set;
 
 TEST_CASE("AbsentAQ Json Evaluation", "[json]") {

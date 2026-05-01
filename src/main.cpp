@@ -4,14 +4,14 @@
 #include <vector>
 #include <argp.h>
 
-#include "do-verify/MTLEngine.hpp"
-#include "do-verify/ptl.hpp"
-#include "do-verify/json_feeder.hpp"
-#include "do-verify/binary_feeder.hpp"
-#include "do-verify/interval_set.hpp"
+#include "loomrv/MTLEngine.hpp"
+#include "loomrv/ptl.hpp"
+#include "loomrv/json_feeder.hpp"
+#include "loomrv/binary_feeder.hpp"
+#include "loomrv/interval_set.hpp"
 
 using namespace db_interval_set;
-using namespace do_verify;
+using namespace loomrv;
 
 // argp option keys
 enum RYBINX_OPTS : uint8_t
@@ -21,9 +21,9 @@ enum RYBINX_OPTS : uint8_t
     OPT_BINARY   = 'b',
 };
 
-const char *argp_program_version = "do-verify-bin 0.2.0";
+const char *argp_program_version = "loomrv 0.2.0";
 const char *argp_program_bug_address = "Arinc Demir <github.com/arincdemir>";
-static const char *doc = "Do-verify (Reelay) CLI Tool";
+static const char *doc = "LoomRV (Reelay) CLI Tool";
 static const char *args_doc = "TRACE_FILE PROPERTIES_FILE";
 
 struct arguments

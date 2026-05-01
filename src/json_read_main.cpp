@@ -5,7 +5,7 @@
 int main() {
     // 1. Load the NDJSON file
     simdjson::padded_string json_data;
-    if (simdjson::padded_string::load("/home/arincdemir/workspace/do-verify/data/fullsuite/RespondBQR/Dense1/1M/RespondBQR10.jsonl").get(json_data)) {
+    if (simdjson::padded_string::load("/home/arincdemir/workspace/loomrv/data/fullsuite/RespondBQR/Dense1/1M/RespondBQR10.jsonl").get(json_data)) {
         std::cerr << "Could not load file.\n";
         return 1;
     }

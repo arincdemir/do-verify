@@ -22,7 +22,7 @@
 #include "MTLEngine.hpp"
 #include "interval_set.hpp"
 
-namespace do_verify {
+namespace loomrv {
 
 
 
@@ -352,4 +352,4 @@ struct ptl_parser : ptl_grammar{
 
 };
 
-} // namespace do_verify
+} // namespace loomrv

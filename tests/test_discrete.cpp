@@ -6,17 +6,17 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-#include "do-verify/json_reader.hpp"
-#include "do-verify/binary_row_reader.hpp"
+#include "loomrv/json_reader.hpp"
+#include "loomrv/binary_row_reader.hpp"
 
 
-#include "do-verify/MTLEngine.hpp"
-#include "do-verify/ptl.hpp"
+#include "loomrv/MTLEngine.hpp"
+#include "loomrv/ptl.hpp"
 
 
 TEST_CASE("Discrete Implementation Tests", "[discrete]") {
 
-    using namespace do_verify;
+    using namespace loomrv;
     using namespace db_interval_set;
 
     SECTION("2 Eventually") {
@@ -90,7 +90,7 @@ TEST_CASE("Discrete Implementation Tests", "[discrete]") {
 TEST_CASE("Discrete AbsentAQ", "[discrete][AbsentAQ]") {
 
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
 
      // --- 1. SETUP PARAMS ---
@@ -137,7 +137,7 @@ TEST_CASE("Discrete AbsentAQ", "[discrete][AbsentAQ]") {
 
 TEST_CASE("Discrete AbsentBQR", "[discrete][AbsentBQR]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Discrete", 10}, 
@@ -183,7 +183,7 @@ TEST_CASE("Discrete AbsentBQR", "[discrete][AbsentBQR]") {
 
 TEST_CASE("Discrete AbsentBR", "[discrete][AbsentBR]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Discrete", 10}, 
@@ -226,7 +226,7 @@ TEST_CASE("Discrete AbsentBR", "[discrete][AbsentBR]") {
 
 TEST_CASE("Discrete AlwaysAQ", "[discrete][AlwaysAQ]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Discrete", 10}, 
@@ -269,7 +269,7 @@ TEST_CASE("Discrete AlwaysAQ", "[discrete][AlwaysAQ]") {
 
 TEST_CASE("Discrete AlwaysBQR", "[discrete][AlwaysBQR]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Discrete", 10}, 
@@ -315,7 +315,7 @@ TEST_CASE("Discrete AlwaysBQR", "[discrete][AlwaysBQR]") {
 
 TEST_CASE("Discrete AlwaysBR", "[discrete][AlwaysBR]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Discrete", 10}, 
@@ -358,7 +358,7 @@ TEST_CASE("Discrete AlwaysBR", "[discrete][AlwaysBR]") {
 
 TEST_CASE("Discrete RecurBQR", "[discrete][RecurBQR]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Discrete", 10}, 
@@ -401,7 +401,7 @@ TEST_CASE("Discrete RecurBQR", "[discrete][RecurBQR]") {
 
 TEST_CASE("Discrete RecurGLB", "[discrete][RecurGLB]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Discrete", 10}, 
@@ -444,7 +444,7 @@ TEST_CASE("Discrete RecurGLB", "[discrete][RecurGLB]") {
 
 TEST_CASE("Discrete RespondBQR", "[discrete][RespondBQR]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Discrete", 10}, 
@@ -491,7 +491,7 @@ TEST_CASE("Discrete RespondBQR", "[discrete][RespondBQR]") {
 
 TEST_CASE("Discrete RespondGLB", "[discrete][RespondGLB]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Discrete", 10}, 

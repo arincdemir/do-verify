@@ -4,10 +4,10 @@
 #include <vector>
 #include <utility>
 
-#include "do-verify/MTLEngine.hpp"
-#include "do-verify/interval_set.hpp"
+#include "loomrv/MTLEngine.hpp"
+#include "loomrv/interval_set.hpp"
 
-namespace do_verify {
+namespace loomrv {
 
 struct DenseJsonFeeder;
 struct DiscreteJsonFeeder;
@@ -51,4 +51,4 @@ int feeder_time(const DiscreteJsonFeeder *feeder);
 // Free all resources associated with the feeder.
 void destroy_feeder(DiscreteJsonFeeder *feeder);
 
-} // namespace do_verify
+} // namespace loomrv

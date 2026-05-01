@@ -1,10 +1,10 @@
-#include "do-verify/binary_feeder.hpp"
-#include "do-verify/binary_row_reader.hpp"
+#include "loomrv/binary_feeder.hpp"
+#include "loomrv/binary_row_reader.hpp"
 
 #include <iostream>
 #include <vector>
 
-namespace do_verify {
+namespace loomrv {
 
 // ---------------------------------------------------------------------------
 // Dense binary feeder
@@ -144,4 +144,4 @@ int feeder_time(const DiscreteBinaryFeeder *feeder) {
 
 void destroy_feeder(DiscreteBinaryFeeder *feeder) { delete feeder; }
 
-} // namespace do_verify
+} // namespace loomrv

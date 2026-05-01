@@ -6,15 +6,15 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-#include "do-verify/json_reader.hpp"
-#include "do-verify/binary_row_reader.hpp"
+#include "loomrv/json_reader.hpp"
+#include "loomrv/binary_row_reader.hpp"
 
 
-#include "do-verify/MTLEngine.hpp"
-#include "do-verify/ptl.hpp"
+#include "loomrv/MTLEngine.hpp"
+#include "loomrv/ptl.hpp"
 TEST_CASE("Dense Implementation tests", "[dense]") {
     using namespace std;
-    using namespace do_verify;
+    using namespace loomrv;
     using namespace db_interval_set;
     
     auto holder = newHolder(1000);
@@ -61,7 +61,7 @@ TEST_CASE("Dense Implementation tests", "[dense]") {
 TEST_CASE("Dense Timescales Tests", "[dense][old]") {
 
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     ptl_parser parser;
     auto monitor = createDenseMultiPropertyMonitor(1000);
@@ -97,7 +97,7 @@ TEST_CASE("Dense Timescales Tests", "[dense][old]") {
 TEST_CASE("Dense AbsentAQ", "[dense][AbsentAQ]") {
 
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
 
      // --- 1. SETUP PARAMS ---
@@ -148,7 +148,7 @@ TEST_CASE("Dense AbsentAQ", "[dense][AbsentAQ]") {
 
 TEST_CASE("Dense AbsentBQR", "[dense][AbsentBQR]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 
@@ -194,7 +194,7 @@ TEST_CASE("Dense AbsentBQR", "[dense][AbsentBQR]") {
 
 TEST_CASE("Dense AbsentBR", "[dense][AbsentBR]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 
@@ -238,7 +238,7 @@ TEST_CASE("Dense AbsentBR", "[dense][AbsentBR]") {
 
 TEST_CASE("Dense AlwaysAQ", "[dense][AlwaysAQ]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 
@@ -281,7 +281,7 @@ TEST_CASE("Dense AlwaysAQ", "[dense][AlwaysAQ]") {
 
 TEST_CASE("Dense AlwaysBQR", "[dense][AlwaysBQR]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 
@@ -327,7 +327,7 @@ TEST_CASE("Dense AlwaysBQR", "[dense][AlwaysBQR]") {
 
 TEST_CASE("Dense AlwaysBR", "[dense][AlwaysBR]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 
@@ -370,7 +370,7 @@ TEST_CASE("Dense AlwaysBR", "[dense][AlwaysBR]") {
 
 TEST_CASE("Dense RecurBQR", "[dense][RecurBQR]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 
@@ -412,7 +412,7 @@ TEST_CASE("Dense RecurBQR", "[dense][RecurBQR]") {
 
 TEST_CASE("Dense RecurGLB", "[dense][RecurGLB]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 
@@ -455,7 +455,7 @@ TEST_CASE("Dense RecurGLB", "[dense][RecurGLB]") {
 
 TEST_CASE("Dense RespondBQR", "[dense][RespondBQR]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 
@@ -503,7 +503,7 @@ TEST_CASE("Dense RespondBQR", "[dense][RespondBQR]") {
 
 TEST_CASE("Dense RespondGLB", "[dense][RespondGLB]") {
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 

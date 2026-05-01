@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <algorithm>
-#include "do-verify/interval_set.hpp"
+#include "loomrv/interval_set.hpp"
 #include <string>
 #include <limits>
 #include <unordered_map>
@@ -10,7 +10,7 @@
 
 #define B_INFINITY std::numeric_limits<int>::max()
 
-namespace do_verify {
+namespace loomrv {
 
 enum class NodeType {
     PROPOSITION,
@@ -238,4 +238,4 @@ const std::vector<db_interval_set::IntervalSet> &eval_multi_property(DenseMultiP
 
 
 
-} // namespace do_verify
+} // namespace loomrv

@@ -1,11 +1,11 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/catch_all.hpp>
 
-#include <do-verify/ptl.hpp>
-#include <do-verify/MTLEngine.hpp>
-#include <do-verify/interval_set.hpp>
+#include <loomrv/ptl.hpp>
+#include <loomrv/MTLEngine.hpp>
+#include <loomrv/interval_set.hpp>
 
-using namespace do_verify;
+using namespace loomrv;
 using namespace db_interval_set;
 
 // Recursive structural tree comparison (from src/test_parse.cpp)

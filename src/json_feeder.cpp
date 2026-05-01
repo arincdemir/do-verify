@@ -1,4 +1,4 @@
-#include "do-verify/json_feeder.hpp"
+#include "loomrv/json_feeder.hpp"
 #include "simdjson.h"
 
 #include <iostream>
@@ -6,7 +6,7 @@
 #include <utility>
 #include <vector>
 
-namespace do_verify {
+namespace loomrv {
 
 struct DenseJsonFeeder {
   DenseMultiPropertyMonitor &monitor;
@@ -222,4 +222,4 @@ int feeder_time(const DiscreteJsonFeeder *feeder) {
 
 void destroy_feeder(DiscreteJsonFeeder *feeder) { delete feeder; }
 
-} // namespace do_verify
+} // namespace loomrv

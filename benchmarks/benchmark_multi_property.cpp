@@ -9,13 +9,13 @@
 #include <string>
 #include <vector>
 
-#include "do-verify/MTLEngine.hpp"
-#include "do-verify/interval_set.hpp"
-#include "do-verify/json_feeder.hpp"
-#include "do-verify/ptl.hpp"
+#include "loomrv/MTLEngine.hpp"
+#include "loomrv/interval_set.hpp"
+#include "loomrv/json_feeder.hpp"
+#include "loomrv/ptl.hpp"
 
 namespace fs = std::filesystem;
-using namespace do_verify;
+using namespace loomrv;
 using namespace db_interval_set;
 
 // Extract the pattern value from a simple YAML file.

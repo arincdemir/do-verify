@@ -1,9 +1,9 @@
 #include <iostream>
-#include <do-verify/ptl.hpp>
-#include <do-verify/MTLEngine.hpp>
-#include <do-verify/interval_set.hpp>
+#include <loomrv/ptl.hpp>
+#include <loomrv/MTLEngine.hpp>
+#include <loomrv/interval_set.hpp>
 
-using namespace do_verify;
+using namespace loomrv;
 using namespace db_interval_set;
 
 std::vector<DenseNode> get_hand_parsed (db_interval_set::IntervalSetHolder holder) {

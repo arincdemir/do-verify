@@ -4,9 +4,9 @@
 #include <fstream>
 #include <iostream>
 
-#include "do-verify/interval_set.hpp"
-#include "do-verify/MTLEngine.hpp"
-#include "do-verify/binary_row_reader.hpp"
+#include "loomrv/interval_set.hpp"
+#include "loomrv/MTLEngine.hpp"
+#include "loomrv/binary_row_reader.hpp"
 // wallgrind memory leak memcheck
 //scanbuild
 
@@ -33,7 +33,7 @@ public:
 TEST_CASE("Dense AbsentAQ", "[dense_benchmarks][AbsentAQ]") {
 
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
 
      // --- 1. SETUP PARAMS ---
@@ -89,7 +89,7 @@ TEST_CASE("Dense AbsentAQ", "[dense_benchmarks][AbsentAQ]") {
 TEST_CASE("Dense AbsentBQR", "[dense_benchmarks][AbsentBQR]") {
 
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     // --- 1. SETUP PARAMS ---
     auto params = GENERATE(table<std::string, int>({
@@ -151,7 +151,7 @@ TEST_CASE("Dense AbsentBQR", "[dense_benchmarks][AbsentBQR]") {
 TEST_CASE("Dense AbsentBR", "[dense_benchmarks][AbsentBR]") {
 
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 
@@ -201,7 +201,7 @@ TEST_CASE("Dense AbsentBR", "[dense_benchmarks][AbsentBR]") {
 TEST_CASE("Dense AlwaysAQ", "[dense_benchmarks][AlwaysAQ]") {
 
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 
@@ -251,7 +251,7 @@ TEST_CASE("Dense AlwaysAQ", "[dense_benchmarks][AlwaysAQ]") {
 TEST_CASE("Dense AlwaysBQR", "[dense_benchmarks][AlwaysBQR]") {
 
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 
@@ -306,7 +306,7 @@ TEST_CASE("Dense AlwaysBQR", "[dense_benchmarks][AlwaysBQR]") {
 TEST_CASE("Dense AlwaysBR", "[dense_benchmarks][AlwaysBR]") {
 
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 
@@ -355,7 +355,7 @@ TEST_CASE("Dense AlwaysBR", "[dense_benchmarks][AlwaysBR]") {
 TEST_CASE("Dense RecurBQR", "[dense_benchmarks][RecurBQR]") {
 
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 
@@ -412,7 +412,7 @@ TEST_CASE("Dense RecurBQR", "[dense_benchmarks][RecurBQR]") {
 TEST_CASE("Dense RecurGLB", "[dense_benchmarks][RecurGLB]") {
 
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 
@@ -456,7 +456,7 @@ TEST_CASE("Dense RecurGLB", "[dense_benchmarks][RecurGLB]") {
 TEST_CASE("Dense RespondBQR", "[dense_benchmarks][RespondBQR]") {
 
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 
@@ -519,7 +519,7 @@ TEST_CASE("Dense RespondBQR", "[dense_benchmarks][RespondBQR]") {
 TEST_CASE("Dense RespondGLB", "[dense_benchmarks][RespondGLB]") {
 
     using namespace db_interval_set;
-    using namespace do_verify;
+    using namespace loomrv;
 
     auto params = GENERATE(table<std::string, int>({
         {"Dense10", 10}, {"Dense100", 10}, {"Discrete", 10}, 

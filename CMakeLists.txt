@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(do-verify VERSION 1.0.0 LANGUAGES CXX)
+project(loomrv VERSION 1.0.0 LANGUAGES CXX)
 
 option(ENABLE_COVERAGE "Enable code coverage" OFF)
 
@@ -33,7 +33,7 @@ set(BUILD_TESTS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(cpp-peglib)
 
 # Define the library with source files
-add_library(do-verify STATIC
+add_library(loomrv_lib STATIC
     src/interval_set.cpp
     src/MTLEngine.cpp
     src/binary_row_reader.cpp
@@ -43,12 +43,12 @@ add_library(do-verify STATIC
 )
 
 # Tell CMake where the headers are
-target_include_directories(do-verify PUBLIC
+target_include_directories(loomrv_lib PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(do-verify PUBLIC peglib simdjson)
+target_link_libraries(loomrv_lib PUBLIC peglib simdjson)
 
 # Fetch Catch2 (ONCE for the whole project)
 FetchContent_Declare(
@@ -60,36 +60,36 @@ FetchContent_MakeAvailable(Catch2)
 
 
 
-add_executable(do-verify-bin 
+add_executable(loomrv 
     src/main.cpp
 )
 
-target_link_libraries(do-verify-bin PRIVATE do-verify)
+target_link_libraries(loomrv PRIVATE loomrv_lib)
 
 
 
-add_executable(do-verify-perf 
+add_executable(loomrv-perf 
     src/main_perf.cpp
 )
 
-target_compile_options(do-verify-perf PRIVATE -g -fno-omit-frame-pointer)
-target_link_libraries(do-verify-perf PRIVATE do-verify)
+target_compile_options(loomrv-perf PRIVATE -g -fno-omit-frame-pointer)
+target_link_libraries(loomrv-perf PRIVATE loomrv_lib)
 
 add_executable(test-parse
     src/test_parse.cpp
 )
 target_compile_options(test-parse PRIVATE -g -O0)
-target_link_libraries(test-parse PRIVATE do-verify)
+target_link_libraries(test-parse PRIVATE loomrv_lib)
 
 add_executable(check-grammar
     src/check_grammar.cpp
 )
-target_link_libraries(check-grammar PRIVATE do-verify)
+target_link_libraries(check-grammar PRIVATE loomrv_lib)
 
 add_executable(count-nodes
     src/count_nodes.cpp
 )
-target_link_libraries(count-nodes PRIVATE do-verify)
+target_link_libraries(count-nodes PRIVATE loomrv_lib)
 
 add_executable(test-json src/json_read_main.cpp)
 target_link_libraries(test-json PRIVATE simdjson)

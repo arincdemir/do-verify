@@ -3,12 +3,12 @@
 #include <iostream>
 #include <string>
 
-#include <do-verify/json_feeder.hpp>
-#include <do-verify/ptl.hpp>
-#include <do-verify/MTLEngine.hpp>
+#include <loomrv/json_feeder.hpp>
+#include <loomrv/ptl.hpp>
+#include <loomrv/MTLEngine.hpp>
 
 using namespace db_interval_set;
-using namespace do_verify;
+using namespace loomrv;
 
 int main(int argc, char **argv)
 {
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
         // Finalize monitor to compute proposition metadata
         finalize_monitor(monitor);
 
-        auto *feeder = create_dense_json_feeder(monitor, "/home/arincdemir/workspace/do-verify/data/fullsuite/RecurBQR/Dense1/1M/RecurBQR10.jsonl");
+        auto *feeder = create_dense_json_feeder(monitor, "/home/arincdemir/workspace/loomrv/data/fullsuite/RecurBQR/Dense1/1M/RecurBQR10.jsonl");
         
         while (feed_next(feeder)) {
             // Processing loop, pulling and consuming results

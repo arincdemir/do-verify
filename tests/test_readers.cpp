@@ -6,8 +6,8 @@
 #include <vector>
 #include <fstream>
 #include <iostream>
-#include "do-verify/json_reader.hpp"
-#include "do-verify/binary_row_reader.hpp"
+#include "loomrv/json_reader.hpp"
+#include "loomrv/binary_row_reader.hpp"
 
 
 TEST_CASE("Readers Implementation Tests", "[reader]") {

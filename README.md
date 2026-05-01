@@ -1,4 +1,4 @@
-[![codecov](https://codecov.io/github/arincdemir/do-verify/graph/badge.svg?token=ARQ99KRISB)](https://codecov.io/github/arincdemir/do-verify)
+[![codecov](https://codecov.io/github/arincdemir/loomrv/graph/badge.svg?token=ARQ99KRISB)](https://codecov.io/github/arincdemir/loomrv)
 
 A data-oriented runtime verification implementation of the algorithm described in [Online monitoring of metric temporal logic using sequential networks](https://arxiv.org/abs/1901.00175). 
 

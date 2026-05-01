@@ -1,6 +1,6 @@
-#include "do-verify/MTLEngine.hpp"
+#include "loomrv/MTLEngine.hpp"
 
-namespace do_verify {
+namespace loomrv {
 
 int add_with_inf(int a, int b) {
     if (a == B_INFINITY || b == B_INFINITY) {
@@ -495,4 +495,4 @@ const std::vector<db_interval_set::IntervalSet> &eval_multi_property(DenseMultiP
 }
 
 
-} // namespace do_verify
+} // namespace loomrv
